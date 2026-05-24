@@ -9,7 +9,7 @@ const REQUEST_TYPES: Record<RequestType, { ar: string; en: string; color: string
   reschedule: {
     ar: 'إعادة جدولة',
     en: 'Reschedule',
-    color: 'bg-blue-100 text-blue-700'
+    color: 'bg-primary-100 text-blue-700'
   },
   cancel: {
     ar: 'إلغاء',
@@ -329,7 +329,7 @@ export default function TeacherRequests() {
                   </p>
                 </div>
                 {selectedRequest.type === 'reschedule' && (
-                  <div className="bg-blue-50 rounded-xl p-3 text-start border border-blue-100">
+                  <div className="bg-primary-50 rounded-xl p-3 text-start border border-blue-100">
                     <p className="text-xs text-blue-600 mb-1">{language === 'ar' ? 'الموعد المقترح' : 'Suggested Time'}</p>
                     <p className="font-bold text-blue-700 text-sm">
                       {new Date(selectedRequest.requestedData.new_start_time).toLocaleString(language === 'ar' ? 'ar-EG' : 'en-US')}

@@ -342,7 +342,7 @@ export default function Expenses() {
                       </p>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700">
+                      <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-primary-50 text-blue-700">
                         {text[expense.type as keyof typeof text]?.[language] || expense.type}
                       </span>
                     </td>

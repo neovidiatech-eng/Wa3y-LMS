@@ -263,7 +263,7 @@ export default function Agenda() {
               {todaySessions.map((s) => (
                 <div
                   key={s.id}
-                  className="bg-blue-50 border rounded-xl p-4 text-right"
+                  className="bg-primary-50 border rounded-xl p-4 text-right"
                 >
                   <p className="font-bold text-lg">{s.title}</p>
 

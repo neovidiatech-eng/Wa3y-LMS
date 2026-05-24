@@ -68,7 +68,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
           <div className="space-y-6">
             {/* Profile Section */}
             <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
-              <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <div className="w-20 h-20 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
                 <span className="text-2xl font-bold text-blue-600">
                   {student.user.name ? student.user.name.charAt(0).toUpperCase() : '?'}
                 </span>

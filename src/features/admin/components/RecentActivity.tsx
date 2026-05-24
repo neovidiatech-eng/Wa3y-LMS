@@ -35,7 +35,7 @@ const getActivityColor = (type: string) => {
   switch (type?.toLowerCase()) {
     case "student":
     case "student_register":
-      return "bg-blue-500";
+      return "bg-primary-500";
     case "teacher":
     case "teacher_register":
       return "bg-green-500";

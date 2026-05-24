@@ -67,7 +67,7 @@ export default function StudentSessionsTable({ studentId }: Props) {
           <tbody className="divide-y divide-gray-50">
             {currentSessions.length > 0 ? (
               currentSessions.map((session) => (
-                <tr key={session.id} className="hover:bg-blue-50/30 transition-colors group">
+                <tr key={session.id} className="hover:bg-primary-50/30 transition-colors group">
                   <td className="px-6 py-4 text-start">
                     <div className="flex flex-col gap-1">
                       <span className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
@@ -92,7 +92,7 @@ export default function StudentSessionsTable({ studentId }: Props) {
                   </td>
                   <td className="px-6 py-4 text-gray-700 text-start">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                      <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-blue-600 font-bold text-xs">
                         {session.teacher?.user?.name?.charAt(0).toUpperCase() || 'T'}
                       </div>
                       <span className="font-medium">{session.teacher?.user?.name || '-'}</span>
@@ -135,7 +135,7 @@ export default function StudentSessionsTable({ studentId }: Props) {
                         setSelectedSession(session);
                         setShowViewModal(true);
                       }}
-                      className="p-2 bg-blue-50/50 text-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-md rounded-xl transition-all duration-300"
+                      className="p-2 bg-primary-50/50 text-blue-600 hover:bg-primary hover:text-white hover:shadow-md rounded-xl transition-all duration-300"
                       title={t('view')}
                     >
                       <Eye className="w-5 h-5" />

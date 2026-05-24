@@ -17,7 +17,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'scheduled':
-        return 'bg-blue-50 text-blue-600 border-blue-100';
+        return 'bg-primary-50 text-blue-600 border-blue-100';
       case 'completed':
         return 'bg-emerald-50 text-emerald-600 border-emerald-100';
       case 'cancelled':
@@ -116,7 +116,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
             {/* People & Subject */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
               <div className="flex items-start gap-4 group">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-500 group-hover:scale-110 transition-transform">
+                <div className="p-2.5 rounded-xl bg-primary-50 text-blue-500 group-hover:scale-110 transition-transform">
                   <User className="w-4 h-4" />
                 </div>
                 <div>
@@ -201,7 +201,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
                     href={session.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all text-xs font-bold shadow-sm active:scale-95"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary text-white rounded-xl transition-all text-xs font-bold shadow-sm active:scale-95"
                   >
                     <Video className="w-4 h-4" />
                     {t('joinSession')}

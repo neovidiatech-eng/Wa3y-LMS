@@ -205,9 +205,9 @@ export default function Transactions() {
           <p className="text-xs text-gray-400 mt-1">{currentSymbol}</p>
         </div>
 
-        <div className={`rounded-2xl p-5 border shadow-sm ${stats.netProfit >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-red-50 border-red-200'}`}>
+        <div className={`rounded-2xl p-5 border shadow-sm ${stats.netProfit >= 0 ? 'bg-primary-50 border-blue-200' : 'bg-red-50 border-red-200'}`}>
           <div className="flex items-center gap-3 mb-3">
-            <div className={`p-2 rounded-lg ${stats.netProfit >= 0 ? 'bg-blue-100' : 'bg-red-100'}`}>
+            <div className={`p-2 rounded-lg ${stats.netProfit >= 0 ? 'bg-primary-100' : 'bg-red-100'}`}>
               <DollarSign className={`w-5 h-5 ${stats.netProfit >= 0 ? 'text-primary' : 'text-red-600'}`} />
             </div>
             <p className="text-sm text-gray-600">{text.netProfit[language]}</p>

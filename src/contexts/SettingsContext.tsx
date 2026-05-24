@@ -38,7 +38,7 @@ const defaultSettings: PlatformSettings = {
   description: 'Modern learning management platform for students, teachers, parents, and academy admins.',
   logoUrl: '/logo.png',
   faviconUrl: '/logo.png',
-  primaryColor: '#2563eb',
+  primaryColor: '#369589',
   secondaryColor: '#0f172a',
   accentColor: '#06b6d4',
   fontFamily: 'Almarai',

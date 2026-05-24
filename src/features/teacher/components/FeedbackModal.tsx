@@ -48,7 +48,7 @@ export default function FeedbackModal({ visible, onClose, sessionId, sessionTitl
     <Modal
       title={
         <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+          <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center text-blue-600">
             <Star size={20} />
           </div>
           <div>
@@ -84,7 +84,7 @@ export default function FeedbackModal({ visible, onClose, sessionId, sessionTitl
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="p-4 rounded-xl border border-slate-100 bg-white shadow-sm flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="text-blue-500 bg-blue-50 p-2 rounded-lg">
+              <div className="text-blue-500 bg-primary-50 p-2 rounded-lg">
                 <ShieldCheck size={18} />
               </div>
               <span className="text-sm font-bold text-slate-700">Teacher Attended</span>
@@ -137,7 +137,7 @@ export default function FeedbackModal({ visible, onClose, sessionId, sessionTitl
             type="primary"
             htmlType="submit"
             loading={isPending}
-            className="h-11 px-10 rounded-xl font-bold bg-blue-600 border-none shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-xl transition-all"
+            className="h-11 px-10 rounded-xl font-bold bg-primary border-none shadow-lg shadow-blue-200 hover:bg-primary-700 hover:shadow-xl transition-all"
           >
             Send Feedback
           </Button>

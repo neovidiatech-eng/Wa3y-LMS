@@ -99,7 +99,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
 
             <div className="flex flex-wrap gap-2 justify-center mb-4">
               {subjects.map((sub, index) => (
-                <span key={index} className="inline-flex px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
+                <span key={index} className="inline-flex px-3 py-1 bg-primary-100 text-blue-700 rounded-lg text-sm font-medium">
                   {sub}
                 </span>
               ))}
@@ -112,7 +112,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                   {activeTeacher.active ? t('active') : t('inactive')}
                 </p>
               </div>
-              <div className="bg-blue-50 rounded-xl px-6 py-3 text-center border border-blue-100">
+              <div className="bg-primary-50 rounded-xl px-6 py-3 text-center border border-blue-100">
                 <p className="text-xs text-blue-600 mb-1">{t('hourlyRate') || (language === 'ar' ? 'السعر بالساعة' : 'Hourly Rate')}</p>
                 <p className="text-lg font-bold text-blue-700">{hourPrice.toFixed(2)} {currencySymbol}</p>
               </div>
@@ -125,7 +125,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow">
-                <div className="p-2 rounded-lg bg-blue-50 w-fit mb-3">
+                <div className="p-2 rounded-lg bg-primary-50 w-fit mb-3">
                   <GraduationCap className="w-5 h-5 text-blue-600" />
                 </div>
                 <p className="text-sm text-gray-600 mb-1 text-start">{t('students') || (language === 'ar' ? 'عدد الطلاب' : 'Students')}</p>
@@ -161,7 +161,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
               <h4 className="text-lg font-bold text-gray-900">{t('earningsDetails') || (language === 'ar' ? 'تفاصيل الأرباح' : 'Earnings Details')}</h4>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4 text-start">
+            <div className="bg-primary-50 border border-blue-200 rounded-xl p-4 mb-4 text-start">
               <p className="text-xs text-blue-700 font-semibold mb-1">{t('formula') || (language === 'ar' ? 'المعادلة الحسابية' : 'Formula')}</p>
               <p className="text-sm text-blue-800 font-mono">
                 {language === 'ar'
@@ -171,7 +171,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="rounded-xl p-5 bg-blue-50 text-blue-700">
+              <div className="rounded-xl p-5 bg-primary-50 text-blue-700">
                 <p className="text-sm mb-2 text-start opacity-80">{t('totalHours') || (language === 'ar' ? 'إجمالي الساعات' : 'Total Hours')}</p>
                 <p className="text-2xl font-bold text-start">{totalHours.toFixed(1)} {language === 'ar' ? 'ساعة' : 'hrs'}</p>
               </div>
@@ -217,7 +217,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                 {teacherSessions.slice(0, 5).map(session => (
                   <div key={session.id} className="flex items-center justify-between bg-gray-50 rounded-xl p-3 border border-gray-100">
                     <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full ${session.date < today ? 'bg-green-400' : session.date === today ? 'bg-blue-400' : 'bg-yellow-400'}`} />
+                      <span className={`w-2 h-2 rounded-full ${session.date < today ? 'bg-green-400' : session.date === today ? 'bg-primary-400' : 'bg-yellow-400'}`} />
                       <span className="text-xs text-gray-500">{session.time} - {session.endTime}</span>
                     </div>
                     <div className="text-start">

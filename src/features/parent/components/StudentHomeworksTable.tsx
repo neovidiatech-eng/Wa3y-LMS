@@ -71,7 +71,7 @@ export default function StudentHomeworksTable({ studentId }: Props) {
                   </td>
                   <td className="px-6 py-4 text-gray-700 text-start">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                      <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-blue-600 font-bold text-xs">
                         {hw.teacher?.user?.name?.charAt(0).toUpperCase() || 'T'}
                       </div>
                       <span className="font-medium">{hw.teacher?.user?.name || '-'}</span>

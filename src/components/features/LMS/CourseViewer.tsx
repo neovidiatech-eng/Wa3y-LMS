@@ -119,7 +119,7 @@ function FileCard({ att }: { att: AttachedFile }) {
       rel="noopener noreferrer"
       className="group flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 transition-all hover:border-blue-200 hover:shadow-sm"
     >
-      <div className="flex-shrink-0 rounded-xl bg-blue-50 p-2.5 transition-colors group-hover:bg-blue-100">
+      <div className="flex-shrink-0 rounded-xl bg-primary-50 p-2.5 transition-colors group-hover:bg-primary-100">
         <Icon className="h-5 w-5 text-blue-500" />
       </div>
 
@@ -184,7 +184,7 @@ export default function CourseViewer({
         <div className="h-4 w-px bg-gray-200" />
 
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
+          <span className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-medium text-blue-600">
             {course.subject?.name_ar || ""}
           </span>
         </div>
@@ -262,7 +262,7 @@ export default function CourseViewer({
               <div className="flex items-center gap-1.5">
                 <Tag className="h-3.5 w-3.5 text-gray-400" />
 
-                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-600">
+                <span className="rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-blue-600">
                   {course.subject?.name_ar || ""}
                 </span>
               </div>
@@ -299,7 +299,7 @@ export default function CourseViewer({
               <span>الملفات المرفقة</span>
 
               {attachmentsList.length > 0 && (
-                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-600">
+                <span className="rounded-full bg-primary-100 px-2 py-0.5 text-xs font-bold text-blue-600">
                   {attachmentsList.length}
                 </span>
               )}

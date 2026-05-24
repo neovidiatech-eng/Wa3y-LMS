@@ -354,7 +354,7 @@ export default function Dashboard() {
               </td>
 
               <td className="py-4 px-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary-50 text-blue-600">
 {
     log.action
 }

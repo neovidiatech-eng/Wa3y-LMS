@@ -114,7 +114,7 @@ export default function AddCurrencyModal({ isOpen, onClose, onSave, initialData 
                 type="button"
                 onClick={() => setActiveTab('ar')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === 'ar'
-                  ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
+                  ? 'bg-primary-50 text-blue-600 border-b-2 border-blue-600'
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                   }`}
               >
@@ -124,7 +124,7 @@ export default function AddCurrencyModal({ isOpen, onClose, onSave, initialData 
                 type="button"
                 onClick={() => setActiveTab('en')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === 'en'
-                  ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600'
+                  ? 'bg-primary-50 text-blue-600 border-b-2 border-blue-600'
                   : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                   }`}
               >
@@ -190,7 +190,7 @@ export default function AddCurrencyModal({ isOpen, onClose, onSave, initialData 
             <p className="text-xs text-gray-500 mt-1">{text.exchangeRateHint[language]}</p>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-primary-50 border border-blue-200 rounded-lg p-4">
             <label className="flex items-center justify-end gap-3 cursor-pointer">
               <span className="text-sm font-medium text-gray-700">{text.isDefault[language]}</span>
               {/*    <input
@@ -227,7 +227,7 @@ export default function AddCurrencyModal({ isOpen, onClose, onSave, initialData 
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors font-medium flex items-center justify-center gap-2"
             >
               <Save className="w-5 h-5" />
               <span>{text.save[language]}</span>

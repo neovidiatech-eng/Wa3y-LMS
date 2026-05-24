@@ -35,7 +35,7 @@ const AuthLayout = () => {
           <div className="relative z-10">
             {/* Logo and Brand Name */}
             <div className="flex items-center gap-3">
-              <div className="bg-white/10 backdrop-blur-md p-2 rounded-2xl border border-white/10">
+              <div className="bg-white backdrop-blur-md p-2 rounded-2xl border border-white/10">
                 <img src={settings.logoUrl} alt={academyName} className="w-10 h-10 rounded-xl object-contain" />
               </div>
               <div className="text-start">

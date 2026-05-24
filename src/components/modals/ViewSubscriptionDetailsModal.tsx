@@ -124,7 +124,7 @@ export default function ViewSubscriptionDetailsModal({
         </div>
 
         <div className="p-6 space-y-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+          <div className="bg-primary-50 border border-blue-200 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-4">
               <User className="w-6 h-6 text-blue-600" />
               <h3 className="text-lg font-bold text-gray-900">{text.studentInfo[language]}</h3>
@@ -261,7 +261,7 @@ export default function ViewSubscriptionDetailsModal({
                 </div>
                 <div className="space-y-2 max-h-64  overflow-y-auto no-scrollbar">
                   {upcomingSessions.map(session => (
-                    <div key={session.id} className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
+                    <div key={session.id} className="bg-primary-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
                       <div>
                         <p className="font-semibold text-gray-900">{session.sessionName}</p>
                         <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">

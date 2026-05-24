@@ -20,7 +20,7 @@ export default function Subjects() {
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  const { data, isLoading, isError, error, isFetching } = useSubjects(debouncedSearch);
+  const { data, isLoading, isError, error, isFetching } = useSubjects();
   const { mutate: addSubject } = useAddSubject();
   const { mutate: updateSubject } = useUpdateSubject();
   const { mutate: deleteSubject } = useDeleteSubject();
@@ -86,7 +86,7 @@ export default function Subjects() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-lg shadow-blue-600/20"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-700 text-white px-5 py-3 rounded-xl font-medium transition-colors shadow-lg shadow-blue-600/20"
         >
           <Plus className="w-5 h-5" />
           {language === 'ar' ? 'إضافة مادة جديدة' : 'Add Subject'}
@@ -95,7 +95,7 @@ export default function Subjects() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-white rounded-2xl border border-gray-200 p-5 flex items-center gap-4 shadow-sm">
-          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
             <BookOpen className="w-6 h-6 text-blue-600" />
           </div>
           <div>
@@ -142,7 +142,7 @@ export default function Subjects() {
                 key={s}
                 onClick={() => setFilterActive(s)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${filterActive === s
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
@@ -190,7 +190,7 @@ export default function Subjects() {
                       </button>
                       <button
                         onClick={() => setEditingSubject(subject)}
-                        className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-primary-50 rounded-lg transition-colors"
                         title={language === 'ar' ? 'تعديل' : 'Edit'}
                       >
                         <Pencil className="w-4 h-4" />

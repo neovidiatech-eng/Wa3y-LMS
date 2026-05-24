@@ -24,8 +24,8 @@ export const formatDateTime = (dateString: string, isRtl: boolean) => {
 
 export const getStatusStyle = (status: string) => {
   switch (status?.toLowerCase()) {
-    case 'scheduled': return 'bg-blue-50 text-blue-700 border-blue-200';
-    case 'planned': return 'bg-blue-50 text-blue-700 border-blue-200';
+    case 'scheduled': return 'bg-primary-50 text-blue-700 border-blue-200';
+    case 'planned': return 'bg-primary-50 text-blue-700 border-blue-200';
     case 'completed': return 'bg-green-50 text-green-700 border-green-200';
     case 'cancelled': return 'bg-red-50 text-red-700 border-red-200';
     case 'pending': return 'bg-orange-50 text-orange-700 border-orange-200';

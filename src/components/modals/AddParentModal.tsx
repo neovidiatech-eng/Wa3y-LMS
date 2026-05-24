@@ -163,7 +163,7 @@ export default function AddParentModal({ onClose, onAdd }: AddParentModalProps) 
             <button type="button" onClick={onClose} className="flex-1 px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">
               {text.cancel[language]}
             </button>
-            <button type="submit" className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-lg">
+            <button type="submit" className="flex-1 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-700 transition-colors font-medium shadow-lg">
               {text.save[language]}
             </button>
           </div>

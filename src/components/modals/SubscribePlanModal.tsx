@@ -154,7 +154,7 @@ export default function SubscribePlanModal({ isOpen, onClose }: SubscribePlanMod
                           <span className="text-sm text-gray-400">/{text.month[language]}</span>
                         </div>
                       </div>
-                      <div className="mt-3 inline-block px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold">
+                      <div className="mt-3 inline-block px-4 py-1.5 bg-primary-50 text-blue-700 rounded-full text-sm font-semibold">
                         {plan.sessionsCount} {text.sessions[language]}
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export default function SubscribePlanModal({ isOpen, onClose }: SubscribePlanMod
 
                     <button
                       className={`w-full py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 ${plan.isPopular
-                          ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg'
+                          ? 'bg-primary text-white hover:bg-primary-700 shadow-md hover:shadow-lg'
                           : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                         }`}
                     >

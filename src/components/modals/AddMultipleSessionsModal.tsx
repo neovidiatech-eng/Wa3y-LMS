@@ -207,7 +207,7 @@ export default function AddMultipleSessionsModal({ isOpen, onClose, onAdd }: Add
           </div>
 
           {selectedStudentPackage && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-start">
+            <div className="bg-primary-50 border border-blue-200 rounded-xl p-4 text-start">
               <p className="text-sm font-bold text-blue-900 mb-2">{t('addMultipleSessions_packageDetails')}</p>
               <div className="flex justify-between text-xs text-blue-700">
                 <span>{t('addMultipleSessions_totalSessions')}: {selectedStudentPackage.totalSessions}</span>
@@ -343,7 +343,7 @@ export default function AddMultipleSessionsModal({ isOpen, onClose, onAdd }: Add
                 <div
                   key={day.id}
                   onClick={() => setWeekDays(prev => prev.map(d => d.id === day.id ? { ...d, checked: !d.checked } : d))}
-                  className={`border rounded-xl p-4 transition-all cursor-pointer ${day.checked ? 'border-primary bg-blue-50' : 'border-gray-200 hover:border-primary/50'}`}
+                  className={`border rounded-xl p-4 transition-all cursor-pointer ${day.checked ? 'border-primary bg-primary-50' : 'border-gray-200 hover:border-primary/50'}`}
                 >
                   <div className="flex items-center justify-between">
                     <input

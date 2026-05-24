@@ -75,7 +75,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 font-sans transition-all">
+    <div className="fixed inset-0 !mt-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 font-sans transition-all">
       <div className="bg-white rounded-[28px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] w-full max-w-[1000px] max-h-[92vh] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-300">
         
         {/* Header */}
@@ -103,7 +103,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
             {/* Read-only info */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div className="flex items-start gap-3 bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                <div className="p-2 rounded-xl bg-blue-50 text-blue-500">
+                <div className="p-2 rounded-xl bg-primary-50 text-blue-500">
                   <User className="w-4 h-4" />
                 </div>
                 <div>
@@ -267,7 +267,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-widest ${
                       formData.status === 'completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
                       formData.status === 'cancelled' ? 'bg-red-50 text-red-600 border-red-100' :
-                      'bg-blue-50 text-blue-600 border-blue-100'
+                      'bg-primary-50 text-blue-600 border-blue-100'
                     }`}>
                       {t(formData.status)}
                     </span>
@@ -334,7 +334,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
           <button 
             type="submit"
             onClick={handleSubmit}
-            className="flex-1 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(79,70,229,0.3)] active:scale-95"
+            className="flex-1 px-8 py-3 bg-primary hover:bg-primary text-white text-xs font-bold rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(79,70,229,0.3)] active:scale-95"
           >
             {t('saveChanges')}
           </button>

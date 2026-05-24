@@ -200,7 +200,7 @@ export default function Roles() {
                                                 <div className="flex items-center gap-2 justify-start">
                                                     <button
                                                         onClick={() => handleEditClick(role)}
-                                                        className="p-2 hover:bg-blue-50 rounded-lg transition-colors group/btn"
+                                                        className="p-2 hover:bg-primary-50 rounded-lg transition-colors group/btn"
                                                         title={t('edit')}
                                                     >
                                                         <Pencil className="w-4 h-4 text-gray-400 group-hover/btn:text-blue-600" />

@@ -360,7 +360,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
               {text.cancel[language]}
             </button>
 
-            <button type="submit" className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg">
+            <button type="submit" className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-lg">
               <Save className="w-5 h-5" />
               {text.save[language]}
             </button>

@@ -43,7 +43,7 @@ export default function SessionsDayModal({
                 <div className="flex justify-between items-center">
                   <h3 className="font-bold">{s.title}</h3>
 
-                  <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                  <span className="text-xs px-2 py-1 rounded-full bg-primary-100 text-blue-700">
                     {s.status}
                   </span>
                 </div>

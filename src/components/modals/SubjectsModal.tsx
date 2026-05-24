@@ -8,7 +8,7 @@ import { Subject } from '../../types/subject';
 
 export const COLORS = [
   { id: '#10b981', bg: 'bg-green-100', icon: 'text-green-600', border: 'border-green-200', labelKey: 'color_green' },
-  { id: '#3b82f6', bg: 'bg-blue-100', icon: 'text-blue-600', border: 'border-blue-200', labelKey: 'color_blue' },
+  { id: '#3b82f6', bg: 'bg-primary-100', icon: 'text-blue-600', border: 'border-blue-200', labelKey: 'color_blue' },
   { id: '#f97316', bg: 'bg-orange-100', icon: 'text-orange-600', border: 'border-orange-200', labelKey: 'color_orange' },
   { id: '#ef4444', bg: 'bg-red-100', icon: 'text-red-600', border: 'border-red-200', labelKey: 'color_red' },
   { id: '#14b8a6', bg: 'bg-teal-100', icon: 'text-teal-600', border: 'border-teal-200', labelKey: 'teal' },
@@ -136,7 +136,7 @@ export default function SubjectForm({ initial, onSave, onCancel, title }: Subjec
             <button type="button" onClick={onCancel} className="flex-1 px-4 py-3 border border-gray-300 rounded-xl font-medium">
               {t('cancel')}
             </button>
-            <button type="submit" className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-medium shadow-lg shadow-blue-600/20">
+            <button type="submit" className="flex-1 px-4 py-3 bg-primary text-white rounded-xl font-medium shadow-lg shadow-blue-600/20">
               {t('save')}
             </button>
           </div>

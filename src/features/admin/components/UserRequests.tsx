@@ -24,7 +24,7 @@ export default function UserRequests({ pendingCount = 0 }: UserRequestsProps) {
           </div>
           <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden flex justify-end">
             <div 
-              className="h-full bg-blue-600 rounded-full transition-all duration-500" 
+              className="h-full bg-primary rounded-full transition-all duration-500" 
               style={{ width: `${pendingPercentage}%` }}
             ></div>
           </div>

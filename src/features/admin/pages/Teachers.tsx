@@ -70,7 +70,7 @@ export default function Teachers() {
       label: t('totalTeachers'),
       value: teachers.length,
       icon: Users,
-      bgColor: 'bg-blue-50',
+      bgColor: 'bg-primary-50',
       iconColor: 'text-blue-600',
       valueColor: 'text-blue-600',
     },
@@ -320,7 +320,7 @@ export default function Teachers() {
                     <tr key={teacher.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3 justify-start">
-                          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center flex-shrink-0">
                             <Users className="w-5 h-5 text-blue-600" />
                           </div>
                           <div className="text-start">

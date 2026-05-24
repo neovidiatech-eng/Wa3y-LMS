@@ -46,7 +46,7 @@ export default function Students() {
       label: t('totalStudents'),
       value: studentsList.length,
       icon: Users,
-      bgColor: 'bg-blue-50',
+      bgColor: 'bg-primary-50',
       iconColor: 'text-blue-600',
       valueColor: 'text-blue-600',
     },
@@ -281,7 +281,7 @@ export default function Students() {
                     <tr key={student.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center flex-shrink-0">
                             <span className="text-blue-600 text-sm font-semibold">
                               {student.user.name ? student.user.name.charAt(0).toUpperCase() : '?'}
                             </span>
@@ -310,7 +310,7 @@ export default function Students() {
                           </div>
                           <div className="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
                             <div
-                              className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                              className="h-full bg-primary-500 rounded-full transition-all duration-500"
                               style={{ width: `${student.sessions > 0 ? (student.sessions_attended / student.sessions) * 100 : 0}%` }}
                             />
                           </div>

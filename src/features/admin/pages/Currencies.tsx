@@ -229,7 +229,7 @@ export default function Currencies() {
                         </button>
                         <button
                           onClick={() => { setSelectedCurrency(currency); setShowAddModal(true); }}
-                          className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg"
+                          className="p-1.5 text-blue-500 hover:bg-primary-50 rounded-lg"
                         >
                           <Edit className="w-4 h-4" />
                         </button>

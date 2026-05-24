@@ -125,7 +125,7 @@ export default function Children() {
                     <span className="text-emerald-600/80 text-xs mb-1 font-medium">{isRtl ? 'الحضور' : 'Attended'}</span>
                     <span className="text-xl font-bold text-emerald-700">{child.sessions_attended}</span>
                   </div>
-                  <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100 flex flex-col items-center justify-center text-center shadow-sm">
+                  <div className="bg-primary-50/50 p-3 rounded-xl border border-blue-100 flex flex-col items-center justify-center text-center shadow-sm">
                     <span className="text-blue-600/80 text-xs mb-1 font-medium">{isRtl ? 'المتبقي' : 'Remaining'}</span>
                     <span className="text-xl font-bold text-blue-700">{child.sessions_remaining}</span>
                   </div>
@@ -135,9 +135,9 @@ export default function Children() {
                 <div className="mt-auto grid grid-cols-2 gap-3 pt-2">
                   <button
                     onClick={() => navigate(`/parent-dashboard/children/${child.id}/sessions`)}
-                    className="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-white border border-gray-100 text-gray-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 transition-all group/btn shadow-sm"
+                    className="flex flex-col items-center justify-center gap-2 p-3 rounded-xl bg-white border border-gray-100 text-gray-600 hover:border-blue-200 hover:bg-primary-50 hover:text-blue-600 transition-all group/btn shadow-sm"
                   >
-                    <div className="p-2 bg-blue-50 text-blue-500 rounded-lg group-hover/btn:bg-blue-100 transition-colors">
+                    <div className="p-2 bg-primary-50 text-blue-500 rounded-lg group-hover/btn:bg-primary-100 transition-colors">
                       <Calendar className="w-5 h-5" />
                     </div>
                     <span className="text-sm font-semibold">{isRtl ? 'الحصص' : 'Sessions'}</span>

@@ -169,7 +169,7 @@ export default function ViewExamModal({ isOpen, onClose, exam }: Props) {
 /* Reusable Card */
 function Card({ icon, label, value, color }: any) {
   const colors: any = {
-    blue: "bg-blue-100 text-blue-600",
+    blue: "bg-primary-100 text-blue-600",
     green: "bg-green-100 text-green-600",
     purple: "bg-purple-100 text-purple-600",
     orange: "bg-orange-100 text-orange-600",

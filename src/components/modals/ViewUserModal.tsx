@@ -147,7 +147,7 @@ export default function ViewUserModal({ isOpen, onClose, userData }: ViewUserMod
                     return (
                       <div
                         key={key}
-                        className="bg-blue-50 border border-blue-200 p-3 rounded-xl"
+                        className="bg-primary-50 border border-blue-200 p-3 rounded-xl"
                       >
                         <p className="text-sm font-medium text-blue-900 text-start">
                           {language === 'ar' ? group.title : group.titleEn}
@@ -171,7 +171,7 @@ export default function ViewUserModal({ isOpen, onClose, userData }: ViewUserMod
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-lg shadow-blue-600/30"
+            className="px-6 py-2.5 bg-primary text-white rounded-xl hover:bg-primary-700 transition-colors font-medium shadow-lg shadow-blue-600/30"
           >
             {language === 'ar' ? 'إغلاق' : 'Close'}
           </button>

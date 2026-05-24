@@ -295,7 +295,7 @@ export default function EditUserModal({ isOpen, onClose, onSubmit, userData }: E
           <button
             type="submit"
             form="edit-user-form"
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-lg"
+            className="px-6 py-2.5 bg-primary text-white rounded-xl hover:bg-primary-700 transition-colors font-medium shadow-lg"
           >
             {t('saveChanges')}
           </button>

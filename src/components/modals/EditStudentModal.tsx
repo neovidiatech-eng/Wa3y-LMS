@@ -212,7 +212,7 @@ export default function EditStudentModal({
 
           <div className="flex gap-3 mt-8 pt-6 border-t">
             <button type="button" onClick={onClose} className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-50">{t('cancel')}</button>
-            <button type="submit" className="flex-1 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200">
+            <button type="submit" className="flex-1 py-3 bg-primary text-white rounded-xl hover:bg-primary-700 shadow-lg shadow-blue-200">
               {t('save')}
             </button>
           </div>

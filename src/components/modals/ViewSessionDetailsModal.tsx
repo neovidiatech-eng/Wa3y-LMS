@@ -69,7 +69,7 @@ export default function ViewSessionDetailsModal({ isOpen, onClose, sessionGroup,
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'scheduled':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-primary-50 text-blue-700 border-blue-200';
       case 'completed':
         return 'bg-green-50 text-green-700 border-green-200';
       case 'cancelled':
@@ -101,7 +101,7 @@ export default function ViewSessionDetailsModal({ isOpen, onClose, sessionGroup,
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 bg-white rounded-xl p-4 shadow-sm">
-                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
                     <User className="w-5 h-5 text-blue-600" />
                   </div>
                   <div className="flex-1 text-start">
@@ -149,7 +149,7 @@ export default function ViewSessionDetailsModal({ isOpen, onClose, sessionGroup,
                       href={sessionGroup.meetingLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center font-medium"
+                      className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-colors text-center font-medium"
                     >
                       {text.openLink[language]}
                     </a>
@@ -241,7 +241,7 @@ export default function ViewSessionDetailsModal({ isOpen, onClose, sessionGroup,
                           {onEditSession && !readOnly && (
                             <button
                               onClick={() => onEditSession(sessionGroup.id, index)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-2 text-blue-600 hover:bg-primary-50 rounded-lg transition-colors"
                               title={text.edit[language]}
                             >
                               <Edit className="w-4 h-4" />

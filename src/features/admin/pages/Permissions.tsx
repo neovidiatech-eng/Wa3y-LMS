@@ -387,7 +387,7 @@ export default function Permissions() {
                               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {/* <button
                                   onClick={() => openEdit(perm)}
-                                  className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                  className="p-2 hover:bg-primary-50 rounded-lg transition-colors"
                                   title={t('edit') || 'Edit'}
                                 >
                                   <Pencil className="w-4 h-4 text-gray-400 hover:text-blue-600 transition-colors" />

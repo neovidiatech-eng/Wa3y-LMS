@@ -300,7 +300,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-lg shadow-blue-600/30"
+              className="flex-1 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-700 transition-colors font-medium shadow-lg shadow-blue-600/30"
             >
               {t('saveChanges')}
             </button>

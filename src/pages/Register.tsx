@@ -18,8 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getRegisterSchema, RegisterInput } from "../lib/schemas/RegisterSchema";
-import { googleRegister, register as registerService } from "../services/AuthServices";
-import { GoogleLogin } from "@react-oauth/google";
+import { register as registerService } from "../services/AuthServices";
 
 interface RegisterProps {
   onRegisterSuccess: () => void;
@@ -130,15 +129,15 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       direction={language === "ar" ? "rtl" : "ltr"}
     >
       <div className="w-full">
-        <div className="text-center mb-8">
+        <div className="text-center mb-3">
           <h1 className="text-2xl font-bold text-slate-800 mb-2">
             {t("registerNewStudent")}
           </h1>
           <p className="text-slate-500 text-sm font-medium">{t("joinAcademy")}</p>
         </div>
 
-        <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             {/* Name */}
             <div className="text-start">
@@ -150,7 +149,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                   type="text"
                   {...register("name")}
                   placeholder={language === "ar" ? "أحمد محمد" : "Ahmed Mohamed"}
-                  className={`w-full h-14 px-5 py-3 ${language === 'ar' ? 'pr-12 pl-4' : 'pl-12 pr-4'} bg-slate-50 border ${errors.name ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-2xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
+                  className={`w-full h-12 px-4 py-2.5 ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} bg-slate-50 border ${errors.name ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
                 />
                 <div className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-slate-400`}>
                   <User className="w-5 h-5" />
@@ -169,7 +168,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                   type="email"
                   {...register("email")}
                   placeholder="student@example.com"
-                  className={`w-full h-14 px-5 py-3 ${language === 'ar' ? 'pr-12 pl-4' : 'pl-12 pr-4'} bg-slate-50 border ${errors.email ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-2xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
+                  className={`w-full h-12 px-4 py-2.5 ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} bg-slate-50 border ${errors.email ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
                   dir="ltr"
                 />
                 <div className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-slate-400`}>
@@ -192,7 +191,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                     <Select
                       {...field}
                       options={countryCodes}
-                      className="h-[52px] w-28 text-slate-600 font-medium"
+                      className="h-12 w-24 text-slate-600 font-medium"
                     />
                   )}
                 />
@@ -205,7 +204,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                       type="tel"
                       placeholder="01069441989"
                       status={errors.phone ? "error" : ""}
-                      className="flex-1 h-[52px] bg-slate-50 border-slate-200 rounded-2xl font-medium focus:bg-white"
+                      className="flex-1 h-12 bg-slate-50 border-slate-200 rounded-xl font-medium focus:bg-white"
                     />
                   )}
                 />
@@ -223,7 +222,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <DatePicker
-                    className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:shadow-none h-[52px] w-full text-slate-600 font-medium hover:border-slate-300"
+                    className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:shadow-none h-12 w-full text-slate-600 font-medium hover:border-slate-300"
                     status={errors.birth_date ? "error" : ""}
                     placeholder={t("selectDate")}
                     value={value ? dayjs(value) : null}
@@ -247,7 +246,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                     {...field}
                     placeholder={t("selectGender")}
                     options={genders}
-                    className="w-full h-[52px]"
+                    className="w-full h-12"
                     status={errors.gender ? "error" : ""}
                     placement={language === "ar" ? "bottomRight" : "bottomLeft"}
                   />
@@ -270,7 +269,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                     showSearch
                     placeholder={t("selectCountry")}
                     options={countries}
-                    className="w-full h-[52px]"
+                    className="w-full h-12"
                     status={errors.country ? "error" : ""}
                     filterOption={(input, option) =>
                       (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
@@ -291,7 +290,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
                   placeholder="••••••••"
-                  className={`w-full h-14 px-5 py-3 ${language === 'ar' ? 'pr-12 pl-12' : 'pl-12 pr-12'} bg-slate-50 border ${errors.password ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-2xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
+                  className={`w-full h-12 px-4 py-2.5 ${language === 'ar' ? 'pr-11 pl-11' : 'pl-11 pr-11'} bg-slate-50 border ${errors.password ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
                   dir="ltr"
                 />
                 <div className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-slate-400`}>
@@ -314,15 +313,15 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
             <label className="block text-sm font-semibold text-slate-700 mb-3">
               {t("choosePackage")} *
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
               {!plansData && (
-                <div className="col-span-full py-8 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200 animate-pulse font-medium">
+                <div className="col-span-full py-2 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200 animate-pulse font-medium">
                   {t("loadingPlans")}
                 </div>
               )}
 
               {plansData?.length === 0 && (
-                <div className="col-span-full py-8 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200 font-medium">
+                <div className="col-span-full py-2 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200 font-medium">
                   {t("noPlansAvailable")}
                 </div>
               )}
@@ -332,28 +331,28 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                   key={pkg.id}
                   type="button"
                   onClick={() => setValue("plan_id", pkg.id, { shouldValidate: true })}
-                  className={`w-full p-5 rounded-2xl border-2 transition-all text-start relative overflow-hidden flex flex-col justify-between min-h-[110px] cursor-pointer ${
+                  className={`w-full p-2 rounded-xl border-2 transition-all text-start relative overflow-hidden flex flex-col justify-between min-h-[80px] cursor-pointer ${
                     selectedPackage === pkg.id
                       ? "border-primary bg-primary/5 shadow-lg shadow-primary/5 scale-[1.01]"
                       : "border-slate-100 bg-slate-50/50 hover:border-slate-200 hover:bg-white"
                   }`}
                 >
                   {selectedPackage === pkg.id && (
-                    <div className={`absolute top-0 ${language === 'ar' ? 'left-0 rounded-br-2xl' : 'right-0 rounded-bl-2xl'} w-7 h-7 bg-primary flex items-center justify-center`}>
-                      <Check className="w-4 h-4 text-white" />
+                    <div className={`absolute top-0 ${language === 'ar' ? 'left-0 rounded-br-xl' : 'right-0 rounded-bl-xl'} w-6 h-6 bg-primary flex items-center justify-center`}>
+                      <Check className="w-3.5 h-3.5 text-white" />
                     </div>
                   )}
                   <div className="text-start">
-                    <div className={`font-bold text-base mb-1 ${selectedPackage === pkg.id ? "text-primary" : "text-slate-800"}`}>
+                    <div className={`font-bold text-sm mb-1 ${selectedPackage === pkg.id ? "text-primary" : "text-slate-800"}`}>
                       {language === "ar" ? pkg.name_ar : pkg.name_en}
                     </div>
-                    <div className="text-slate-500 text-sm font-semibold">
+                    <div className="text-slate-500 text-xs font-semibold">
                       {pkg.sessionsCount} {t("sessionsCount")}
                     </div>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-slate-100 w-full flex items-baseline gap-1" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                  <div className="mt-2 pt-2 border-t border-slate-100 w-full flex items-baseline gap-1" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                     <span className="text-xs text-slate-400 font-semibold">{pkg.currency?.symbol}</span>
-                    <span className="text-xl font-extrabold text-slate-800">{pkg.price}</span>
+                    <span className="text-lg font-extrabold text-slate-800">{pkg.price}</span>
                   </div>
                 </button>
               ))}
@@ -365,7 +364,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-14 bg-gradient-to-r from-primary to-primary-dark text-white rounded-2xl font-bold hover:shadow-lg hover:shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] border-none outline-none cursor-pointer text-base"
+            className="w-full h-12 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-bold hover:shadow-lg hover:shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] border-none outline-none cursor-pointer text-sm"
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

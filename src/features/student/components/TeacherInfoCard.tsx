@@ -112,7 +112,7 @@ export const TeacherInfoCard = ({ teacher, isRtl, settings }: TeacherInfoCardPro
                 <p className="text-xs font-semibold text-gray-700">{isRtl ? 'هوية محققة' : 'Identity Verified'}</p>
               </div>
             </div>
-            <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center gap-3 text-right">
+            <div className="p-3 bg-primary-50/50 rounded-xl border border-blue-100 flex items-center gap-3 text-right">
               <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm">
                 <Calendar className="w-5 h-5 text-blue-500" />
               </div>

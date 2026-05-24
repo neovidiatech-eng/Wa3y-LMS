@@ -270,7 +270,7 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
             >
               {t('cancel')}
             </button>
-            <button type="submit" className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium">
+            <button type="submit" className="flex-1 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-700 transition-colors font-medium">
               {t('save')}
             </button>
           </div>

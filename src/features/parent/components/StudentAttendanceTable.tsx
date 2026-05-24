@@ -49,7 +49,7 @@ export default function StudentAttendanceTable({ studentId }: Props) {
           <tbody className="divide-y divide-gray-50">
             {currentLogs.length > 0 ? (
               currentLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-blue-50/30 transition-colors group">
+                <tr key={log.id} className="hover:bg-primary-50/30 transition-colors group">
                   <td className="px-6 py-4 text-start">
                     <div className="flex flex-col gap-1">
                       <span className="font-semibold text-gray-900">
@@ -84,7 +84,7 @@ export default function StudentAttendanceTable({ studentId }: Props) {
                         <Clock className="w-3 h-3" />
                         {log.joinTime_student ? formatDateTime(log.joinTime_student, isRtl).time : isRtl ? 'لم ينضم' : 'No Join Time'}
                       </span>
-                      <span className="inline-flex items-center w-fit text-[11px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">
+                      <span className="inline-flex items-center w-fit text-[11px] bg-primary-50 text-blue-700 px-2 py-0.5 rounded font-medium">
                         {log.duration_student ? Math.round(log.duration_student) + ' ' + t('minutes') : '-'}
                       </span>
                     </div>

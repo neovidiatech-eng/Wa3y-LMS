@@ -136,7 +136,7 @@ export default function SchedulingSettings({
                         setValue('selectedDays', [...watchSelectedDays, day]);
                       }
                     }}
-                    className={`day-btn ${selected ? 'bg-indigo-600 text-white' : 'bg-white'
+                    className={`day-btn ${selected ? 'bg-primary text-white' : 'bg-white'
                       }`}
                   >
                     {day.slice(0, 3)}

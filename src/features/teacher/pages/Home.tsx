@@ -40,7 +40,7 @@ export default function TeacherDashboardHome() {
       value: dashboardData.stats.totalStudents.toString(),
       icon: Users,
       color: 'text-blue-500',
-      bg: 'bg-blue-50'
+      bg: 'bg-primary-50'
     },
     {
       title: isRtl ? 'المواد' : 'Subjects',

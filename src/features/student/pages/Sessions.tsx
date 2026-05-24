@@ -11,6 +11,7 @@ import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
 import { useSettings } from '../../../contexts/SettingsContext';
 import CreateRequestModal from '../../../components/modals/CreateRequestModal';
 import { leaveSession } from '../../../services/SessionsServices';
+import FeedbackModal from '../../teacher/components/FeedbackModal';
 
 export default function Sessions() {
   const { t, i18n } = useTranslation();
@@ -22,6 +23,8 @@ export default function Sessions() {
   const [selectedSession, setSelectedSession] = useState<Schedule | null>(null);
   const [groupedSessions, setGroupedSessions] = useState<Schedule[]>([]);
   const [now, setNow] = useState(new Date());
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [sessionForFeedback, setSessionForFeedback] = useState<Schedule | null>(null);
 
   const { settings } = useSettings();
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
@@ -250,6 +253,8 @@ export default function Sessions() {
                           onClick={async () => {
                             try {
                               await leaveSession(session.id);
+                              setSessionForFeedback(session);
+                              setShowFeedbackModal(true);
                             } catch (error) {
                               console.log(error);
                             }
@@ -331,6 +336,15 @@ export default function Sessions() {
         onClose={() => { setIsRequestModalOpen(false); setSessionForRequest(null); }}
         sessionId={sessionForRequest?.id}
         sessionTitle={sessionForRequest?.title}
+      />
+      <FeedbackModal
+        visible={showFeedbackModal}
+        onClose={() => {
+          setShowFeedbackModal(false);
+          setSessionForFeedback(null);
+        }}
+        sessionId={sessionForFeedback?.id || ""}
+        sessionTitle={sessionForFeedback?.title || ""}
       />
     </div>
   );

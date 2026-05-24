@@ -144,9 +144,9 @@ export default function Sessions() {
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
       case "scheduled":
-        return "bg-blue-50 text-blue-700 border-blue-200";
+        return "bg-primary-50 text-blue-700 border-blue-200";
       case "planned":
-        return "bg-blue-50 text-blue-700 border-blue-200";
+        return "bg-primary-50 text-blue-700 border-blue-200";
       case "completed":
         return "bg-green-50 text-green-700 border-green-200";
       case "cancelled":
