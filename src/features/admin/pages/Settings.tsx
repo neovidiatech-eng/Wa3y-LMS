@@ -91,8 +91,6 @@ const socialPlatforms: {
 type Tab = 'social' | 'contact' | 'Late Discount';
 
 const tabs: { id: Tab; label: string; icon: any }[] = [
-  { id: 'social', label: 'التواصل', icon: Share2 },
-  { id: 'contact', label: 'التواصل معنا', icon: Phone },
   { id: 'Late Discount', label: 'خصم التأخير', icon: Monitor },
 ];
 
@@ -100,7 +98,7 @@ export default function SettingsPage() {
   const { settings, updateSettings, updateSocialLink, resetSettings } =
     useSettings();
 
-  const [activeTab, setActiveTab] = useState<Tab>('social');
+  const [activeTab, setActiveTab] = useState<Tab>('Late Discount');
   const [saved, setSaved] = useState(false);
 
   const [lateMinutes, setLateMinutes] = useState('');
@@ -212,141 +210,6 @@ export default function SettingsPage() {
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Social Tab */}
-          {activeTab === 'social' && (
-            <SectionCard
-              title="روابط السوشيال ميديا"
-              icon={Share2}
-              primaryColor={settings.primaryColor}
-            >
-              <div className="space-y-3">
-                {socialPlatforms.map(
-                  ({
-                    platform,
-                    label,
-                    placeholder,
-                    icon: Icon,
-                    color,
-                  }) => {
-                    const link = settings.socialLinks.find(
-                      (l) => l.platform === platform
-                    );
-
-                    return (
-                      <div
-                        key={platform}
-                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                          link?.enabled
-                            ? 'border-gray-200 bg-white shadow-sm'
-                            : 'border-gray-100 bg-gray-50'
-                        }`}
-                      >
-                        <div
-                          onClick={() =>
-                            updateSocialLink(platform, {
-                              enabled: !link?.enabled,
-                            })
-                          }
-                          className={`w-10 h-6 rounded-full cursor-pointer transition-colors relative flex-shrink-0 ${
-                            link?.enabled
-                              ? ''
-                              : 'bg-gray-300'
-                          }`}
-                          style={
-                            link?.enabled
-                              ? {
-                                  backgroundColor:
-                                    settings.primaryColor,
-                                }
-                              : {}
-                          }
-                        >
-                          <div
-                            className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${
-                              link?.enabled
-                                ? 'left-5'
-                                : 'left-1'
-                            }`}
-                          />
-                        </div>
-
-                        <input
-                          type="text"
-                          value={link?.value || ''}
-                          onChange={(e) =>
-                            updateSocialLink(platform, {
-                              value: e.target.value,
-                              enabled: true,
-                            })
-                          }
-                          className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                          placeholder={placeholder}
-                          dir="ltr"
-                          disabled={!link?.enabled}
-                        />
-
-                        <div className="flex items-center gap-2 flex-shrink-0 w-28 justify-end">
-                          <span className="text-sm font-medium text-gray-700">
-                            {label}
-                          </span>
-
-                          <div
-                            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                            style={{
-                              backgroundColor: color + '20',
-                            }}
-                          >
-                            <Icon
-                              className="w-4 h-4"
-                              style={{ color }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }
-                )}
-              </div>
-            </SectionCard>
-          )}
-
-          {/* Contact Tab */}
-          {activeTab === 'contact' && (
-            <SectionCard
-              title="معلومات التواصل"
-              icon={Phone}
-              primaryColor={settings.primaryColor}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FieldGroup label="رقم الواتساب">
-                  <input
-                    type="text"
-                    value={settings.whatsappNumber}
-                    onChange={(e) =>
-                      updateSettings({
-                        whatsappNumber: e.target.value,
-                      })
-                    }
-                    className={inputCls}
-                  />
-                </FieldGroup>
-
-                <FieldGroup label="البريد الإلكتروني">
-                  <input
-                    type="email"
-                    value={settings.email}
-                    onChange={(e) =>
-                      updateSettings({
-                        email: e.target.value,
-                      })
-                    }
-                    className={inputCls}
-                  />
-                </FieldGroup>
-              </div>
-            </SectionCard>
-          )}
-
           {/* Late Discount Tab */}
           {activeTab === 'Late Discount' && (
             <SectionCard
