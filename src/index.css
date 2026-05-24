@@ -106,7 +106,7 @@
   /* Normalize common hardcoded utility colors to primary palette */
   .bg-\[\#eefcfc\],
   .bg-primary-50,
-  .bg-indigo-50 {
+  .bg-primary-50 {
     background-color: color-mix(in srgb, var(--color-primary) 12%, white) !important;
   }
 

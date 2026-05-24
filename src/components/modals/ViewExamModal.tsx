@@ -175,7 +175,7 @@ function Card({ icon, label, value, color }: any) {
     orange: "bg-orange-100 text-orange-600",
     cyan: "bg-cyan-100 text-cyan-600",
     pink: "bg-pink-100 text-pink-600",
-    indigo: "bg-indigo-100 text-indigo-600",
+    indigo: "bg-primary-100 text-indigo-600",
   };
 
   return (

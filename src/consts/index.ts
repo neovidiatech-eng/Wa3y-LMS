@@ -1,1 +1,1 @@
-export const baseURL = "https://perfect-due.com";
+export const baseURL = "https://api.waaiacademy.com";

@@ -355,7 +355,7 @@ export default function AddSessionModal({
         {/* Header */}
         <div className="px-8 py-5 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-primary-50 flex items-center justify-center">
               <Calendar className="w-6 h-6 text-indigo-600" />
             </div>
 

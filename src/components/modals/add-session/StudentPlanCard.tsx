@@ -15,7 +15,7 @@ export default function StudentPlanCard({
   if (!studentPlanInfo) return null;
 
   return (
-    <div className="mb-6 p-4 rounded-3xl border border-indigo-100 bg-indigo-50/50">
+    <div className="mb-6 p-4 rounded-3xl border border-indigo-100 bg-primary-50/50">
       <div className="flex items-center gap-2 mb-4">
         <Layers className="w-4 h-4 text-indigo-600" />
         <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-700">

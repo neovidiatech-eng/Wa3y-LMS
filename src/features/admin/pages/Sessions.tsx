@@ -436,7 +436,7 @@ export default function Sessions() {
                         {session.title}
                       </span>
                       {/* {(session.is_recurring || session.parent_recurring_id) && (
-                          <span title={language === 'ar' ? 'جلسة متكررة' : 'Recurring Session'} className="flex items-center justify-center p-1 bg-indigo-50 text-indigo-500 rounded text-xs">
+                          <span title={language === 'ar' ? 'جلسة متكررة' : 'Recurring Session'} className="flex items-center justify-center p-1 bg-primary-50 text-indigo-500 rounded text-xs">
                             <RefreshCw className="w-3 h-3" />
                           </span>
                        )} */}

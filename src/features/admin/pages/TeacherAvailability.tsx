@@ -843,7 +843,7 @@ export default function TeacherAvailability() {
                 <div className="flex items-center justify-between pt-1">
                   <button
                     onClick={() => setSelectedTeacherForModal(teacher)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 text-[#6366f1] rounded-xl text-xs font-bold transition-all hover:bg-[#6366f1] hover:text-white"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-primary-50 text-[#6366f1] rounded-xl text-xs font-bold transition-all hover:bg-[#6366f1] hover:text-white"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     {language === "ar" ? "عرض الجدول" : "View Schedule"}

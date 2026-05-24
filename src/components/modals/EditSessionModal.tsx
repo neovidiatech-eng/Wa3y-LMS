@@ -81,7 +81,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
         {/* Header */}
         <div className="px-8 py-5 border-b border-gray-100 flex items-start justify-between bg-white shrink-0">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[14px] bg-indigo-50 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-[14px] bg-primary-50 flex items-center justify-center">
               <Calendar className="w-6 h-6 text-[#6366f1]" />
             </div>
             <div>
@@ -253,7 +253,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
               {/* Preview Card */}
               <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center text-indigo-600 font-black text-sm">
                     {formData.title?.charAt(0)?.toUpperCase() || 'S'}
                   </div>
                   <div>

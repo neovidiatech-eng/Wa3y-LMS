@@ -379,7 +379,7 @@ export default function Permissions() {
                               </code>
                             </td>
                             <td className="px-6 py-3.5">
-                              <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 uppercase">
+                              <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-primary-50 text-indigo-600 uppercase">
                                 {perm.method || perm.action}
                               </span>
                             </td>

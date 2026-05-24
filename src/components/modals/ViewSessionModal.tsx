@@ -89,7 +89,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
         {/* Header */}
         <div className="px-8 py-5 border-b border-gray-100 flex items-start justify-between bg-white shrink-0">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[14px] bg-indigo-50 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-[14px] bg-primary-50 flex items-center justify-center">
               <Calendar className="w-6 h-6 text-[#6366f1]" />
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
 
             {/* Schedule & Duration Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-              <div className="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100/50">
+              <div className="bg-primary-50/50 rounded-2xl p-4 border border-indigo-100/50">
                 <div className="flex items-center gap-2 mb-2 text-indigo-400">
                   <Calendar className="w-3.5 h-3.5" />
                   <p className="text-[10px] font-bold uppercase tracking-wider">{t('date')}</p>
@@ -237,7 +237,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
           <Repeat className="w-4 h-4 text-indigo-500" />
           <h3 className="font-bold text-gray-900 text-sm">{t('recurringSessions')}</h3>
         </div>
-        <span className="px-3 py-1 bg-indigo-50 text-indigo-600 border border-indigo-100 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-sm">
+        <span className="px-3 py-1 bg-primary-50 text-indigo-600 border border-indigo-100 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-sm">
           {groupedSessions.length} {t('sessions')}
         </span>
       </div>
@@ -266,7 +266,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
                     </span>
 
                     {isCurrent && (
-                      <span className="text-[8px] font-black text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+                      <span className="text-[8px] font-black text-indigo-600 bg-primary-50 px-1.5 py-0.5 rounded">
                         CURRENT
                       </span>
                     )}
@@ -312,7 +312,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
           <Clock className="w-4 h-4 text-indigo-500" />
           <h3 className="font-bold text-gray-900 text-sm">{t('otherTeacherSessions')}</h3>
         </div>
-        <span className="px-3 py-1 bg-indigo-50 text-indigo-600 border border-indigo-100 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-sm">
+        <span className="px-3 py-1 bg-primary-50 text-indigo-600 border border-indigo-100 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-sm">
           {allSessions.length} {t('sessions')}
         </span>
       </div>
