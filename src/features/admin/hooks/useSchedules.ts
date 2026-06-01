@@ -20,7 +20,7 @@ import { message } from "antd";
 
 export const useGetSchedules = (
   page: number = 1,
-  limit: number = 10,
+  limit: number = 7,
   filters: {
     fromDate?: string;
     toDate?: string;
@@ -31,6 +31,7 @@ export const useGetSchedules = (
     queryFn: () => getAllSchedules(page, limit, filters),
   });
 };
+
 
 export const useSearchSchedules = (
   searchTerm: string,
