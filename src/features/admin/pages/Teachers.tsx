@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, lazy, useCallback } from 'react';
-import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX } from 'lucide-react';
+import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX , Copy, Check} from 'lucide-react';
 import WhatsAppPhone from '../../../components/ui/WhatsAppPhone';
 // import AddTeacherModal from '../../../components/modals/AddTeacherModal';
 // import ViewTeacherModal from '../../../components/modals/ViewTeacherModal';
@@ -29,6 +29,7 @@ export default function Teachers() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [copiedPasswordId, setCopiedPasswordId] = useState<string | null>(null);
   const itemsPerPage = 7;
 
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -132,7 +133,11 @@ export default function Teachers() {
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
-
+  const handleCopyPassword = (userId: string, password: string) => {
+    navigator.clipboard.writeText(password);
+    setCopiedPasswordId(userId);
+    setTimeout(() => setCopiedPasswordId(null), 2000);
+  };
 
   const handleViewTeacher = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
@@ -289,6 +294,9 @@ export default function Teachers() {
                     {t('email')}
                   </th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
+                    {t('password')}
+                  </th>
+                  <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('phone')}
                   </th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
@@ -330,6 +338,24 @@ export default function Teachers() {
                       </td>
                       <td className="px-6 py-4 text-start">
                         <span className="text-sm text-gray-600">{teacher.user?.email || '-'}</span>
+                      </td>
+                    <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 group">
+                          <span className="text-sm text-gray-600">{teacher.user?.password || '-'}</span>
+                          {teacher.user?.password && (
+                            <button
+                              onClick={() => handleCopyPassword(teacher.user?.id, teacher.user?.password)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                              title={t('copy')}
+                            >
+                              {copiedPasswordId === teacher.user?.id ? (
+                                <Check className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <Copy className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                              )}
+                            </button>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-start">
                         <WhatsAppPhone

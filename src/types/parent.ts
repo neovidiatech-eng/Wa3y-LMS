@@ -31,6 +31,7 @@ export interface ParentUser {
     name: string;
     email: string;
     phone: string;
+    password:string;
     country: string;
     codeCountry: string;
     timezone?: string;

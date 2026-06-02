@@ -1,5 +1,5 @@
 import { useState, lazy, useMemo, useEffect } from 'react';
-import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX, ClipboardList } from 'lucide-react';
+import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX, ClipboardList, Check, Copy } from 'lucide-react';
 import WhatsAppPhone from '../../../components/ui/WhatsAppPhone';
 // import AddStudentModal from '../../../components/modals/AddStudentModal';
 // import ViewStudentModal from '../../../components/modals/ViewStudentModal';
@@ -30,6 +30,7 @@ export default function Students() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [copiedPasswordId, setCopiedPasswordId] = useState<string | null>(null);
   const itemsPerPage = 7;
 
   useEffect(() => {
@@ -116,6 +117,14 @@ export default function Students() {
   useEffect(() => {
     setCurrentPage(1);
   }, [debouncedSearch, selectedGrade, selectedCountry]);
+
+
+ const handleCopyPassword = (userId: string, password: string) => {
+    navigator.clipboard.writeText(password);
+    setCopiedPasswordId(userId);
+    setTimeout(() => setCopiedPasswordId(null), 2000);
+  };
+
 
 
   const handlePageChange = (page: number) => {
@@ -260,8 +269,12 @@ export default function Students() {
                     {t('studentInfo')}
                   </th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
+                    {t('password')}
+                  </th>
+                  <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('phone')}
                   </th>
+
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('plan')}
                   </th>
@@ -305,7 +318,25 @@ export default function Students() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-start">
+                         <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 group">
+                          <span className="text-sm text-gray-600">{student.user?.password || '-'}</span>
+                          {student.user?.password && (
+                            <button
+                              onClick={() => handleCopyPassword(student.user?.id, student.user?.password)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                              title={t('copy')}
+                            >
+                              {copiedPasswordId === student.user?.id ? (
+                                <Check className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <Copy className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                          <td className="px-6 py-4 text-start">
                         <WhatsAppPhone
                           phone={`${student.user.code_country} ${student.user.phone}`}
                           className="text-sm text-gray-900"

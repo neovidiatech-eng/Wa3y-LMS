@@ -7,6 +7,7 @@ export interface UserDetails {
     email: string;
     name: string;
     phone: string;
+    password:string;
     code_country: string;
     status: string;
     confirmAt: string | null;

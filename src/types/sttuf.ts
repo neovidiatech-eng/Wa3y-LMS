@@ -22,7 +22,7 @@ export interface StuffItem {
 export interface User {
     id: string;
     email: string;
-    password?: string; // Optional if you don't always want to expose the hash
+    password: string; // Optional if you don't always want to expose the hash
     name: string;
     phone: string;
     provider: string;
@@ -53,10 +53,10 @@ export interface CreateStaffPayload {
     name: string;
     email: string;
     password: string;
-    codeCountry: string;
+    code_country: string;
     phone: string;
     roleId: string;
-    timezone?: string;
+    // timezone?: string;
 }
 
 export interface UpdateStaffPayload extends Partial<CreateStaffPayload> {
