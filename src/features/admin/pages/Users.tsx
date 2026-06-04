@@ -60,7 +60,7 @@ export default function Users() {
   };
 
   const handleAddUser = (userData: UserFormData) => {
-    addStaff.mutate(
+    addStaff.mutateAsync(
       {
         name: userData.name,
         email: userData.email,
@@ -78,8 +78,8 @@ export default function Users() {
     );
   };
 
-  const handleEditUser = (userData: UserFormData & { id: string }) => {
-    updateStaff.mutate(
+  const handleEditUser = async (userData: UserFormData & { id: string }) => {
+    await updateStaff.mutateAsync(
       {
         id: userData.id,
         staff: {

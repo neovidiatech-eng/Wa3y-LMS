@@ -7,7 +7,7 @@ import { StudentFormData, getStudentSchema } from '../../lib/schemas/StudentSche
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlans } from '../../features/admin/hooks/usePlans';
-import { GetCountries } from 'react-country-state-city';
+import { DEFAULT_COUNTRIES } from '../../consts/countries';
 
 type EditStudentFormData = Omit<StudentFormData, 'password'> & { password?: string };
 
@@ -26,7 +26,7 @@ export default function EditStudentModal({
 }: EditStudentModalProps) {
   const { language, t } = useLanguage();
   const { data: plansData } = usePlans();
-  const [countryCodes, setCountryCodes] = useState<Array<{ name: string; phone_code: string; emoji?: string; iso2: string }>>([{ name: 'Egypt', phone_code: '20', emoji: '🇪🇬', iso2: 'EG' }]);
+  const [countryCodes] = useState<Array<{ name: string; phone_code: string; emoji?: string; iso2: string }>>(DEFAULT_COUNTRIES);
 
   const { control, handleSubmit, register, reset, formState: { errors } } = useForm<EditStudentFormData>({
     resolver: zodResolver(getStudentSchema(t).omit({ password: true })),
@@ -39,14 +39,6 @@ export default function EditStudentModal({
     }
   }, [isOpen, studentData, reset]);
 
-  useEffect(() => {
-    GetCountries()
-      .then((data) => {
-        if (data?.length) setCountryCodes(data);
-      })
-      .catch(() => setCountryCodes([{ name: 'Egypt', phone_code: '20', emoji: '🇪🇬', iso2: 'EG' }]));
-  }, []);
-
   if (!isOpen || !studentData) return null;
 
 
@@ -57,6 +49,9 @@ export default function EditStudentModal({
   const uniqueCountryCodes = Array.from(
     new Map(countryCodes.map((c) => [`+${c.phone_code}`, c])).values()
   );
+
+
+
   const displayNames = new Intl.DisplayNames([language === 'ar' ? 'ar' : 'en'], { type: 'region' });
 
   const countryCodeOptions = uniqueCountryCodes.map((c) => ({
