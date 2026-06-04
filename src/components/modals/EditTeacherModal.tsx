@@ -14,7 +14,7 @@ import { DEFAULT_COUNTRIES } from '../../consts/countries';
 interface EditTeacherModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (teacherData: TeacherFormData) => void;
+  onSubmit: (teacherData: TeacherFormData) => Promise<void>;
   teacher: Teacher | null;
 }
 
@@ -65,8 +65,8 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
     }
   }, [teacher, reset]);
 
-  const handleOnSubmit = (data: TeacherFormData) => {
-    onSubmit(data);
+  const handleOnSubmit = async (data: TeacherFormData) => {
+    await onSubmit(data);
     onClose();
   };
 

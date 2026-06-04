@@ -59,8 +59,8 @@ export default function Users() {
     setTimeout(() => setCopiedPasswordId(null), 2000);
   };
 
-  const handleAddUser = (userData: UserFormData) => {
-    addStaff.mutateAsync(
+  const handleAddUser = async (userData: UserFormData) => {
+    await addStaff.mutateAsync(
       {
         name: userData.name,
         email: userData.email,

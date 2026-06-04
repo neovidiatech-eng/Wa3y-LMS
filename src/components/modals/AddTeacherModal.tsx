@@ -14,7 +14,7 @@ import { DEFAULT_COUNTRIES } from '../../consts/countries';
 interface AddTeacherModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (teacherData: TeacherFormData) => void;
+  onSubmit: (teacherData: TeacherFormData) => Promise<void>;
 }
 
 export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeacherModalProps) {
@@ -51,8 +51,8 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
 
 
 
-  const handleOnSubmit = (data: TeacherFormData) => {
-    onSubmit({
+  const handleOnSubmit = async (data: TeacherFormData) => {
+    await onSubmit({
       ...data,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });

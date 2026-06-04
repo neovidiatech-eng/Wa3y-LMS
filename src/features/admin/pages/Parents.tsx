@@ -63,6 +63,7 @@ const parents = parentsData?.data?.parents || [];
       setShowAddModal(false);
     } catch (error: any) {
       message.error(error.response?.data?.message || (language === 'ar' ? 'حدث خطأ أثناء إضافة ولي الأمر' : 'Failed to add parent'));
+      throw error;
     }
   };
 
@@ -92,6 +93,7 @@ const parents = parentsData?.data?.parents || [];
         setSelectedParent(null);
       } catch (error: any) {
         message.error(error.response?.data?.message || (language === 'ar' ? 'حدث خطأ أثناء تحديث ولي الأمر' : 'Failed to update parent'));
+        throw error;
       }
     }
   };

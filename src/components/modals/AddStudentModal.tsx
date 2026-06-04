@@ -13,7 +13,7 @@ import { DEFAULT_COUNTRIES } from '../../consts/countries';
 interface AddStudentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (studentData: StudentFormData) => void;
+  onSubmit: (studentData: StudentFormData) => Promise<void>;
 }
 
 export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStudentModalProps) {
@@ -31,8 +31,9 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       country: 'مصر'
     }
   });
-  const onFormSubmit = (data: StudentFormData) => {
-    onSubmit({
+  
+  const onFormSubmit = async (data: StudentFormData) => {
+    await onSubmit({
       ...data,
       //timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });

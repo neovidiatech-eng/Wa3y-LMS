@@ -8,7 +8,7 @@ interface EditSessionModalProps {
   isOpen: boolean;
   onClose: () => void;
   session: Schedule | null;
-  onSave: (id: string, data: any) => void;
+  onSave: (id: string, data: any) => Promise<void>;
 }
 
 export default function EditSessionModal({ isOpen, onClose, session, onSave }: EditSessionModalProps) {
@@ -56,9 +56,9 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
 
   if (!isOpen || !session) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(session.id, {
+    await onSave(session.id, {
       title: formData.title,
       description: formData.description,
       link: formData.link,

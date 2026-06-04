@@ -10,7 +10,7 @@ import { CustomCheckbox } from '../ui/CustomCheckbox';
 interface AddCurrencyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (currency: CurrencyFormData & { id?: string }) => void;
+  onSave: (currency: CurrencyFormData & { id?: string }) => Promise<void>;
   initialData?: Currency | null;
 }
 
@@ -76,8 +76,8 @@ export default function AddCurrencyModal({ isOpen, onClose, onSave, initialData 
 
   if (!isOpen) return null;
 
-  const onSubmit = (data: CurrencyFormData) => {
-    onSave({ ...data, id: initialData?.id });
+  const onSubmit = async (data: CurrencyFormData) => {
+    await onSave({ ...data, id: initialData?.id });
     onClose();
   };
 

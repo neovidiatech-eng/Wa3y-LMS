@@ -174,6 +174,7 @@ export default function Teachers() {
     } catch (error) {
       console.error('Error adding teacher:', error);
       // Detailed error is handled by axios interceptor
+      throw error;
     }
   };
 
@@ -187,6 +188,7 @@ export default function Teachers() {
     } catch (error) {
       console.error('Error updating teacher:', error);
       // Detailed error is handled by axios interceptor
+      throw error;
     }
   };
 

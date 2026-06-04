@@ -14,7 +14,7 @@ import { DEFAULT_COUNTRIES } from '../../consts/countries';
 interface EditUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (userData: UserFormData & { id: string }) => void;
+  onSubmit: (userData: UserFormData & { id: string }) => Promise<void>;
   userData: UserFormData & { id: string };
 }
 // Static permission list removed in favor of dynamic fetching

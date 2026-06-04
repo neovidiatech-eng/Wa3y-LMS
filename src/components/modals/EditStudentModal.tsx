@@ -14,7 +14,7 @@ type EditStudentFormData = Omit<StudentFormData, 'password'> & { password?: stri
 interface EditStudentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (studentData: EditStudentFormData & { id: string }) => void;
+  onSubmit: (studentData: EditStudentFormData & { id: string }) => Promise<void>;
   studentData: (EditStudentFormData & { id: string }) | null;
 }
 
@@ -42,8 +42,8 @@ export default function EditStudentModal({
   if (!isOpen || !studentData) return null;
 
 
-  const handleEditSubmit = (data: EditStudentFormData) => {
-    onSubmit({ ...data, id: studentData.id });
+  const handleEditSubmit = async (data: EditStudentFormData) => {
+    await onSubmit({ ...data, id: studentData.id });
     onClose();
   };
   const uniqueCountryCodes = Array.from(
