@@ -57,6 +57,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
         password: '',
         hourlyRate: teacher.hour_price || 0,
         currency: currencyId,
+        nationality: teacher.nationality || '',
         gender: (teacher.gender?.toLowerCase() as 'male' | 'female') || 'male',
         status: teacher.active ? 'active' : 'inactive',
         subjects: subjectIds,
@@ -105,6 +106,13 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
       </div>
     ),
   }));
+
+  const nationalityOptions = useMemo(() => {
+    return DEFAULT_COUNTRIES.map((country) => ({
+      value: country.nationality,
+      label: country.nationality,
+    }));
+  }, []);
 
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -272,18 +280,34 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
               />
             </div>
 
-            {/* Row 5: Zoom Link */}
-            <div className="grid grid-cols-1 md:grid-cols-1">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('zoomLink')}
-              </label>
-              <input
-                type="text"
-                placeholder="https://zoom.us/j/123456789"
-                {...register('meeting_link')}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+            {/* Row 5: Zoom Link and Nationality */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('zoomLink')}
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://zoom.us/j/123456789"
+                  {...register('meeting_link')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                />
+                {errors.meeting_link && <p className="text-red-500 text-xs mt-1">{errors.meeting_link.message}</p>}
+              </div>
+
+              <Controller
+                name="nationality"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('nationality')}
+                    value={field.value}
+                    options={nationalityOptions}
+                    placeholder={t('selectNationality')}
+                    onChange={field.onChange}
+                  />
+                )}
               />
-              {errors.meeting_link && <p className="text-red-500 text-xs mt-1">{errors.meeting_link.message}</p>}
             </div>
 
             {/* Subjects */}

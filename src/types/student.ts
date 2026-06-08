@@ -30,6 +30,7 @@ export interface Student {
     sessions_remaining: number;
     planId: string | null;
     country: string;
+    nationality: string;
     status: StudentStatus;
     user: UserDetails;
     plan: Plan | null;

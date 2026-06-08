@@ -8,14 +8,15 @@ export const getTeacherSchema = (t: TFunc) => z.object({
   phone_code: z.string().min(1, t("validation.required")),
   phone: z.string().min(8, t("validation.min", { count: 8 })),
 
-password: z
-  .string()
-  .min(8, t("validation.passwordMin", { count: 8 }))
-  .regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#])[A-Za-z\d@$!%*?&^#]+$/,
-    t("validation.passwordComplex")
-  ),
-  
+  password: z
+    .string()
+    .min(8, t("validation.passwordMin", { count: 8 }))
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#])[A-Za-z\d@$!%*?&^#]+$/,
+      t("validation.passwordComplex")
+    ),
+  nationality: z.string().min(1, t("validation.required")),
+
   hourlyRate: z.coerce.number().min(0, t("validation.required")),
 
   currency: z.string().min(1, t("validation.required")),

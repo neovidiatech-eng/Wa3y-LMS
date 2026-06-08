@@ -1,4 +1,4 @@
-﻿import { X, GraduationCap } from 'lucide-react';
+import { X, GraduationCap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
@@ -62,6 +62,11 @@ export default function EditStudentModal({
       <span>{displayNames.of(country.iso2) || country.name}</span>
     </div>
   ),
+}));
+
+const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
+  value: country.nationality,
+  label: country.nationality,
 }));
 
   const countryCodeOptions = uniqueCountryCodes.map((c) => ({
@@ -187,6 +192,20 @@ export default function EditStudentModal({
                 />
               )}
             />
+
+                <Controller
+                  name="nationality"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomSelect
+                      label={t('nationality')}
+                      value={field.value}
+                      options={nationalityOptions}
+                      placeholder={t('selectNationality')}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
 
             {/* Plan */}
             <Controller

@@ -22,6 +22,7 @@ export interface Teacher {
     hour_price: number;
     gender: 'Male' | 'Female';
     active: boolean;
+    nationality?: string;
     createdAt: string;
     updatedAt: string;
     roleId: string | null;
@@ -29,7 +30,7 @@ export interface Teacher {
         id: string;
         email: string;
         name: string;
-        password:string;
+        password: string;
         phone: string;
         code_country: string;
         status: string;
@@ -62,6 +63,7 @@ export interface CreateTeacherInput {
     password?: string;
     phone: string;
     code_country: string;
+    nationality: string;
     currency_id: string;
     gender: 'male' | 'female';
     hour_price: number;
@@ -78,6 +80,7 @@ export interface UpdateTeacherInput {
     phone: string;
     code_country: string;
     currency_id: string;
+    nationality: string;
     gender: 'male' | 'female';
     hour_price: number;
     active: boolean;

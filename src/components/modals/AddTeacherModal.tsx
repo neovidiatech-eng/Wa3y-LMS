@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { X, Users, Eye, EyeOff, Lock } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
@@ -7,7 +6,7 @@ import { Controller, Resolver, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CustomCheckbox } from '../ui/CustomCheckbox';
 import { useCurrency } from '../../features/admin/hooks/useCurrency';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSubjects } from '../../features/admin/hooks/useSubjects';
 import { DEFAULT_COUNTRIES } from '../../consts/countries';
 
@@ -16,6 +15,8 @@ interface AddTeacherModalProps {
   onClose: () => void;
   onSubmit: (teacherData: TeacherFormData) => Promise<void>;
 }
+
+
 
 export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeacherModalProps) {
   const { language, t } = useLanguage();
@@ -34,6 +35,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
       password: '',
       hourlyRate: 0,
       currency: '',
+      nationality: '',
       gender: 'male',
       status: 'active',
       subjects: [],
@@ -49,6 +51,12 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
     }));
   }, [currenciesData, language]);
 
+  const nationalityOptions = useMemo(() => {
+    return DEFAULT_COUNTRIES.map((country) => ({
+      value: country.nationality,
+      label: country.nationality,
+    }));
+  }, []);
 
 
   const handleOnSubmit = async (data: TeacherFormData) => {
@@ -262,18 +270,34 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
               />
             </div>
 
-            {/* Row 5: Zoom Link */}
-          <div className="grid grid-cols-1 md:grid-cols-1">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {t('zoomLink')}
-          </label>
-          <input
-            type="text"
-            placeholder="https://zoom.us/j/123456789"
-            {...register('meeting_link')}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
-          />
-          {errors.meeting_link && <p className="text-red-500 text-xs mt-1">{errors.meeting_link.message}</p>}
+            {/* Row 5: Zoom Link and Nationality */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('zoomLink')}
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://zoom.us/j/123456789"
+                  {...register('meeting_link')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                />
+                {errors.meeting_link && <p className="text-red-500 text-xs mt-1">{errors.meeting_link.message}</p>}
+              </div>
+
+              <Controller
+                name="nationality"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('nationality')}
+                    value={field.value}
+                    options={nationalityOptions}
+                    placeholder={t('selectNationality')}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
             </div>
 
             {/* Subjects */}

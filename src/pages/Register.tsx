@@ -30,6 +30,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
   const { t, language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const { data: plansData } = usePlans();
+  void onRegisterSuccess;
 
   const {
     register,
@@ -49,6 +50,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       birth_date: "",
       gender: "",
       country: "",
+      nationality: "",
       password: "",
       plan_id: "",
     },
@@ -71,6 +73,11 @@ const displayNames = new Intl.DisplayNames(
 const countries = DEFAULT_COUNTRIES.map((country) => ({
   value: country.name,
   label: `${country.emoji} ${displayNames.of(country.iso2) || country.name}`,
+}));
+
+const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
+  value: country.nationality,
+  label: country.nationality,
 }));
 
 
@@ -294,14 +301,39 @@ const countryCodes = Array.from(
                   />
                 )}
               />
-              {errors.country && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.country.message}</p>}
-            </div>
+            {errors.country && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.country.message}</p>}
+          </div>
 
-            {/* Password */}
-            <div className="text-start md:col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                {t("password")} *
-              </label>
+          {/* Nationality */}
+          <div className="text-start">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+              {t("nationality")} *
+            </label>
+            <Controller
+              name="nationality"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  showSearch
+                  placeholder={t("selectNationality")}
+                  options={nationalityOptions}
+                  className="w-full h-12"
+                  status={errors.nationality ? "error" : ""}
+                  filterOption={(input, option) =>
+                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                  }
+                />
+              )}
+            />
+            {errors.nationality && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.nationality.message}</p>}
+          </div>
+
+          {/* Password */}
+          <div className="text-start md:col-span-2">
+            <label className="block text-sm font-semibold text-slate-700 mb-2">
+              {t("password")} *
+            </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}

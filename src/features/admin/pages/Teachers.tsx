@@ -160,6 +160,7 @@ export default function Teachers() {
       gender: formData.gender as 'male' | 'female',
       active: formData.status === 'active',
       code_country: formData.phone_code,
+      nationality:formData.nationality,
       subject_ids: formData.subjects,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       meeting_link: formData.meeting_link?.trim() || undefined,

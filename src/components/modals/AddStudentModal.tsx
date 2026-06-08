@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { X, GraduationCap, Eye, EyeOff, Lock } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
@@ -28,7 +28,8 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       status: 'approved',
       gender: '',
       plan: '',
-      country: 'مصر'
+      country: 'مصر',
+      nationality: ''
     }
   });
   
@@ -60,7 +61,6 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
     { value: 'female', label: t('female') },
   ];
 
-
   const statusOptions = [
     { value: 'approved', label: t('active') },
     { value: 'pending', label: t('pending') },
@@ -88,6 +88,11 @@ const countryOptions = DEFAULT_COUNTRIES.map((country) => ({
       <span>{displayNames.of(country.iso2) || country.name}</span>
     </div>
   ),
+}));
+
+const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
+  value: country.nationality,
+  label: country.nationality,
 }));
 
 
@@ -226,6 +231,20 @@ const countryOptions = DEFAULT_COUNTRIES.map((country) => ({
                   />
                 )}
               />
+
+              <Controller
+                name="nationality"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                      label={t('nationality')}
+                      value={field.value}
+                      options={nationalityOptions}
+                      placeholder={t('selectNationality')}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
               <Controller
                 name="plan"
                 control={control}
