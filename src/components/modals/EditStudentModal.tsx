@@ -208,7 +208,8 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                 />
 
             {/* Plan */}
-            <Controller
+          <div className="grid md:col-span-1">
+              <Controller
               name="plan"
               control={control}
               render={({ field: { value, onChange } }) => (
@@ -220,6 +221,7 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                 />
               )}
             />
+          </div>
           </div>
 
           {/* Status */}

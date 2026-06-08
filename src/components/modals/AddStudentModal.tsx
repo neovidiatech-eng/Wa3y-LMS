@@ -245,6 +245,7 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                     />
                   )}
                 />
+                          </div>
               <Controller
                 name="plan"
                 control={control}
@@ -257,7 +258,6 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                   />
                 )}
               />
-            </div>
 
             {/* Row 5: Password and Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
