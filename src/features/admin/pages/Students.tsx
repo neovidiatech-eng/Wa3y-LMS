@@ -60,6 +60,8 @@ export default function Students() {
   const studentsList: Student[] = Array.isArray(rawData) ? rawData : (rawData?.students || rawData?.data || []);
   const pagination = apiResponse?.data?.pagination;
   const totalItems = pagination?.totalItems ?? 0;
+  const activeItems = apiResponse?.data?.activeCount ?? 0;
+  const inactiveItems = apiResponse?.data?.inactiveCount ?? 0;
   const totalPages = pagination?.totalPages ?? 1;
   const { mutateAsync: createStudent } = useCreateStudent();
   const { mutateAsync: updateStudent } = useUpdateStudent();
@@ -79,16 +81,16 @@ export default function Students() {
     {
       id: 'active',
       label: t('activeStudents'),
-      value: studentsList.filter(student => student.active === true).length,
+      value: activeItems,
       icon: UserCheck,
       bgColor: 'bg-green-50',
       iconColor: 'text-green-600',
       valueColor: 'text-green-600',
     },
     {
-      id: 'pending',
-      label: t('pendingStudents'),
-      value: studentsList.filter(student => student.status === 'pending').length,
+      id: 'inactive',
+      label: t('inactiveStudents'),
+      value: inactiveItems,
       icon: UserX,
       bgColor: 'bg-orange-50',
       iconColor: 'text-orange-600',
