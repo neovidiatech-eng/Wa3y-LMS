@@ -417,7 +417,7 @@
   "codeSentSuccess": "تم إرسال رمز التحقق بنجاح",
   "totalRoles": "إجمالي الأدوار",
   "zoomLink": "رابط زووم",
-   "sidebar_permissions": "الصلاحيات",
+  "sidebar_permissions": "الصلاحيات",
   "permissionsManagement": "إدارة الصلاحيات",
   "permissionsManagementSubtitle": "إدارة صلاحيات النظام مجمعةً حسب الفئة",
   "addPermission": "إضافة صلاحية",
@@ -530,30 +530,25 @@
   "90minutes": "90 دقيقة",
   "120minutes": "120 دقيقة",
   "leaveSession": "مغادرة الحصة",
-   "dashboard": {
+  "dashboard": {
     "totalStudents": "إجمالي الطلاب",
     "totalTeachers": "إجمالي المعلمين",
     "todaySessions": "حصص اليوم",
     "pendingRequests": "طلبات معلقة",
-
     "student": "طالب",
     "teacher": "معلم",
     "session": "حصة",
     "request": "طلب",
     "students": "الطلاب",
     "instructors": "المعلمون",
-    "user": "مستخدم",
     "activeUser": "مستخدم نشط",
-
     "totalOverall": "الإجمالي العام",
     "total": "الإجمالي",
     "scheduledToday": "المجدولة لهذا اليوم",
     "waitingReview": "بانتظار المراجعة",
     "scheduledSoon": "مجدولة قريباً",
-
     "loadErrorTitle": "عذراً، فشل تحميل بيانات لوحة التحكم",
     "loadErrorDescription": "حدث خطأ أثناء الاتصال بالخادم. يرجى التحقق من اتصال الشبكة والمحاولة مرة أخرى.",
-
     "upcomingSessions": "الحصص القادمة",
     "subject": "الموضوع / العنوان",
     "teacherColumn": "المعلم",
@@ -587,22 +582,20 @@
     "action": "الإجراء",
     "statusColumn": "الحالة",
     "timeColumn": "الوقت",
-
     "noUpcomingSessions": "لا توجد حصص قادمة",
     "scheduledSessionsAppear": "ستظهر الحصص المجدولة هنا"
   },
-
   "common": {
     "retry": "إعادة المحاولة"
   },
   "deleteUser": "حذف المستخدم",
   "deleteTeacher": "حذف المعلم",
   "deleteStudent": "حذف الطالب",
-  "deleteRole":"حذف الدور",
-  "deleteCourse":"حذف الكورس",
+  "deleteRole": "حذف الدور",
+  "deleteCourse": "حذف الكورس",
   "confirm_delete_course": "هل أنت متأكد من حذف هذا الكورس ؟",
   "noLogs": "لا توجد سجلات حالياً",
   "logs": "السجلات",
-  "endSession": "إنهاء الحصة"
-
+  "endSession": "إنهاء الحصة",
+  "renewSubscription": "تجديد الاشتراك"
 }
