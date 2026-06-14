@@ -31,7 +31,8 @@ export default function AddUserModal({ isOpen, onClose, onSubmit }: AddUserModal
   const [showPassword, setShowPassword] = useState(false);
   const [countryCodes] = useState<Array<{ name: string; phone_code: string; emoji?: string; iso2: string }>>(DEFAULT_COUNTRIES);
   const { data: rolesData } = useRoles();
-  const dynamicRoles = rolesData?.data || [];
+  const dynamicRoles = rolesData?.data?.filter((role) => role.name !== 'student' && role.name !== 'teacher') || [];
+
 
 
   // const { data: permsData } = usePermissions();
