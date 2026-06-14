@@ -226,7 +226,9 @@ export default function Dashboard() {
                       className="hover:bg-gray-50/50 transition-colors duration-150"
                     >
                       <td className="py-4 font-bold text-gray-800">
-                        {session.subject || session.title}
+                        {typeof session.subject === "object" && session.subject !== null
+                          ? (i18n.language.startsWith("ar") ? (session.subject as any)?.name_ar : (session.subject as any)?.name_en) || (session.subject as any)?.name || session.title
+                          : (session.subject as string) || session.title}
                       </td>
 
                       <td className="py-4 text-gray-600 font-medium">
@@ -305,29 +307,31 @@ export default function Dashboard() {
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
         <thead>
-        <th className="px-4 py-4 text-start font-semibold">
-  {t("dashboard.user")}
-</th>
+          <tr>
+            <th className="px-4 py-4 text-start font-semibold">
+              {t("dashboard.user")}
+            </th>
 
-<th className="px-4 py-4 text-start font-semibold">
-  {t("dashboard.emailColumn")}
-</th>
+            <th className="px-4 py-4 text-start font-semibold">
+              {t("dashboard.emailColumn")}
+            </th>
 
-<th className="px-4 py-4 text-start font-semibold">
-  {t("dashboard.role")}
-</th>
+            <th className="px-4 py-4 text-start font-semibold">
+              {t("dashboard.role")}
+            </th>
 
-<th className="px-4 py-4 text-start font-semibold">
-  {t("dashboard.action")}
-</th>
+            <th className="px-4 py-4 text-start font-semibold">
+              {t("dashboard.action")}
+            </th>
 
-<th className="px-4 py-4 text-start font-semibold">
-  {t("dashboard.statusColumn")}
-</th>
+            <th className="px-4 py-4 text-start font-semibold">
+              {t("dashboard.statusColumn")}
+            </th>
 
-<th className="px-4 py-4 text-start font-semibold">
-  {t("dashboard.timeColumn")}
-</th>
+            <th className="px-4 py-4 text-start font-semibold">
+              {t("dashboard.timeColumn")}
+            </th>
+          </tr>
         </thead>
 
         <tbody className="divide-y divide-gray-50">
