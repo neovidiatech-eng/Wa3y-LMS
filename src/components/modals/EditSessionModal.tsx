@@ -49,7 +49,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
         start_time: startDate ? toLocalDatetimeString(startDate) : '',
         end_time: endDate ? toLocalDatetimeString(endDate) : '',
         type: (session.type as 'full' | 'half') || 'full',
-        notification_Time: '10',
+        notification_Time: String((session as any).notification_Time || (session as any).notification_time || (session as any).notificationTime || '10'),
       });
     }
   }, [session, isOpen]);

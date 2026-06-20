@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   BookOpen,
   Layers,
+  Bell,
 } from 'lucide-react';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -568,8 +569,8 @@ export default function AddSessionModal({
               control={control}
             />
 
-            {/* Meeting Link */}
-            <div className="grid grid-cols-1 gap-5 mb-6">
+            {/* Meeting Link & Notification */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
               <div>
                 <label className="label">
                   <MonitorPlay className="w-3.5 h-3.5" />
@@ -588,6 +589,29 @@ export default function AddSessionModal({
                     {errors.meetingLink.message as string}
                   </p>
                 )}
+              </div>
+
+              <div>
+                <label className="label">
+                  <Bell className="w-3.5 h-3.5" />
+                  {t('notificationTime')}
+                </label>
+
+                <Controller
+                  name="notification_Time"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomSelect
+                      options={[
+                        { value: '10', label: language === 'ar' ? 'قبل 10 دقائق' : '10 minutes before' },
+                        { value: '30', label: language === 'ar' ? 'قبل 30 دقيقة' : '30 minutes before' },
+                        { value: '60', label: language === 'ar' ? 'قبل ساعة' : '1 hour before' },
+                      ]}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
               </div>
             </div>
 
