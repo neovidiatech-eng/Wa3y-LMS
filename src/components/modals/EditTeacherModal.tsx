@@ -71,7 +71,6 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
     onClose();
   };
 
-  if (!isOpen || !teacher) return null;
   const subjectsValue = watch('subjects') || [];
 
   const handleSubjectToggle = (id: string, checked: boolean) => {
@@ -113,6 +112,8 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
       label: country.nationality,
     }));
   }, []);
+
+  if (!isOpen || !teacher) return null;
 
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
