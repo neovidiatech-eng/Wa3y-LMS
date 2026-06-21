@@ -22,6 +22,8 @@ const EditStudentModal = lazy(() => import('../../../components/modals/EditStude
 export default function Students() {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split('-')[0];
+  const role = localStorage.getItem('role');
+  const isSuperAdmin = role === 'super_admin';
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedGrade, setSelectedGrade] = useState('all');
@@ -265,7 +267,7 @@ export default function Students() {
       {/* Students Table Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {isLoading ? (
-          <TableSkeleton rows={itemsPerPage} columns={7} />
+          <TableSkeleton rows={itemsPerPage} columns={isSuperAdmin ? 8 : 7} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -274,9 +276,11 @@ export default function Students() {
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('studentInfo')}
                   </th>
-                  <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
-                    {t('password')}
-                  </th>
+                  {isSuperAdmin && (
+                    <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
+                      {t('password')}
+                    </th>
+                  )}
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('phone')}
                   </th>
@@ -300,7 +304,7 @@ export default function Students() {
               <tbody className="divide-y divide-gray-200">
                 {studentsList.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500 bg-gray-50/30">
+                    <td colSpan={isSuperAdmin ? 8 : 7} className="px-6 py-12 text-center text-gray-500 bg-gray-50/30">
                       <div className="flex flex-col items-center gap-2">
                         <Users className="w-12 h-12 text-gray-200" />
                         <p>{t('noData')}</p>
@@ -324,24 +328,26 @@ export default function Students() {
                         </div>
                       </td>
 
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 group">
-                          <span className="text-sm text-gray-600">{student.user?.password || '-'}</span>
-                          {student.user?.password && (
-                            <button
-                              onClick={() => handleCopyPassword(student.user?.id, student.user?.password)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
-                              title={t('copy')}
-                            >
-                              {copiedPasswordId === student.user?.id ? (
-                                <Check className="w-4 h-4 text-green-600" />
-                              ) : (
-                                <Copy className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                              )}
-                            </button>
-                          )}
-                        </div>
-                      </td>
+                      {isSuperAdmin && (
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 group">
+                            <span className="text-sm text-gray-600">{student.user?.password || '-'}</span>
+                            {student.user?.password && (
+                              <button
+                                onClick={() => handleCopyPassword(student.user?.id, student.user?.password)}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                                title={t('copy')}
+                              >
+                                {copiedPasswordId === student.user?.id ? (
+                                  <Check className="w-4 h-4 text-green-600" />
+                                ) : (
+                                  <Copy className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      )}
 
                       <td className="px-6 py-4 text-start">
                         <WhatsAppPhone

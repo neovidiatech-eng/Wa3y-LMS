@@ -22,6 +22,8 @@ const EditTeacherModal = lazy(() => import('../../../components/modals/EditTeach
 export default function Teachers() {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split('-')[0];
+  const role = localStorage.getItem('role');
+  const isSuperAdmin = role === 'super_admin';
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -284,7 +286,7 @@ export default function Teachers() {
       {/* Teachers Table Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {isLoading ? (
-          <TableSkeleton rows={itemsPerPage} columns={6} />
+          <TableSkeleton rows={itemsPerPage} columns={isSuperAdmin ? 7 : 6} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -296,9 +298,11 @@ export default function Teachers() {
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('email')}
                   </th>
-                  <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
-                    {t('password')}
-                  </th>
+                  {isSuperAdmin && (
+                    <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
+                      {t('password')}
+                    </th>
+                  )}
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('phone')}
                   </th>
@@ -316,13 +320,13 @@ export default function Teachers() {
               <tbody className="divide-y divide-gray-200">
                 {isError ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-red-500">
+                    <td colSpan={isSuperAdmin ? 7 : 6} className="px-6 py-12 text-center text-red-500">
                       {t('errorLoadingData')}
                     </td>
                   </tr>
                 ) : currentTeachers.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={isSuperAdmin ? 7 : 6} className="px-6 py-12 text-center text-gray-500">
                       {t('noTeachersFound')}
                     </td>
                   </tr>
@@ -342,24 +346,26 @@ export default function Teachers() {
                       <td className="px-6 py-4 text-start">
                         <span className="text-sm text-gray-600">{teacher.user?.email || '-'}</span>
                       </td>
-                    <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 group">
-                          <span className="text-sm text-gray-600">{teacher.user?.password || '-'}</span>
-                          {teacher.user?.password && (
-                            <button
-                              onClick={() => handleCopyPassword(teacher.user?.id, teacher.user?.password)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
-                              title={t('copy')}
-                            >
-                              {copiedPasswordId === teacher.user?.id ? (
-                                <Check className="w-4 h-4 text-green-600" />
-                              ) : (
-                                <Copy className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                              )}
-                            </button>
-                          )}
-                        </div>
-                      </td>
+                      {isSuperAdmin && (
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 group">
+                            <span className="text-sm text-gray-600">{teacher.user?.password || '-'}</span>
+                            {teacher.user?.password && (
+                              <button
+                                onClick={() => handleCopyPassword(teacher.user?.id, teacher.user?.password)}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                                title={t('copy')}
+                              >
+                                {copiedPasswordId === teacher.user?.id ? (
+                                  <Check className="w-4 h-4 text-green-600" />
+                                ) : (
+                                  <Copy className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      )}
                       <td className="px-6 py-4 text-start">
                         <WhatsAppPhone
                           phone={`${teacher.user?.code_country || ''} ${teacher.user?.phone || ''}`.trim()}

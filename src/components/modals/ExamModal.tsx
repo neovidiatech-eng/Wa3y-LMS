@@ -23,7 +23,7 @@ export default function AddExamModal({
   initialData,
 }: AddExamModalProps) {
   const { language, t } = useLanguage();
-  const { data } = useStudents();
+  const { data } = useStudents({ limit: 1000 });
   const { data: subjData } = useSubjects();
 
   const subjects = subjData?.subjects.map((s) => ({

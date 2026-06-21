@@ -22,7 +22,7 @@ export default function EditParentModal({
   const { language, t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
 
-  const { data: studentsData } = useStudents();
+  const { data: studentsData } = useStudents({ limit: 1000 });
 
   const studentOptions =
     (studentsData?.data?.studentsData || []).map((s: any) => ({
