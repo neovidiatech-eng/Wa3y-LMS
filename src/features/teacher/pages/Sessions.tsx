@@ -43,8 +43,14 @@ export default function Sessions() {
     if (!link) return false;
     const start = new Date(startTime);
     const end = new Date(endTime);
-    const oneMinuteBefore = new Date(start.getTime() - 60000);
-    return now >= oneMinuteBefore && now <= end;
+    const fiveMinutesBefore = new Date(start.getTime() - 300000);
+    return now >= fiveMinutesBefore && now <= end;
+  };
+
+  const isEndable = (startTime: string) => {
+    const start = new Date(startTime);
+    const fifteenMinutesAfter = new Date(start.getTime() + 900000);
+    return now >= fifteenMinutesAfter;
   };
 
   const { data: sessionResponse, isLoading } = useUserSessions(debouncedSearch);
@@ -312,8 +318,8 @@ export default function Sessions() {
                               console.log(error);
                             }
                           }}
-                          disabled={session.status?.toLowerCase() === 'completed'}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${session.status?.toLowerCase() === 'completed'
+                          disabled={session.status?.toLowerCase() === 'completed' || !isEndable(session.start_time)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${session.status?.toLowerCase() === 'completed' || !isEndable(session.start_time)
                             ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
                           }`}
