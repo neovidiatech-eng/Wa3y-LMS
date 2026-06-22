@@ -6,7 +6,6 @@ import {
   GraduationCap,
   Video,
   FileText,
-  Bell,
   ExternalLink,
   Repeat,
 } from "lucide-react";
@@ -250,15 +249,25 @@ export default function ViewSessionModal({
                   {t("meetingLink")}
                 </p>
                 <div className="flex items-center gap-3">
-                  <a
-                    href={session.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary text-white rounded-xl transition-all text-xs font-bold shadow-sm active:scale-95"
-                  >
-                    <Video className="w-4 h-4" />
-                    {t("joinSession")}
-                  </a>
+                  {session.status?.toLowerCase() === 'completed' ? (
+                    <button
+                      disabled
+                      className="flex items-center gap-2 px-5 py-2.5 bg-gray-200 text-gray-400 rounded-xl text-xs font-bold shadow-sm cursor-not-allowed opacity-60"
+                    >
+                      <Video className="w-4 h-4" />
+                      {t("joinSession")}
+                    </button>
+                  ) : (
+                    <a
+                      href={session.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary text-white rounded-xl transition-all text-xs font-bold shadow-sm active:scale-95"
+                    >
+                      <Video className="w-4 h-4" />
+                      {t("joinSession")}
+                    </a>
+                  )}
                   <span className="text-xs text-gray-400 break-all" dir="ltr">
                     {session.link}
                   </span>

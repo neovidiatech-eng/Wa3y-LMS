@@ -282,8 +282,17 @@ export default function Sessions() {
                             setSessionForRequest(session);
                             setIsRequestModalOpen(true);
                           }}
-                          className="flex items-center gap-2 px-3 py-2 rounded-xl text-white font-normal transition-all hover:opacity-90 shadow-sm hover:shadow-md"
-                          style={{ backgroundColor: settings.primaryColor }}
+                          disabled={session.status?.toLowerCase() === 'completed'}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-white font-normal transition-all shadow-sm ${
+                            session.status?.toLowerCase() === 'completed'
+                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                              : 'hover:opacity-90 hover:shadow-md'
+                          }`}
+                          style={
+                            session.status?.toLowerCase() === 'completed'
+                              ? undefined
+                              : { backgroundColor: settings.primaryColor }
+                          }
                         >
                           <Plus className="w-5 h-5" />
                           {isRtl ? 'تقديم طلب' : 'Add Request'}
