@@ -6,7 +6,7 @@ import { disconnectSocket } from "../../utils/socket";
 
 interface HeaderProps {
   onMenuClick: () => void;
-  userRole: "admin" | "teacher" | "student"| "parent";
+  userRole: "admin" | "teacher" | "student" | "parent";
   userName: string;
   userEmail: string;
   isCollapsed?: boolean;
@@ -60,8 +60,7 @@ export default function Header({
 
   return (
     <header
-      className={`bg-white border-b border-gray-200 sticky top-0 z-40 transition-all duration-300 ${
-        userRole === "parent"
+      className={`bg-white border-b border-gray-200 sticky top-0 z-40 transition-all duration-300 ${userRole === "parent"
           ? ""
           : isRtl
             ? isCollapsed
@@ -70,7 +69,7 @@ export default function Header({
             : isCollapsed
               ? "lg:ml-20"
               : "lg:ml-72"
-      }`}
+        }`}
     >
       <div
         className={`flex items-center justify-between transition-all duration-300 ${isCollapsed ? "px-4" : "px-4"} py-3`}
@@ -114,7 +113,7 @@ export default function Header({
           >
             {language === "ar" ? "English" : "العربية"}
           </button>
-          <div className="relative">
+          {/* <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative"
@@ -152,7 +151,7 @@ export default function Header({
                 </div>
               </>
             )}
-          </div>
+          </div> */}
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}

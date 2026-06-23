@@ -185,11 +185,10 @@ export default function Plans() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`bg-white rounded-2xl shadow-sm border-2 transition-all hover:shadow-xl ${
-                plan.bestSeller
-                  ? "border-primary ring-primary"
-                  : "border-gray-200"
-              }`}
+              className={`bg-white rounded-2xl shadow-sm border-2 transition-all hover:shadow-xl overflow-hidden flex flex-col ${plan.bestSeller
+                ? "border-primary ring-primary"
+                : "border-gray-200"
+                }`}
             >
               {plan.bestSeller && (
                 <div className="bg-gradient-to-r from-primary to-primary-dark text-white text-center py-2 rounded-t-2xl font-bold text-sm">
@@ -197,20 +196,19 @@ export default function Plans() {
                 </div>
               )}
 
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-1 justify-center">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1 text-start">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
                       {language === "ar" ? plan.name_ar : plan.name_en}
                     </h3>
-                    <p className="text-gray-600 text-sm">{plan.description}</p>
+                    <p className="text-gray-600 text-sm" style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}>{plan.description}</p>
                   </div>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                      plan.active
-                        ? "bg-green-50 text-green-700 border-green-200"
-                        : "bg-gray-50 text-gray-700 border-gray-200"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-xs font-medium border ${plan.active
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-gray-50 text-gray-700 border-gray-200"
+                      }`}
                   >
                     {plan.active ? text.active[language] : text.inactive[language]}
                   </span>
@@ -235,7 +233,7 @@ export default function Plans() {
                   </div>
                 </div>
 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3 mb-6 flex-1">
                   <h4 className="text-sm font-semibold text-gray-900 text-start">
                     {text.features[language]}
                   </h4>
@@ -245,14 +243,14 @@ export default function Plans() {
                       className="flex items-start gap-3 text-start"
                     >
                       <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-gray-700 flex-1">
+                      <span className="text-sm text-gray-700 flex-1 break-all">
                         {feature}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="flex items-center gap-2 pt-6 border-t border-gray-200">
+                <div className="flex items-center gap-2 pt-6 border-t border-gray-200 mt-auto">
                   <button
                     onClick={() => handleViewPlan(plan)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 btn-primary text-white rounded-xl transition-colors text-sm font-medium"
