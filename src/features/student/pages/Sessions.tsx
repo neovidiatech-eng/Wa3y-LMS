@@ -243,10 +243,10 @@ export default function Sessions() {
                               console.log(error);
                             }
                           }}
-                          disabled={isJoining || !isJoinable(session.start_time, session.end_time, session.link)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${isJoinable(session.start_time, session.end_time, session.link)
-                            ? 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
-                            : 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                          disabled={isJoining || session.status?.toLowerCase() === 'completed' || !isJoinable(session.start_time, session.end_time, session.link)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${!isJoinable(session.start_time, session.end_time, session.link) || session.status?.toLowerCase() === 'completed'
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                            : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
                             } ${isJoining ? 'opacity-50 cursor-wait' : ''}`}
                         >
                           <Video className="w-4 h-4" />
