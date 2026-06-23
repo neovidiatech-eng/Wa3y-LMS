@@ -15,6 +15,37 @@ export interface TeacherSubject {
     };
 }
 
+export interface TeacherFinancials {
+    totalHours: number;
+    hourPrice: number;
+    totalDue: number;
+    totalEarnings: number;
+    completedEarnings: number;
+    completedHours: number;
+    pendingEarnings: number;
+    pendingHours: number;
+    availableBalance: number;
+    pendingWithdrawals: number;
+}
+
+export interface TeacherStats {
+    totalStudents: number;
+    completedSessions: number;
+    todaySessions: number;
+    upcomingSessions: number;
+    financials: TeacherFinancials;
+}
+
+export interface TeacherCurrency {
+    id: string;
+    name_en: string;
+    name_ar: string;
+    symbol: string;
+    code: string;
+    default: boolean;
+    exchangeRate: number;
+}
+
 export interface Teacher {
     id: string;
     user_id: string;
@@ -26,6 +57,8 @@ export interface Teacher {
     createdAt: string;
     updatedAt: string;
     roleId: string | null;
+    avgRating?: number;
+    totalReviews?: number;
     user: {
         id: string;
         email: string;
@@ -35,9 +68,13 @@ export interface Teacher {
         code_country: string;
         status: string;
         confirmAt: string | null;
+        nationality?: string;
+        timezone?: string;
     };
     teacherSubjects: TeacherSubject[];
-    meeting_link?: string;
+    meeting_link?: string | null;
+    currency?: TeacherCurrency;
+    stats?: TeacherStats;
 }
 
 export interface TeachersFetchResponse {
