@@ -44,7 +44,16 @@ export default function Teachers() {
     }
   }, [searchTerm]);
 
-  const { data: teachersResponse, isLoading, isError } = useTeacher(debouncedSearch);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch, selectedStatus]);
+
+  const teachersParams = useMemo(() => ({
+    search: debouncedSearch || undefined,
+    limit: 100,
+  }), [debouncedSearch]);
+
+  const { data: teachersResponse, isLoading, isError } = useTeacher(teachersParams);
   const { data: currenciesData } = useCurrency();
   const deleteTeacherMutation = useDeleteTeacher();
   const createTeacherMutation = useCreateTeacher();

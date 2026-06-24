@@ -21,8 +21,7 @@ import {
   Package,
   Coins,
   ShieldCheck,
-  Repeat,
-  KeyRound
+  Repeat
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -61,7 +60,7 @@ const SubjectsPage = lazy(() => import("../../features/admin/pages/Subjects"));
 const LMSCoursesPage = lazy(() => import("../../features/admin/pages/LMSCourses/LMSCourses"));
 const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
 const RolesPage = lazy(() => import("../../features/admin/pages/Roles"));
-const PermissionsPage = lazy(() => import("../../features/admin/pages/Permissions"));
+const NotificationsPage = lazy(() => import("../../features/admin/pages/Notifications"));
 
 export const adminDashboardRoutes: RouteConfig[] = [
   {
@@ -261,6 +260,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
     icon: FileQuestion,
     path: "requests",
     element: <TeacherRequestsPage />,
+  },
+  {
+    id: "notifications",
+    label: "الإشعارات",
+    icon: AlertCircle,
+    path: "notifications",
+    element: <NotificationsPage />,
   },
   {
     id: "settings",

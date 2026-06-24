@@ -4,6 +4,7 @@ import {
   FileText,
   ClipboardList,
   Users,
+  AlertCircle
 } from 'lucide-react';
 
 export interface ParentRouteConfig {
@@ -22,6 +23,7 @@ const ExamsPage = lazy(() => import('../../features/parent/pages/Exams'));
 const AssignmentsPage = lazy(() => import('../../features/parent/pages/Assignments'));
 const ChildrenPage = lazy(() => import('../../features/parent/pages/Children'));
 const ChildDashboard = lazy(() => import('../../features/parent/pages/ChildDashboard'));
+const NotificationsPage = lazy(() => import('../../features/admin/pages/Notifications'));
 
 export const parentDashboardRoutes: ParentRouteConfig[] = [
       {
@@ -57,5 +59,12 @@ export const parentDashboardRoutes: ParentRouteConfig[] = [
         icon: ClipboardList,
         path: 'assignments',
         element: <AssignmentsPage />,
+      },
+      {
+        id: 'notifications',
+        label: 'الإشعارات',
+        icon: AlertCircle,
+        path: 'notifications',
+        element: <NotificationsPage />,
       },
     ]

@@ -9,7 +9,8 @@ import {
   ClipboardList,
   User,
   MessageSquare,
-  Send
+  Send,
+  AlertCircle
 } from 'lucide-react';
 
 export interface StudentRouteConfig {
@@ -31,6 +32,7 @@ const ProfilePage = lazy(() => import('../../features/student/pages/Profile'));
 const LMSCoursesPage = lazy(() => import('../../features/student/pages/LMSCourses/LMSCourses'));
 const ChatPage = lazy(() => import('../../features/student/pages/Chat'));
 const RequestsPage = lazy(() => import('../../features/student/pages/Requests'));
+const NotificationsPage = lazy(() => import('../../features/admin/pages/Notifications'));
 
 export const studentDashboardRoutes: StudentRouteConfig[] = [
   {
@@ -110,5 +112,12 @@ export const studentDashboardRoutes: StudentRouteConfig[] = [
     icon: Send,
     path: 'requests',
     element: <RequestsPage />,
+  },
+  {
+    id: 'notifications',
+    label: 'الإشعارات',
+    icon: AlertCircle,
+    path: 'notifications',
+    element: <NotificationsPage />,
   },
 ];

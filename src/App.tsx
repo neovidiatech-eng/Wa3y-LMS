@@ -31,6 +31,7 @@ import GuestGuard from './components/guards/GuestGuard';
 import { Provider } from "react-redux";
 import { store } from './store/store';
 import { useChatSocket } from './hooks/useChat';
+import { useFCM } from './hooks/useFCM';
 const ParentDashboard = lazy(() => import('./features/parent/pages/ParentDashboard'));
 
 // Centralized Loading Fallback UI
@@ -73,6 +74,11 @@ function SocketProvider() {
   useChatSocket();
   return null;
 }
+
+function FCMProvider() {
+  useFCM();
+  return null;
+}
   return (
     <Provider store={store}>
       <ErrorBoundary>
@@ -83,6 +89,7 @@ function SocketProvider() {
                 <Router >
                   {!isAuthenticated && <LanguageSwitcher />}
                   {isAuthenticated && <SocketProvider />}
+                  {isAuthenticated && <FCMProvider />}
                   <Suspense fallback={<LoadingFallback />}>
                     <Routes>
                       {/* Auth Routes */}

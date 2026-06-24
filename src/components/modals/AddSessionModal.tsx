@@ -72,7 +72,7 @@ export default function AddSessionModal({
   const [sessionsLimitError, setSessionsLimitError] = useState('');
 
   const { data: students } = useStudents({ limit: 1000 });
-  const { data: instructors } = useTeacher({ limit: 1000 });
+  const { data: instructors } = useTeacher({ limit: 100 });
 
   const singleSchema = getSessionSchema(t);
   const batchSchema = getMultipleSessionsSchema(t);

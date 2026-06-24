@@ -1,9 +1,10 @@
-import { Bell, Menu, User, LogOut, ChevronDown } from "lucide-react";
+import { Bell, Menu, User, LogOut, ChevronDown, Check, Trash2, CheckCheck } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useSettings } from "../../contexts/SettingsContext";
 import { disconnectSocket } from "../../utils/socket";
-
+import { useNotifications, useMarkNotificationAsRead, useMarkAllNotificationsAsRead, useDeleteNotification } from "../../features/admin/hooks/useNotification";
+import { useNavigate } from "react-router-dom";
 interface HeaderProps {
   onMenuClick: () => void;
   userRole: "admin" | "teacher" | "student" | "parent";
@@ -21,6 +22,7 @@ export default function Header({
   const { settings } = useSettings();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const navigate = useNavigate();
   const isRtl = language === "ar";
   const academyName = language === "ar" ? t("academyName") : settings.name;
 
@@ -31,11 +33,14 @@ export default function Header({
     parent: { ar: "لوحة ولي الأمر", en: "Parent Panel" },
   };
 
-  const notifications = [
-    { id: 1, text: language === "ar" ? "طالب جديد قام بالتسجيل" : "A new student registered", time: language === "ar" ? "5 دقائق" : "5 minutes" },
-    { id: 2, text: language === "ar" ? "تمت إضافة حصة جديدة" : "A new session was added", time: language === "ar" ? "30 دقيقة" : "30 minutes" },
-    { id: 3, text: language === "ar" ? "معلم جديد في انتظار الموافقة" : "A new teacher is pending approval", time: language === "ar" ? "ساعة واحدة" : "1 hour" },
-  ];
+  const { data: notificationsData } = useNotifications();
+  const { mutate: markAsRead } = useMarkNotificationAsRead();
+  const { mutate: markAllAsRead } = useMarkAllNotificationsAsRead();
+  const { mutate: deleteNotif } = useDeleteNotification();
+
+  const serverNotifications = notificationsData?.data?.notifications || [];
+  const displayedNotifications = serverNotifications.slice(0, 3);
+  const unreadCount = notificationsData?.data?.unreadCount || 0;
 
   const handleLogout = () => {
     disconnectSocket();
@@ -113,45 +118,98 @@ export default function Header({
           >
             {language === "ar" ? "English" : "العربية"}
           </button>
-          {/* <div className="relative">
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative"
-            >
-              <Bell className="w-5 h-5 text-gray-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            {showNotifications && (
-              <>
-                <div
-                  className="fixed inset-0 z-40"
-                  onClick={() => setShowNotifications(false)}
-                ></div>
-                <div className="fixed top-[70px] ltr:right-4 rtl:left-4 w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <h3 className="font-semibold text-gray-900 text-start">
-                      {language === "ar" ? "الإشعارات" : "Notifications"}
-                    </h3>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.map((notif) => (
-                      <div
-                        key={notif.id}
-                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                      >
-                        <p className="text-sm text-gray-900 text-start">
-                          {notif.text}
-                        </p>
-                        <p className="text-xs text-gray-500 text-start mt-1">
-                          {language === "ar" ? `منذ ${notif.time}` : `${notif.time} ago`}
-                        </p>
+          <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative"
+              >
+                <Bell className="w-5 h-5 text-gray-600" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full flex justify-center items-center text-[10px] text-white font-bold">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+              {showNotifications && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowNotifications(false)}
+                  ></div>
+                  <div className="fixed top-[70px] ltr:right-4 rtl:left-4 w-[calc(100vw-2rem)] sm:w-96 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
+                      <h3 className="font-semibold text-gray-900 text-start">
+                        {language === "ar" ? "الإشعارات" : "Notifications"}
+                      </h3>
+                      {unreadCount > 0 && (
+                        <button 
+                          onClick={() => markAllAsRead()}
+                          className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                        >
+                          <CheckCheck className="w-3 h-3" />
+                          {language === "ar" ? "تحديد الكل كمقروء" : "Mark all as read"}
+                        </button>
+                      )}
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      {serverNotifications.length === 0 ? (
+                        <div className="px-4 py-6 text-center text-sm text-gray-500">
+                           {language === "ar" ? "لا توجد إشعارات" : "No notifications"}
+                        </div>
+                      ) : (
+                        displayedNotifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            className={`px-4 py-3 hover:bg-gray-50 transition-colors flex justify-between items-start gap-2 ${!notif.isRead ? 'bg-primary-50/50' : ''}`}
+                          >
+                            <div className="flex-1">
+                              <p className={`text-sm text-gray-900 text-start ${!notif.isRead ? 'font-medium' : ''}`}>
+                                {notif.message}
+                              </p>
+                              <p className="text-xs text-gray-500 text-start mt-1">
+                                {new Date(notif.createdAt).toLocaleString(language === "ar" ? "ar-EG" : "en-US")}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {!notif.isRead && (
+                                <button 
+                                  onClick={(e) => { e.stopPropagation(); markAsRead(notif.id); }}
+                                  className="p-1 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded"
+                                  title={language === "ar" ? "تحديد كمقروء" : "Mark as read"}
+                                >
+                                  <Check className="w-4 h-4" />
+                                </button>
+                              )}
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); deleteNotif(notif.id); }}
+                                className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                                title={language === "ar" ? "حذف" : "Delete"}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    {serverNotifications.length > 0 && (
+                      <div className="border-t border-gray-100 p-2">
+                        <button
+                          onClick={() => {
+                            setShowNotifications(false);
+                            const basePath = userRole === 'admin' ? '/dashboard' : `/${userRole}-dashboard`;
+                            navigate(`${basePath}/notifications`);
+                          }}
+                          className="w-full text-center py-2 text-sm text-primary-600 font-medium hover:bg-gray-50 rounded-lg transition-colors"
+                        >
+                          {language === "ar" ? "رؤية المزيد" : "View All"}
+                        </button>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
-              </>
-            )}
-          </div> */}
+                </>
+              )}
+            </div>
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}

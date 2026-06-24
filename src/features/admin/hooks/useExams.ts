@@ -5,7 +5,7 @@ import { getStudents } from "../../admin/services/StudentServices";
 export const useStudents = () => {
   return useQuery({
     queryKey: ["students"],
-    queryFn: () => getStudents({ limit: 1000 }),
+    queryFn: () => getStudents({ limit: 100 }),
   });
 };
 

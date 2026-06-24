@@ -8,9 +8,11 @@ export interface GetTeachersParams {
 }
 
 export const getTeacher = async (params: GetTeachersParams = {}): Promise<TeachersData> => {
-    const { search } = params;
+    const { search, page, limit } = params;
     const queryParams: Record<string, string | number> = {};
     if (search) queryParams.search = search;
+    if (page) queryParams.page = page;
+    if (limit) queryParams.limit = limit;
     const response = await api.get("/teachers", Object.keys(queryParams).length > 0 ? { params: queryParams } : undefined);
     return response.data.data
 }

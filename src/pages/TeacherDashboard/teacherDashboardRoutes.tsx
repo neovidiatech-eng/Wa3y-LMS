@@ -9,7 +9,8 @@ import {
   Users,
   Play,
   Calendar,
-  ClipboardList
+  ClipboardList,
+  AlertCircle
 } from 'lucide-react';
 import { RouteConfig } from '../../components/constants/dashboardRoutes';
 
@@ -25,6 +26,7 @@ const AssignmentsPage = lazy(() => import('../../features/teacher/pages/Assignme
 const StudentsPage = lazy(() => import('../../features/teacher/pages/Students'));
 const ChatPage = lazy(() => import('../../features/teacher/pages/Chat'));
 const RequestsPage = lazy(() => import('../../features/teacher/pages/Requests'));
+const NotificationsPage = lazy(() => import('../../features/admin/pages/Notifications'));
 
 export const teacherDashboardRoutes: RouteConfig[] = [
   {
@@ -109,5 +111,12 @@ export const teacherDashboardRoutes: RouteConfig[] = [
     icon: User,
     path: 'profile',
     element: <ProfilePage />,
+  },
+  {
+    id: 'notifications',
+    label: 'الإشعارات',
+    icon: AlertCircle,
+    path: 'notifications',
+    element: <NotificationsPage />,
   },
 ];
