@@ -36,15 +36,22 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
     },
 
   });
-  const features = watch('features');
+  const features = watch('features') || [];
   const addFeature = () => {
     setValue('features', [...features, '']);
   };
 
   const removeFeature = (index: number) => {
-    const updated = features.filter((_, i) => i !== index);
+    const updated = features.filter((_: string, i: number) => i !== index);
+    setValue('features', updated.length > 0 ? updated : ['']);
+  };
+
+  const updateFeature = (index: number, value: string) => {
+    const updated = [...features];
+    updated[index] = value;
     setValue('features', updated);
   };
+
 
   const [availableCurrencies, setAvailableCurrencies] = useState<Currency[]>([]);
 
@@ -60,11 +67,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
     fetchCurrencies();
   }, []);
 
-  const updateFeature = (index: number, value: string) => {
-    const updated = [...features];
-    updated[index] = value;
-    setValue('features', updated);
-  };
+
 
 
   useEffect(() => {
@@ -103,7 +106,6 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
     sessionsCount: { ar: 'عدد الحصص', en: 'Sessions Count' },
     sessionTime: { ar: 'مدة الحصة (دقيقة)', en: 'Session Time (Minutes)' },
     features: { ar: 'المميزات', en: 'Features' },
-
     addFeature: { ar: 'إضافة ميزة', en: 'Add Feature' },
     isPopular: { ar: 'الأكثر شعبية', en: 'Most Popular' },
     status: { ar: 'الحالة', en: 'Status' },
@@ -115,10 +117,20 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
   };
 
   const onSubmit = async (data: PlanFormData) => {
-    await onSave({
+    const filteredFeatures = data.features?.filter(f => typeof f === 'string' && f.trim() !== '') || [];
+    
+    const payload: any = {
       ...data,
       id: initialData?.id
-    });
+    };
+
+    if (filteredFeatures.length > 0) {
+      payload.features = filteredFeatures;
+    } else {
+      delete payload.features;
+    }
+
+    await onSave(payload);
     reset();
     onClose();
   };
@@ -162,14 +174,13 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
               )}
             </div>
           </div>
-          {/* Description */}
+
+          {/* Description (Optional) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
               {text.description[language]}
             </label>
             <textarea {...register('description')} rows={3} className="w-full px-4 py-2.5 border rounded-lg text-start resize-none" />
-            {errors.description && (<p className="text-red-500 text-sm mt-1 text-start"> {errors.description.message}</p>
-            )}
           </div>
 
           {/* Price + Currency */}
@@ -256,23 +267,23 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
               <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
                 {text.sessionTime[language]}
               </label>
-<Controller
-  name="sessionTime"
-  control={control}
-  render={({ field }) => (
-    <CustomSelect
-      options={[
-        { label: t('30minutes'), value: 30 },
-        { label: t('45minutes'), value: 45 },
-        { label: t('60minutes'), value: 60 },
-        { label: t('90minutes'), value: 90 },
-        { label: t('120minutes'), value: 120 },
-      ]}  
-      className='text-start'
-      {...field}
-    />
-  )}
-/>
+              <Controller
+                name="sessionTime"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    options={[
+                      { label: t('30minutes'), value: 30 },
+                      { label: t('45minutes'), value: 45 },
+                      { label: t('60minutes'), value: 60 },
+                      { label: t('90minutes'), value: 90 },
+                      { label: t('120minutes'), value: 120 },
+                    ]}
+                    className='text-start'
+                    {...field}
+                  />
+                )}
+              />
               {errors.sessionTime && (
                 <p className="text-red-500 text-sm mt-1 text-start">
                   {errors.sessionTime.message}
@@ -282,9 +293,8 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
 
           </div>
 
-          {/* Features */}
+          {/* Features (Optional) */}
           <div>
-
             <div className="flex justify-between mb-3">
               <button type="button" onClick={addFeature}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
@@ -296,9 +306,8 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
             </div>
 
             <div className="space-y-3">
-              {features.map((feature, index) => (
+              {features.map((feature: string, index: number) => (
                 <div key={index} className="flex items-center gap-2">
-
                   <button
                     type="button"
                     onClick={() => removeFeature(index)}
@@ -307,17 +316,12 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
-
-                  <div className="flex-1 flex flex-col gap-1">
-                    <input
-                      value={feature}
-                      onChange={(e) => updateFeature(index, e.target.value)}
-                      placeholder={text.featurePlaceholder[language]}
-                      className={`px-4 py-2.5 border rounded-lg ${errors.features?.[index] ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-                    {errors.features?.[index] && <span className="text-red-500 text-xs text-start">هذا الحقل مطلوب</span>}
-                  </div>
-
+                  <input
+                    value={feature}
+                    onChange={(e) => updateFeature(index, e.target.value)}
+                    placeholder={text.featurePlaceholder[language]}
+                    className="flex-1 px-4 py-2.5 border rounded-lg border-gray-300"
+                  />
                 </div>
               ))}
             </div>

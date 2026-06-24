@@ -77,20 +77,19 @@ export default function EditPlanModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const filteredFeatures = formData.features.filter((f) => f.trim() !== "");
-    if (filteredFeatures.length === 0) {
-      alert(
-        language === "ar"
-          ? "يجب إضافة ميزة واحدة على الأقل"
-          : "Please add at least one feature",
-      );
-      return;
-    }
-    onSave({
+    
+    const payload: any = {
       ...plan,
       ...formData,
-      features: filteredFeatures,
-    });
+    };
 
+    if (filteredFeatures.length > 0) {
+      payload.features = filteredFeatures;
+    } else {
+      delete payload.features;
+    }
+
+    onSave(payload);
     onClose();
   };
 

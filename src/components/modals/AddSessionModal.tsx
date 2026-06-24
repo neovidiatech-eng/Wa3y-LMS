@@ -29,7 +29,8 @@ import { useStudents } from '../../features/admin/hooks/useStudents';
 import { useTeacher } from '../../features/admin/hooks/useTeacher';
 
 import { Student } from '../../types/student';
-import { Teacher, DayOfWeek } from '../../types/scheduales';
+import { Teacher } from '../../types/teachers';
+import { DayOfWeek } from '../../types/scheduales';
 
 import { useTranslation } from 'react-i18next';
 
@@ -71,7 +72,7 @@ export default function AddSessionModal({
   const [sessionsLimitError, setSessionsLimitError] = useState('');
 
   const { data: students } = useStudents({ limit: 1000 });
-  const { data: instructors } = useTeacher();
+  const { data: instructors } = useTeacher({ limit: 1000 });
 
   const singleSchema = getSessionSchema(t);
   const batchSchema = getMultipleSessionsSchema(t);

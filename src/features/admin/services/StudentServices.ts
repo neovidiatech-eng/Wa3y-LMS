@@ -11,12 +11,37 @@ export interface GetStudentsParams {
 }
 
 export const getStudents = async (params: GetStudentsParams = {}): Promise<StudentsFetchResponse> => {
-  const { page = 1, limit = 7, search, country, planId } = params;
+  const { page, limit, search, country, planId } = params;
 
-  const queryParams: Record<string, string | number> = { page, limit };
+  const queryParams: Record<string, string | number> = {};
+  if (page !== undefined) queryParams.page = page;
+  if (limit !== undefined && limit !== 1000) queryParams.limit = limit;
   if (search) queryParams.search = search;
   if (country && country !== "all") queryParams.country = country;
   if (planId && planId !== "all") queryParams.planId = planId;
+
+  // If we need all records (limit=1000), fetch the first page to get totalPages, then fetch the rest
+  if (limit === 1000) {
+    queryParams.page = 1;
+    const firstResponse = await api.get("/students", { params: queryParams });
+    const data = firstResponse.data;
+    
+    if (data.data?.pagination?.totalPages > 1) {
+      const totalPages = data.data.pagination.totalPages;
+      const promises = [];
+      for (let i = 2; i <= totalPages; i++) {
+        promises.push(api.get("/students", { params: { ...queryParams, page: i } }));
+      }
+      
+      const results = await Promise.all(promises);
+      results.forEach(res => {
+        if (res.data?.data?.studentsData) {
+          data.data.studentsData = data.data.studentsData.concat(res.data.data.studentsData);
+        }
+      });
+    }
+    return data;
+  }
 
   const response = await api.get("/students", {
     params: queryParams
@@ -27,28 +52,9 @@ export const getStudents = async (params: GetStudentsParams = {}): Promise<Stude
 export const searchStudent = async (
   search: string,
 ): Promise<StudentsFetchResponse> => {
-  try {
     const response = await api.get(`/students?search=${search}`);
     return response.data;
-  } catch (error: any) {
-    if (error.response?.status === 404) {
-      return {
-        message: "",
-        status: 404,
-        data: {
-          studentsData: [],
-          pagination: {
-            page: 1,
-            limit: 10,
-            totalItems: 0,
-            totalPages: 0,
-            hasNextPage: false,
-          },
-        },
-      };
-    }
-    throw error;
-  }
+
 };
 
 export const getStudentById = async (

@@ -92,19 +92,24 @@ export default function Plans() {
     planData: PlanFormData & { id?: string },
   ) => {
     try {
-      const payload = {
+      const payload: any = {
         name_ar: planData.name,
         name_en: planData.nameEn,
-        description: planData.description,
         price: Number(planData.price),
         duration: Number(planData.duration),
         sessionsCount: Number(planData.sessionsCount),
         sessionTime: Number(planData.sessionTime),
         active: planData.status === "active",
         bestSeller: planData.isPopular,
-        features: planData.features,
         currencyId: planData.currencyId,
       };
+
+      if (planData.description && planData.description.trim() !== '') {
+        payload.description = planData.description;
+      }
+      if (planData.features && planData.features.length > 0) {
+        payload.features = planData.features;
+      }
 
 
       if (planData.id) {

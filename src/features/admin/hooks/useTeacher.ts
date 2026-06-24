@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createTeacher, deleteTeacher, getTeacher, getTeacherById, searchTeacher, updateTeacher } from "../services/TeacherServices"
+import { createTeacher, deleteTeacher, getTeacher, GetTeachersParams, getTeacherById, searchTeacher, updateTeacher } from "../services/TeacherServices"
 import { CreateTeacherInput , TeachersData, UpdateTeacherInput } from "../../../types/teachers"
 import { message } from "antd"
 
-export const useTeacher = (search?: string) => {
+export const useTeacher = (paramsOrSearch?: string | GetTeachersParams) => {
+    const isString = typeof paramsOrSearch === 'string';
+    const search = isString ? paramsOrSearch : undefined;
+    const params = isString ? undefined : paramsOrSearch;
     return useQuery<TeachersData>({
-        queryKey: ["teachers", search],
-        queryFn: () => search ? searchTeacher(search) : getTeacher(),
+        queryKey: ["teachers", paramsOrSearch],
+        queryFn: () => search ? searchTeacher(search) : getTeacher(params),
     })
 }
 export const useTeacherById = (id?: string) => {
