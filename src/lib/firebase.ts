@@ -3,7 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCLh5Kor4b6Pz3GLGqfM-S5gFdoCG6cQWs",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "wa3y-notification.firebaseapp.com",
   projectId: "wa3y-notification",
   storageBucket: "wa3y-notification.firebasestorage.app",
