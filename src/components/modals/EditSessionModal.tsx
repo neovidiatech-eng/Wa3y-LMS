@@ -71,15 +71,24 @@ export default function EditSessionModal({ isOpen, onClose, session, groupedSess
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSave(currentSession.id, {
+
+    const payload: any = {
       title: formData.title,
-      description: formData.description,
       link: formData.link,
-      notes: formData.notes,
       status: formData.status,
       start_time: formData.start_time ? new Date(formData.start_time).toISOString() : currentSession.start_time,
       notification_Time: formData.notification_Time,
-    });
+    };
+
+    if (formData.description && formData.description.trim() !== '') {
+      payload.description = formData.description;
+    }
+
+    if (formData.notes && formData.notes.trim() !== '') {
+      payload.notes = formData.notes;
+    }
+
+    await onSave(currentSession.id, payload);
     onClose();
   };
 
