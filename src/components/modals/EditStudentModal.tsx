@@ -224,10 +224,9 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
               )}
             />
           </div>
-          </div>
 
             {/* Password */}
-            <div className="text-start relative mb-4">
+            <div className="text-start relative">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('password')}
               </label>
@@ -249,6 +248,7 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                 {t('leaveBlankPassword')}
               </p>
             </div>
+          </div>
 
           {/* Status */}
           <Controller

@@ -17,10 +17,10 @@ const CustomSelect = forwardRef<any, CustomSelectProps>(({
   ...props 
 }, ref) => {
   return (
-    <div className="w-full flex flex-col gap-1 text-start">
+    <div className="w-full flex flex-col gap-1">
       {/* Label */}
       {label && (
-        <label className="text-sm font-medium text-gray-700 mb-1">
+        <label className="text-sm font-medium text-gray-700 mb-1 text-start">
           {label}
         </label>
       )}
