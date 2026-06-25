@@ -3,6 +3,48 @@ import { Modal, Form, Input, Select, Button } from "antd";
 import { useSendNotification } from "../hooks/useNotification";
 import { SendNotificationPayload } from "../../../types/notification";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useTeacher } from "../hooks/useTeacher";
+import { useStudents } from "../hooks/useStudents";
+import { useGetParents } from "../hooks/useParents";
+
+const SpecificUserSelect = ({ role, isRtl }: { role: string, isRtl: boolean }) => {
+  const { data: teachersData, isLoading: isLoadingTeachers } = useTeacher(role === "teachers" ? { limit: 100 } : undefined);
+  const { data: studentsData, isLoading: isLoadingStudents } = useStudents(role === "students" ? { limit: 1000 } : undefined);
+  const { data: parentsData, isLoading: isLoadingParents } = useGetParents(); 
+
+  let options: { value: string, label: string }[] = [];
+  let loading = false;
+
+  if (role === "teachers") {
+    loading = isLoadingTeachers;
+    options = teachersData?.teachers?.map(t => ({ value: t.user?.id || t.user_id, label: t.user?.name || t.user?.email || t.id })) || [];
+  } else if (role === "students") {
+    loading = isLoadingStudents;
+    options = studentsData?.data?.studentsData?.map(s => ({ value: s.user?.id || s.user_id, label: s.user?.name || s.user?.email || s.id })) || [];
+  } else if (role === "parents") {
+    loading = isLoadingParents;
+    options = parentsData?.data?.parents?.map(p => ({ value: p.id, label: p.name || p.email || p.id })) || [];
+  }
+
+  return (
+    <Form.Item
+      name="userId"
+      label={isRtl ? "اختر المستخدم" : "Select User"}
+      rules={[{ required: true, message: isRtl ? "الرجاء اختيار المستخدم" : "Please select a user" }]}
+    >
+      <Select 
+        showSearch 
+        loading={loading}
+        optionFilterProp="children"
+        placeholder={isRtl ? "ابحث بالاسم أو البريد الإلكتروني" : "Search by name or email"}
+      >
+        {options.map(opt => (
+          <Select.Option key={opt.value} value={opt.value}>{opt.label}</Select.Option>
+        ))}
+      </Select>
+    </Form.Item>
+  );
+};
 
 interface SendNotificationModalProps {
   isOpen: boolean;
@@ -26,8 +68,10 @@ export const SendNotificationModal: React.FC<SendNotificationModalProps> = ({
     }
   }, [isSuccess, form, onClose]);
 
-  const handleSubmit = (values: SendNotificationPayload) => {
-    sendNotification(values);
+  const handleSubmit = (values: SendNotificationPayload & { specificUserRole?: string }) => {
+    const payload = { ...values };
+    delete payload.specificUserRole;
+    sendNotification(payload);
   };
 
   return (
@@ -82,17 +126,39 @@ export const SendNotificationModal: React.FC<SendNotificationModalProps> = ({
           noStyle
           shouldUpdate={(prevValues, currentValues) => prevValues.targetType !== currentValues.targetType}
         >
-          {({ getFieldValue }) =>
+          {({ getFieldValue, setFieldsValue }) =>
             getFieldValue("targetType") === "single" ? (
               <Form.Item
-                name="userId"
-                label={isRtl ? "رقم أو معرّف المستخدم" : "User ID"}
-                rules={[{ required: true, message: isRtl ? "الرجاء إدخال معرّف المستخدم" : "Please enter the User ID" }]}
+                name="specificUserRole"
+                label={isRtl ? "نوع المستخدم" : "User Type"}
+                rules={[{ required: true, message: isRtl ? "الرجاء اختيار النوع" : "Please select user type" }]}
               >
-                <Input placeholder={isRtl ? "أدخل معرّف المستخدم" : "Enter User ID"} />
+                <Select placeholder={isRtl ? "اختر النوع" : "Select Type"} onChange={() => setFieldsValue({ userId: undefined })}>
+                  <Select.Option value="teachers">{isRtl ? "المعلمين" : "Teachers"}</Select.Option>
+                  <Select.Option value="students">{isRtl ? "الطلاب" : "Students"}</Select.Option>
+                  <Select.Option value="parents">{isRtl ? "أولياء الأمور" : "Parents"}</Select.Option>
+                </Select>
               </Form.Item>
             ) : null
           }
+        </Form.Item>
+
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) => 
+            prevValues.targetType !== currentValues.targetType ||
+            prevValues.specificUserRole !== currentValues.specificUserRole
+          }
+        >
+          {({ getFieldValue }) => {
+            const targetType = getFieldValue("targetType");
+            const specificRole = getFieldValue("specificUserRole");
+            
+            if (targetType === "single" && specificRole) {
+              return <SpecificUserSelect role={specificRole} isRtl={isRtl} />;
+            }
+            return null;
+          }}
         </Form.Item>
 
         <div className="flex justify-end gap-2 mt-6">

@@ -2,7 +2,6 @@
 import { Select } from 'antd';
 import type { SelectProps } from 'antd';
 
-// تعريف الـ Props التي سيقبلها المكون
 export interface CustomSelectProps extends SelectProps {
   label?: string;
   error?: string;
