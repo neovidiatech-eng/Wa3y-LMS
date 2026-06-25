@@ -1,8 +1,8 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Eye, EyeOff, Lock } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
-import { UserFormData, getUserSchema } from '../../lib/schemas/UserSchema';
+import { EditUserFormData, getEditUserSchema } from '../../lib/schemas/UserSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { useRoles } from '../../features/admin/hooks/useRoles';
@@ -14,8 +14,8 @@ import { DEFAULT_COUNTRIES } from '../../consts/countries';
 interface EditUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (userData: UserFormData & { id: string }) => Promise<void>;
-  userData: UserFormData & { id: string };
+  onSubmit: (userData: EditUserFormData & { id: string }) => Promise<void>;
+  userData: EditUserFormData & { id: string };
 }
 // Static permission list removed in favor of dynamic fetching
 
@@ -42,8 +42,8 @@ export default function EditUserModal({ isOpen, onClose, onSubmit, userData }: E
   //   return acc;
   // }, {});
 
-  const { control, handleSubmit, register, reset, formState: { errors } } = useForm<UserFormData>({
-    resolver: zodResolver(getUserSchema(t)),
+  const { control, handleSubmit, register, reset, formState: { errors } } = useForm<EditUserFormData>({
+    resolver: zodResolver(getEditUserSchema(t)),
     defaultValues: userData,
   });
 
@@ -60,7 +60,7 @@ export default function EditUserModal({ isOpen, onClose, onSubmit, userData }: E
 
   if (!isOpen) return null;
 
-  const onFormSubmit = async (data: UserFormData) => {
+  const onFormSubmit = async (data: EditUserFormData) => {
     try {
       await onSubmit({
         ...data,
