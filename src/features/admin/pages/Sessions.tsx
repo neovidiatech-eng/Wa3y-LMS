@@ -507,6 +507,14 @@ export default function Sessions() {
                       </button>
                       <button
                         onClick={() => {
+                          const grouped = session.parent_recurring_id
+                            ? scheduleData.filter(
+                                (s: Schedule) =>
+                                  s.parent_recurring_id ===
+                                  session.parent_recurring_id,
+                              )
+                            : [session];
+                          setGroupedSessions(grouped);
                           setSelectedSession(session);
                           setShowEditModal(true);
                         }}
@@ -554,6 +562,11 @@ export default function Sessions() {
         }}
         session={selectedSession}
         groupedSessions={groupedSessions}
+        onEditSession={(s) => {
+          setShowViewModal(false);
+          setSelectedSession(s);
+          setShowEditModal(true);
+        }}
       />
 
       <EditSessionModal
@@ -563,6 +576,7 @@ export default function Sessions() {
           setSelectedSession(null);
         }}
         session={selectedSession}
+        groupedSessions={groupedSessions}
         onSave={handleUpdateSession}
       />
 

@@ -8,12 +8,15 @@ interface EditSessionModalProps {
   isOpen: boolean;
   onClose: () => void;
   session: Schedule | null;
+  groupedSessions?: Schedule[];
   onSave: (id: string, data: any) => Promise<void>;
 }
 
-export default function EditSessionModal({ isOpen, onClose, session, onSave }: EditSessionModalProps) {
+export default function EditSessionModal({ isOpen, onClose, session, groupedSessions, onSave }: EditSessionModalProps) {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split('-')[0];
+
+  const [currentSession, setCurrentSession] = useState<Schedule | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -36,35 +39,45 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
     return `${y}-${mo}-${d}T${h}:${mi}`;
   };
 
+  const populateForm = (s: Schedule) => {
+    const startDate = s.start_time ? new Date(s.start_time) : null;
+    const endDate = s.end_time ? new Date(s.end_time) : null;
+    setFormData({
+      title: s.title || '',
+      description: s.description || '',
+      link: s.link || '',
+      notes: s.notes || '',
+      status: s.status === 'scheduled' ? 'planned' : (s.status || 'planned'),
+      start_time: startDate ? toLocalDatetimeString(startDate) : '',
+      end_time: endDate ? toLocalDatetimeString(endDate) : '',
+      type: (s.type as 'full' | 'half') || 'full',
+      notification_Time: String((s as any).notification_Time || (s as any).notification_time || (s as any).notificationTime || '10'),
+    });
+  };
+
   useEffect(() => {
     if (session && isOpen) {
-      const startDate = session.start_time ? new Date(session.start_time) : null;
-      const endDate = session.end_time ? new Date(session.end_time) : null;
-      setFormData({
-        title: session.title || '',
-        description: session.description || '',
-        link: session.link || '',
-        notes: session.notes || '',
-        status: session.status === 'scheduled' ? 'planned' : (session.status || 'planned'),
-        start_time: startDate ? toLocalDatetimeString(startDate) : '',
-        end_time: endDate ? toLocalDatetimeString(endDate) : '',
-        type: (session.type as 'full' | 'half') || 'full',
-        notification_Time: String((session as any).notification_Time || (session as any).notification_time || (session as any).notificationTime || '10'),
-      });
+      setCurrentSession(session);
+      populateForm(session);
     }
   }, [session, isOpen]);
 
-  if (!isOpen || !session) return null;
+  const handleSelectSession = (s: Schedule) => {
+    setCurrentSession(s);
+    populateForm(s);
+  };
+
+  if (!isOpen || !session || !currentSession) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSave(session.id, {
+    await onSave(currentSession.id, {
       title: formData.title,
       description: formData.description,
       link: formData.link,
       notes: formData.notes,
       status: formData.status,
-      start_time: formData.start_time ? new Date(formData.start_time).toISOString() : session.start_time,
+      start_time: formData.start_time ? new Date(formData.start_time).toISOString() : currentSession.start_time,
       notification_Time: formData.notification_Time,
     });
     onClose();
@@ -108,7 +121,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('studentLabel')}</p>
-                  <p className="text-sm font-bold text-gray-900">{session.student?.user?.name || '—'}</p>
+                  <p className="text-sm font-bold text-gray-900">{currentSession.student?.user?.name || '—'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-gray-50 rounded-2xl p-4 border border-gray-100">
@@ -117,7 +130,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('teacherLabel')}</p>
-                  <p className="text-sm font-bold text-gray-900">{session.teacher?.user?.name || '—'}</p>
+                  <p className="text-sm font-bold text-gray-900">{currentSession.teacher?.user?.name || '—'}</p>
                 </div>
               </div>
             </div>
@@ -250,6 +263,43 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
             </div>
             
             <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+              {/* Batch Sessions List */}
+              {groupedSessions && groupedSessions.length > 1 && (
+                <div className="mb-6">
+                  <h4 className="text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('recurringSessions')}</h4>
+                  <div className="space-y-2">
+                    {groupedSessions.map(s => (
+                      <div 
+                        key={s.id} 
+                        onClick={() => handleSelectSession(s)}
+                        className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+                          currentSession.id === s.id 
+                            ? 'bg-indigo-50 border-indigo-200 ring-1 ring-indigo-500 shadow-sm' 
+                            : 'bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div>
+                          <p className="text-sm font-bold text-gray-900 mb-0.5">
+                            {s.title}
+                          </p>
+                          <p className="text-[11px] font-bold text-gray-600">
+                            {new Date(s.start_time).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short' })}
+                          </p>
+                          <p className="text-[10px] font-bold text-gray-400 mt-0.5" dir="ltr">
+                            {new Date(s.start_time).toLocaleTimeString(language === 'ar' ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                        {currentSession.id === s.id && (
+                          <span className="text-[9px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full uppercase">
+                            {t('edit')}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Preview Card */}
               <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
@@ -258,7 +308,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-gray-900">{formData.title || t('sessionTitleLabel')}</h4>
-                    <p className="text-[10px] font-bold text-gray-400">{session.student?.user?.name}</p>
+                    <p className="text-[10px] font-bold text-gray-400">{currentSession.student?.user?.name}</p>
                   </div>
                 </div>
                 <div className="space-y-2.5">
@@ -294,10 +344,10 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
               <div className="bg-white border border-gray-100 rounded-2xl p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-black text-sm">
-                    {session.teacher?.user?.name?.charAt(0)?.toUpperCase() || 'T'}
+                    {currentSession.teacher?.user?.name?.charAt(0)?.toUpperCase() || 'T'}
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-gray-900">{session.teacher?.user?.name}</p>
+                    <p className="text-xs font-bold text-gray-900">{currentSession.teacher?.user?.name}</p>
                     <p className="text-[10px] font-bold text-gray-400">{t('teacherLabel')}</p>
                   </div>
                 </div>

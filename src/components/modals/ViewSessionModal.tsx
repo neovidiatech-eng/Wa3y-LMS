@@ -8,6 +8,7 @@ import {
   FileText,
   ExternalLink,
   Repeat,
+  Edit,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Schedule } from "../../types/scheduales";
@@ -18,6 +19,7 @@ interface ViewSessionModalProps {
   session: Schedule | null;
   groupedSessions?: Schedule[];
   allSessions?: Schedule[];
+  onEditSession?: (session: Schedule) => void;
 }
 
 export default function ViewSessionModal({
@@ -26,6 +28,7 @@ export default function ViewSessionModal({
   session,
   groupedSessions,
   allSessions = [],
+  onEditSession,
 }: ViewSessionModalProps) {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split("-")[0];
@@ -342,7 +345,11 @@ export default function ViewSessionModal({
                               )}
                             </div>
 
-                            <p className="text-xs font-bold text-gray-800">
+                            <p className="text-sm font-bold text-gray-900 mb-0.5">
+                              {s.title}
+                            </p>
+
+                            <p className="text-[11px] font-bold text-gray-800">
                               {date}
                             </p>
 
@@ -361,16 +368,27 @@ export default function ViewSessionModal({
                               {t(s.status?.toLowerCase() || "")}
                             </span>
 
-                            {s.link && (
-                              <a
-                                href={s.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-indigo-500 hover:text-indigo-700 transition-colors"
-                              >
-                                <ExternalLink className="w-3.5 h-3.5" />
-                              </a>
-                            )}
+                            <div className="flex items-center gap-2 mt-1">
+                              {s.link && (
+                                <a
+                                  href={s.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-indigo-500 hover:text-indigo-700 transition-colors"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </a>
+                              )}
+                              {onEditSession && (
+                                <button
+                                  onClick={() => onEditSession(s)}
+                                  className="text-amber-500 hover:text-amber-700 transition-colors"
+                                  title={t("edit")}
+                                >
+                                  <Edit className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -435,11 +453,22 @@ export default function ViewSessionModal({
                               </div>
                             </div>
 
-                            <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-widest ${getStatusStyle(s.status)}`}
-                            >
-                              {t(s.status?.toLowerCase() || "")}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-widest ${getStatusStyle(s.status)}`}
+                              >
+                                {t(s.status?.toLowerCase() || "")}
+                              </span>
+                              {onEditSession && (
+                                <button
+                                  onClick={() => onEditSession(s)}
+                                  className="text-amber-500 hover:text-amber-700 transition-colors"
+                                  title={t("edit")}
+                                >
+                                  <Edit className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
