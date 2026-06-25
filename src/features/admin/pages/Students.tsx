@@ -493,8 +493,8 @@ export default function Students() {
               status: (selectedStudent.status || 'pending') as any,
               gender: selectedStudent.gender || 'male',
               plan: selectedStudent.planId || '',
-              nationality: selectedStudent.nationality || '',
-              password: '',
+              nationality: (selectedStudent.user as any)?.nationality || selectedStudent.nationality || '',
+              password: selectedStudent.user.password || '',
               birthDate: selectedStudent.birth_date ? selectedStudent.birth_date.split('T')[0] : '',
             }
             : null
@@ -520,7 +520,7 @@ export default function Students() {
               payload.planId = null;
             }
 
-            if (updatedData.password) {
+            if (updatedData.password && updatedData.password !== selectedStudent?.user.password) {
               payload.password = updatedData.password;
             }
             await updateStudent({ id: updatedData.id, data: payload });

@@ -1,5 +1,6 @@
 import { X, Users, Eye, EyeOff, Lock } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useTeacherById } from '../../features/admin/hooks/useTeacher';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
 import { TeacherFormData, getTeacherSchema } from '../../lib/schemas/TeacherSchema';
@@ -25,6 +26,9 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
   const { data: currenciesData } = useCurrency();
   const { data: subjectsData, isLoading: isLoadingSubjects } = useSubjects();
 
+  const { data: fullTeacher, isLoading: isLoadingFullTeacher } = useTeacherById(isOpen && teacher ? teacher.id : undefined);
+  const teacherData = fullTeacher || teacher;
+
   const { register, handleSubmit, setValue, watch, control, reset, formState: { errors }, } = useForm<TeacherFormData>({
     resolver: zodResolver(getTeacherSchema(t)) as Resolver<TeacherFormData>,
   });
@@ -38,33 +42,33 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
   }, [currenciesData, language]);
 
   useEffect(() => {
-    if (teacher) {
-      console.log("==> EditTeacherModal Mount:", teacher);
+    if (teacherData) {
+      console.log("==> EditTeacherModal Mount:", teacherData);
 
       // Extract subject IDs directly from the API response
-      const subjectsArray = teacher.teacherSubjects || [];
+      const subjectsArray = teacherData.teacherSubjects || [];
       const subjectIds = subjectsArray.map((s: any) => String(s.subjectId || s.subject?.id)).filter(Boolean);
 
-      const currencyId = teacher.currencyId || '';
+      const currencyId = teacherData.currencyId || '';
 
       console.log("==> Extracted Data:", { subjectIds, currencyId });
 
       reset({
-        name: teacher.user?.name || '',
-        email: teacher.user?.email || '',
-        phone: teacher.user?.phone || '',
-        phone_code: teacher.user?.code_country || '+20',
-        password: '',
-        hourlyRate: teacher.hour_price || 0,
+        name: teacherData.user?.name || '',
+        email: teacherData.user?.email || '',
+        phone: teacherData.user?.phone || '',
+        phone_code: teacherData.user?.code_country || '+20',
+        password: teacherData.user?.password || '',
+        hourlyRate: teacherData.hour_price || 0,
         currency: currencyId,
-        nationality: teacher.nationality || '',
-        gender: (teacher.gender?.toLowerCase() as 'male' | 'female') || 'male',
-        status: teacher.active ? 'active' : 'inactive',
+        nationality: (teacherData.user as any)?.nationality || teacherData.nationality || '',
+        gender: (teacherData.gender?.toLowerCase() as 'male' | 'female') || 'male',
+        status: teacherData.active ? 'active' : 'inactive',
         subjects: subjectIds,
-        meeting_link: teacher.meeting_link || '',
+        meeting_link: teacherData.meeting_link || '',
       });
     }
-  }, [teacher, reset]);
+  }, [teacherData, reset]);
 
   const handleOnSubmit = async (data: TeacherFormData) => {
     await onSubmit(data);
@@ -114,6 +118,16 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
   }, []);
 
   if (!isOpen || !teacher) return null;
+
+  if (isLoadingFullTeacher) {
+    return (
+      <div className="fixed inset-0 !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl p-6 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
