@@ -8,18 +8,18 @@ import Pagination from '../../../components/ui/Pagination';
 import { useTranslation } from 'react-i18next';
 import { useStaff, useAddStaff, useUpdateStaff, useDeleteStaff } from '../hooks/useStaff';
 import { StuffItem } from '../../../types/sttuf';
-import { UserFormData } from '../../../lib/schemas/UserSchema';
+import { UserFormData, EditUserFormData } from '../../../lib/schemas/UserSchema';
 import { useConfirm } from '../../../hooks/useConfirm';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
 
-/** Map a StuffItem from the API to the flat shape the modals & table need */
 const toModalUser = (item: StuffItem) => ({
   id: item.id,
   name: item.user.name,
   email: item.user.email,
   phone: item.user.phone,
   countryCode: item.user.code_country || '+20',
-  role: item.role?.name || '',
+  role: item.roleId || '',
+  roleName: item.role?.name || '',
   status: (item.user.status as 'active' | 'inactive') || 'active',
   password: item.user.password || '',
   permissions: [] as string[],
@@ -80,7 +80,7 @@ export default function Users() {
     );
   };
 
-  const handleEditUser = async (userData: UserFormData & { id: string }) => {
+  const handleEditUser = async (userData: EditUserFormData & { id: string }) => {
     await updateStaff.mutateAsync(
       {
         id: userData.id,
@@ -245,7 +245,7 @@ export default function Users() {
                         />
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-sm text-purple-600 font-medium">{user.role}</span>
+                        <span className="text-sm text-purple-600 font-medium">{user.roleName}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span

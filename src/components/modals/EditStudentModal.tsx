@@ -28,7 +28,7 @@ export default function EditStudentModal({
   const { data: plansData } = usePlans();
   const [countryCodes] = useState<Array<{ name: string; phone_code: string; emoji?: string; iso2: string }>>(DEFAULT_COUNTRIES);
 
-  const { control, handleSubmit, register, reset, formState: { errors } } = useForm<EditStudentFormData>({
+  const { control, handleSubmit, register, reset, formState: { errors, dirtyFields } } = useForm<EditStudentFormData>({
     resolver: zodResolver(getStudentSchema(t)),
     defaultValues: studentData || undefined,
   });
@@ -45,7 +45,11 @@ export default function EditStudentModal({
 
 
   const handleEditSubmit = async (data: EditStudentFormData) => {
-    await onSubmit({ ...data, id: studentData.id });
+    const payload: any = { ...data, id: studentData.id };
+    if (!dirtyFields.email) {
+      delete payload.email;
+    }
+    await onSubmit(payload);
     onClose();
   };
   const uniqueCountryCodes = Array.from(

@@ -514,6 +514,10 @@ export default function Students() {
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             };
 
+            if (updatedData.email) {
+              payload.email = updatedData.email;
+            }
+
             if (updatedData.plan && updatedData.plan.trim() !== "") {
               payload.planId = updatedData.plan;
             } else {
