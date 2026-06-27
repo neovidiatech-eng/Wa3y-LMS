@@ -56,7 +56,8 @@ export default function EditUserModal({ isOpen, onClose, onSubmit, userData }: E
     if (userData && isOpen) {
       reset({ ...userData, password: '' })
     }
-  }, [userData, isOpen, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData?.id, isOpen]);
 
   if (!isOpen) return null;
 

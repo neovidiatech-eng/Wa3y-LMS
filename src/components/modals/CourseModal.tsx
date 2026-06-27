@@ -74,6 +74,7 @@ export default function CourseModal({
       description: '',
       category: subjectCategories.filter(c => c.id !== 'الكل' && c.id !== 'All')[0]?.id || '',
       videoUrl: '',
+      pdfUrl: '',
       thumbnailFile: null,
       thumbnailPreview: '',
       attachments: [],

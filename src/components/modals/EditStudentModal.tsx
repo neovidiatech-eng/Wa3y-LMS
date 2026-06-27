@@ -39,7 +39,8 @@ export default function EditStudentModal({
     if (isOpen && studentData) {
       reset(studentData);
     }
-  }, [isOpen, studentData, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, studentData?.id]);
 
   if (!isOpen || !studentData) return null;
 
