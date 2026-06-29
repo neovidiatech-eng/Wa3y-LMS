@@ -183,10 +183,14 @@ export default function AddSessionModal({
   }, [selectedTeacherData]);
 
   const subjectOptions = useMemo(() => {
-    return subjects.map((subject: TeacherSubject) => ({
-      value: String(subject.subject.id),
-      label: language === 'ar' ? subject.subject.name_ar : (subject.subject.name_en || subject.subject.name_ar),
-    }));
+    return subjects.map((subject: TeacherSubject) => {
+      const name = language === 'ar' ? subject.subject.name_ar : (subject.subject.name_en || subject.subject.name_ar);
+      return {
+        value: String(subject.subject.id),
+        label: name,
+        searchText: name,
+      };
+    });
   }, [subjects, language]);
 
   useEffect(() => {
@@ -410,6 +414,8 @@ export default function AddSessionModal({
                           (student: Student) => ({
                             value: String(student.id),
                             label: student.user.name,
+                                                        searchText: student.user.name,
+
                           })
                         ) || []
                       }
@@ -444,6 +450,8 @@ export default function AddSessionModal({
                           (teacher: Teacher) => ({
                             value: String(teacher.id),
                             label: teacher.user.name,
+                                                        searchText: teacher.user.name,
+
                           })
                         ) || []
                       }
