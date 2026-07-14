@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createTeacher, deleteTeacher, getTeacher, GetTeachersParams, getTeacherById, searchTeacher, updateTeacher } from "../services/TeacherServices"
-import { CreateTeacherInput , TeachersData, UpdateTeacherInput } from "../../../types/teachers"
+import { createTeacher, deleteTeacher, getTeacher, GetTeachersParams, getTeacherById, searchTeacher, updateTeacher, getTeacherStudentsForAdmin, assignStudentHourPrice } from "../services/TeacherServices"
+import { CreateTeacherInput, TeachersData, UpdateTeacherInput } from "../../../types/teachers"
 import { message } from "antd"
 
 export const useTeacher = (paramsOrSearch?: string | GetTeachersParams) => {
@@ -54,3 +54,22 @@ export const useCreateTeacher = () => {
     });
 }
 
+export const useTeacherStudentsForAdmin = (teacherId?: string) => {
+    return useQuery({
+        queryKey: ["teacher-students", teacherId],
+        queryFn: () => getTeacherStudentsForAdmin(teacherId!),
+        enabled: !!teacherId,
+    })
+}
+
+export const useAssignStudentHourPrice = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ teacherId, studentId, hour_price }: { teacherId: string, studentId: string, hour_price: number | string }) => assignStudentHourPrice(teacherId, studentId, hour_price),
+        onSuccess: (data: any, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["teacher-students", variables.teacherId] });
+            queryClient.invalidateQueries({ queryKey: ["teachers", variables.teacherId] });
+            message.success(data.message || 'Hour Price Assigned Successfully');
+        }
+    });
+}

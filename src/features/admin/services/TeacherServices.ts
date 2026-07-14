@@ -41,3 +41,16 @@ export const deleteTeacher = async (id: string): Promise<TeachersFetchResponse> 
     const response = await api.delete(`/teachers/delete/${id}`);
     return response.data
 }
+
+export const getTeacherStudentsForAdmin = async (teacherId: string) => {
+    const response = await api.get(`/teachers/my-students/${teacherId}`);
+    return response.data;
+}
+
+export const assignStudentHourPrice = async (teacherId: string, studentId: string, hour_price: number | string) => {
+    const response = await api.patch(`/teachers/my-students/${teacherId}/hour-price`, {
+        studentId,
+        hour_price
+    });
+    return response.data;
+}
