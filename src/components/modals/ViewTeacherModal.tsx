@@ -291,7 +291,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                             name: student.name || '',
                             currentPrice: student.hour_price
                          })}
-                         className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                         className="flex items-center gap-2 px-4 py-2 bg-[#31867B]/90 text-white hover:bg-[#31867B]/100 rounded-lg text-sm font-medium transition-colors"
                        >
                          <Settings className="w-4 h-4" />
                          {language === 'ar' ? 'تحديد السعر' : 'Set Price'}

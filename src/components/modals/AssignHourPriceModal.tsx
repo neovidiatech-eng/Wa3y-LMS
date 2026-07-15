@@ -103,7 +103,7 @@ export default function AssignHourPriceModal({
             <button
               type="submit"
               disabled={isPending || !hourPrice}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center min-w-[120px]"
+              className="px-6 py-2.5 bg-[#31867B] hover:bg-[#31867B]/90 text-white font-medium rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center min-w-[120px]"
             >
               {isPending ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
