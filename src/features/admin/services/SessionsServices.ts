@@ -69,7 +69,7 @@ export const createRecurringSchedule = async (
     scheduleData: CreateRecurringSessionBody
 ) => {
     const response = await api.post(
-        "/schedules/create-recurring/",
+        "/schedules/create-recurring",
         scheduleData
     );
     return response.data;
