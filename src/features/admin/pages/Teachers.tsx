@@ -166,7 +166,6 @@ export default function Teachers() {
       email: formData.email,
       phone: formData.phone,
       password: (formData.password && formData.password !== selectedTeacher?.user?.password) ? formData.password : undefined,
-      hour_price: Number(formData.hourlyRate),
       currency_id: formData.currency,
       gender: formData.gender as 'male' | 'female',
       active: formData.status === 'active',

@@ -59,7 +59,6 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
         phone: teacherData.user?.phone || '',
         phone_code: teacherData.user?.code_country || '+20',
         password: teacherData.user?.password || '',
-        hourlyRate: teacherData.hour_price || 0,
         currency: currencyId,
         nationality: (teacherData.user as any)?.nationality || teacherData.nationality || '',
         gender: (teacherData.gender?.toLowerCase() as 'male' | 'female') || 'male',
@@ -233,9 +232,8 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
               </div>
             </div>
 
-            {/* Row 4: Hourly Rate and Currency */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Currency */}
+            {/* Row 4: Currency */}
+            <div className="w-full">
               <Controller
                 name="currency"
                 control={control}
@@ -248,23 +246,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                   />
                 )}
               />
-
-              {/* Hourly Rate */}
-              <div className="text-start">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('hourlyRate')}
-                </label>
-                <input
-                  type="number"
-                  placeholder="150"
-                  {...register('hourlyRate')}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-start"
-                  dir="ltr"
-                />
-                {errors.hourlyRate && <p className="text-red-500 text-xs mt-1">{errors.hourlyRate.message}</p>}
-              </div>
             </div>
-
             {/* Row 4: Gender and Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Status */}

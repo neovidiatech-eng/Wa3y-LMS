@@ -33,7 +33,6 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
       phone: '',
       phone_code: '+20',
       password: '',
-      hourlyRate: 0,
       currency: '',
       nationality: '',
       gender: 'male',
@@ -208,9 +207,8 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
               </div>
             </div>
 
-            {/* Row 4: Hourly Rate and Currency */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Currency */}
+            {/* Row 4: Currency */}
+            <div className="w-full">
               <Controller
                 name="currency"
                 control={control}
@@ -223,20 +221,6 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                   />
                 )}
               />
-
-              {/* Hourly Rate */}
-              <div className="text-start">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('hourlyRate')}
-                </label>
-                <input
-                  type="number"
-                  placeholder="150"
-                  {...register('hourlyRate', { valueAsNumber: true })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
-                  dir="ltr"
-                />
-              </div>
             </div>
 
             {/* Row 4: Gender and Status */}

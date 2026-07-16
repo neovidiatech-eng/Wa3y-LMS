@@ -103,7 +103,6 @@ export interface CreateTeacherInput {
     nationality: string;
     currency_id: string;
     gender: 'male' | 'female';
-    hour_price: number;
     active: boolean;
     subject_ids: string[];
     meeting_link?: string;
@@ -119,7 +118,6 @@ export interface UpdateTeacherInput {
     currency_id: string;
     nationality: string;
     gender: 'male' | 'female';
-    hour_price: number;
     active: boolean;
     subject_ids: string[];
     timezone?: string;

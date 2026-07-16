@@ -16,9 +16,6 @@ export const getTeacherSchema = (t: TFunc) => z.object({
       t("validation.passwordComplex")
     ),
   nationality: z.string().min(1, t("validation.required")),
-
-  hourlyRate: z.coerce.number().min(0, t("validation.required")),
-
   currency: z.string().min(1, t("validation.required")),
   gender: z.enum(['male', 'female']),
   status: z.enum(['active', 'inactive']),
