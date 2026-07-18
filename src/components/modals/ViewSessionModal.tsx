@@ -9,9 +9,12 @@ import {
   ExternalLink,
   Repeat,
   Edit,
+  Loader2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Schedule } from "../../types/scheduales";
+import { useGetBatchSchedules } from "../../features/admin/hooks/useSchedules";
+import { useMemo } from "react";
 
 interface ViewSessionModalProps {
   isOpen: boolean;
@@ -26,12 +29,26 @@ export default function ViewSessionModal({
   isOpen,
   onClose,
   session,
-  groupedSessions,
+  groupedSessions: initialGroupedSessions,
   allSessions = [],
   onEditSession,
 }: ViewSessionModalProps) {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split("-")[0];
+
+  const { data: allSchedulesData, isLoading: isFetchingBatch } = useGetBatchSchedules(session?.parent_recurring_id, isOpen);
+
+  const groupedSessions = useMemo(() => {
+    if (!session?.parent_recurring_id) {
+      return initialGroupedSessions || (session ? [session] : []);
+    }
+    if (allSchedulesData?.data?.schedule) {
+      return allSchedulesData.data.schedule.filter(
+        (s) => s.parent_recurring_id === session.parent_recurring_id
+      );
+    }
+    return initialGroupedSessions || [];
+  }, [session, allSchedulesData, initialGroupedSessions]);
 
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -300,15 +317,20 @@ export default function ViewSessionModal({
           <div className="w-full lg:w-[42%] bg-[#fcfdfe] border-l border-gray-100/80 flex flex-col overflow-hidden">
             {/* Recurring Sessions Header */}
             {(session.is_recurring || session.parent_recurring_id) &&
-            groupedSessions &&
-            groupedSessions.length > 1 ? (
+              groupedSessions &&
+              groupedSessions.length > 1 ? (
               <>
                 <div className="p-6 border-b border-gray-100/50 flex items-center justify-between bg-white/50 backdrop-blur-sm shrink-0">
                   <div className="flex items-center gap-2">
                     <Repeat className="w-4 h-4 text-indigo-500" />
-                    <h3 className="font-bold text-gray-900 text-sm">
-                      {t("recurringSessions")}
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-gray-900 text-sm">
+                        {t("recurringSessions")}
+                      </h3>
+                      {isFetchingBatch && (
+                        <Loader2 className="w-4 h-4 text-indigo-400 animate-spin" />
+                      )}
+                    </div>
                   </div>
                   <span className="px-3 py-1 bg-primary-50 text-indigo-600 border border-indigo-100 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-sm">
                     {groupedSessions.length} {t("sessions")}
@@ -323,11 +345,10 @@ export default function ViewSessionModal({
                     return (
                       <div
                         key={s.id}
-                        className={`bg-white border rounded-2xl p-4 transition-all ${
-                          isCurrent
+                        className={`bg-white border rounded-2xl p-4 transition-all ${isCurrent
                             ? "border-indigo-200 ring-2 ring-indigo-500/10 shadow-sm"
                             : "border-gray-100 hover:border-gray-200"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex-1">

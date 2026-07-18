@@ -59,6 +59,14 @@ export const useGetSchedulesByTeacher = (teacherId: string) => {
   });
 };
 
+export const useGetBatchSchedules = (parent_recurring_id?: string | null, isOpen?: boolean) => {
+  return useQuery({
+    queryKey: ["schedules", "batch", parent_recurring_id],
+    queryFn: () => getAllSchedules(1, 1000),
+    enabled: !!parent_recurring_id && !!isOpen,
+  });
+};
+
 export const useCreateSchedule = () => {
   const queryClient = useQueryClient();
   return useMutation({

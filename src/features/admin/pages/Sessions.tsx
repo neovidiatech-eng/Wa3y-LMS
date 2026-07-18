@@ -136,7 +136,7 @@ export default function Sessions() {
     }
   };
 
- 
+
 
   useEffect(() => {
     if (searchTerm.length > 2) {
@@ -226,15 +226,15 @@ export default function Sessions() {
 
   const calculateDuration = (startTime: any, endTime: any) => {
     if (!startTime || !endTime) return 0;
-    
+
     // Check if they are full ISO/Date strings by trying to parse them with Date
     const start = new Date(startTime).getTime();
     const end = new Date(endTime).getTime();
-    
+
     if (!isNaN(start) && !isNaN(end)) {
       return Math.max(0, Math.round((end - start) / 60000));
     }
-    
+
     // If not parseable as full dates, fall back to "HH:MM" string split
     try {
       const getMinutes = (timeStr: string) => {
@@ -245,7 +245,7 @@ export default function Sessions() {
         const m = Number(parts[1]) || 0;
         return h * 60 + m;
       };
-      
+
       const startTotal = getMinutes(String(startTime));
       const endTotal = getMinutes(String(endTime));
       let diff = endTotal - startTotal;
@@ -350,7 +350,7 @@ export default function Sessions() {
                 <Plus className="w-5 h-5" />
                 {t("singleSession")}
               </button>
-            
+
             </div>
           </div>
 
@@ -491,10 +491,10 @@ export default function Sessions() {
                         onClick={() => {
                           const grouped = session.parent_recurring_id
                             ? scheduleData.filter(
-                                (s: Schedule) =>
-                                  s.parent_recurring_id ===
-                                  session.parent_recurring_id,
-                              )
+                              (s: Schedule) =>
+                                s.parent_recurring_id ===
+                                session.parent_recurring_id,
+                            )
                             : [session];
                           setGroupedSessions(grouped);
                           setSelectedSession(session);
@@ -509,10 +509,10 @@ export default function Sessions() {
                         onClick={() => {
                           const grouped = session.parent_recurring_id
                             ? scheduleData.filter(
-                                (s: Schedule) =>
-                                  s.parent_recurring_id ===
-                                  session.parent_recurring_id,
-                              )
+                              (s: Schedule) =>
+                                s.parent_recurring_id ===
+                                session.parent_recurring_id,
+                            )
                             : [session];
                           setGroupedSessions(grouped);
                           setSelectedSession(session);
