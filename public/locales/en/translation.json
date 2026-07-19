@@ -38,6 +38,7 @@
   "english": "English",
   "registerNewStudent": "Register New Student",
   "joinAcademy": "Join Waay Academy and start your educational journey",
+  "joinAcademyTeacher": "Join the teaching staff at Waay Academy and start your journey with us",
   "fullName": "Full Name",
   "phoneNumber": "Phone Number",
   "choosePackage": "Choose Package",
@@ -605,6 +606,7 @@
     "noUpcomingSessions": "No upcoming sessions",
     "scheduledSessionsAppear": "Scheduled sessions will appear here"
   },
+  "registerNewTeacher": "Register New Teacher",
   "common": {
     "retry": "Retry"
   },

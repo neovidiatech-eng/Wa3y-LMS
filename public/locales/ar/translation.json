@@ -38,6 +38,7 @@
   "english": "English",
   "registerNewStudent": "تسجيل طالب جديد",
   "joinAcademy": "انضم إلى أكاديمية وعي وابدأ رحلتك التعليمية",
+  "joinAcademyTeacher": "انضم إلى طاقم التدريس في أكاديمية وعي وابدأ رحلتك معنا",
   "fullName": "الاسم الكامل",
   "phoneNumber": "رقم الهاتف",
   "choosePackage": "اختر الباقة",
@@ -605,6 +606,7 @@
     "noUpcomingSessions": "لا توجد حصص قادمة",
     "scheduledSessionsAppear": "ستظهر الحصص المجدولة هنا"
   },
+  "registerNewTeacher": "اضافة معلم جديد",
   "common": {
     "retry": "إعادة المحاولة"
   },

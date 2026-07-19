@@ -19,7 +19,8 @@ import { googleClientId } from './components/constants';
 // --- Lazy Loading Core Layouts & Pages ---
 const AuthLayout = lazy(() => import('./pages/AuthLayout/AuthLayout'));
 const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
+const Register = lazy(() => import('./pages/StudentRegister'));
+const TeacherRegister = lazy(() => import('./pages/TeacherRegister'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const VerifyAccount = lazy(() => import('./pages/VerifyAccount'));
@@ -97,6 +98,7 @@ function FCMProvider() {
                         <Route element={<AuthLayout />}>
                           <Route path="/login" element={<Login onLoginSuccess={handleLogin} />} />
                           <Route path="/register" element={<Register onRegisterSuccess={handleLogin} />} />
+                          <Route path="/teacher-register" element={<TeacherRegister />} />
                           <Route path="/forgot-password" element={<ForgotPassword />} />
                           <Route path="/reset-password" element={<ResetPassword />} />
                           <Route path="/verify-account" element={<VerifyAccount onVerifySuccess={handleLogin} />} />

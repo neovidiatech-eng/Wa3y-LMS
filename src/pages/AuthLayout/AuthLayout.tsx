@@ -12,7 +12,8 @@ const AuthLayout = () => {
 
   const isLogin = location.pathname === "/login";
   const isRegister = location.pathname === "/register";
-  const isAuthTab = isLogin || isRegister;
+  const isTeacherRegister = location.pathname === "/teacher-register";
+  const isAuthTab = isLogin || isRegister || isTeacherRegister;
 
   return (
     <div
@@ -48,10 +49,14 @@ const AuthLayout = () => {
           {/* Core Brand Message */}
           <div className="relative z-10 my-auto py-8 text-start">
             <h1 className="text-3xl font-bold leading-tight mb-4">
-              {language === 'ar' ? 'رحلتك نحو المعرفة والتميز تبدأ من هنا' : 'Your Journey to Knowledge & Excellence Starts Here'}
+              {isTeacherRegister
+                ? (language === 'ar' ? 'انضم إلى فريق المدرسين في أكاديمية وعي' : 'Join the Teaching Team at Waay Academy')
+                : (language === 'ar' ? 'رحلتك نحو المعرفة والتميز تبدأ من هنا' : 'Your Journey to Knowledge & Excellence Starts Here')}
             </h1>
             <p className="text-white/80 text-sm leading-relaxed mb-8">
-              {t("academyDescription")}
+              {isTeacherRegister 
+                ? (language === 'ar' ? 'نحن نبحث دائمًا عن معلمين متميزين للانضمام إلى أكاديميتنا وتقديم محتوى تعليمي هادف لطلابنا. سجل الآن لتكون جزءاً من نجاحنا.' : 'We are always looking for outstanding teachers to join our academy and deliver meaningful educational content. Register now to be part of our success.')
+                : t("academyDescription")}
             </p>
             
             {/* Quick trust metrics or features */}
@@ -59,19 +64,25 @@ const AuthLayout = () => {
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#daad15] shadow-lg shadow-[#daad15]/50" />
                 <span className="text-xs font-semibold text-white/90">
-                  {language === 'ar' ? 'نخبة من أفضل المعلمين والمعلمات' : 'Elite Certified Instructors'}
+                  {isTeacherRegister 
+                    ? (language === 'ar' ? 'بيئة عمل احترافية وداعمة' : 'Professional & Supportive Work Environment')
+                    : (language === 'ar' ? 'نخبة من أفضل المعلمين والمعلمات' : 'Elite Certified Instructors')}
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#daad15] shadow-lg shadow-[#daad15]/50" />
                 <span className="text-xs font-semibold text-white/90">
-                  {language === 'ar' ? 'مناهج دراسية متكاملة وحديثة' : 'Modern & Comprehensive Curriculum'}
+                  {isTeacherRegister 
+                    ? (language === 'ar' ? 'الوصول إلى آلاف الطلاب الطموحين' : 'Reach Thousands of Ambitious Students')
+                    : (language === 'ar' ? 'مناهج دراسية متكاملة وحديثة' : 'Modern & Comprehensive Curriculum')}
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#daad15] shadow-lg shadow-[#daad15]/50" />
                 <span className="text-xs font-semibold text-white/90">
-                  {language === 'ar' ? 'جلسات تفاعلية مباشرة ومواعيد مرنة' : 'Live Interactive Sessions & Flexible Schedules'}
+                  {isTeacherRegister 
+                    ? (language === 'ar' ? 'تطوير مستمر ومردود مادي مجزي' : 'Continuous Development & Rewarding Compensation')
+                    : (language === 'ar' ? 'جلسات تفاعلية مباشرة ومواعيد مرنة' : 'Live Interactive Sessions & Flexible Schedules')}
                 </span>
               </div>
             </div>
@@ -134,7 +145,19 @@ const AuthLayout = () => {
                 >
                   {language === "ar" ? "تسجيل طالب جديد" : "Register New Student"}
                 </button>
+
+                <button
+                  onClick={() => navigate("/teacher-register")}
+                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${
+                    isTeacherRegister
+                      ? "bg-white text-primary shadow-md shadow-slate-200/50 border border-slate-100/50"
+                      : "text-slate-500 hover:text-slate-800 hover:bg-slate-100/50"
+                  }`}
+                >
+                  {language === "ar" ? "تسجيل معلم جديد" : "Register New Teacher"}
+                </button>
               </div>
+              
             )}
 
             {/* Render forms here */}
