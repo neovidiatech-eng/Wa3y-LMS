@@ -91,7 +91,7 @@ export default function Sessions() {
           startTime: session.time || formData.startTime || '14:00',
         }));
 
-        await createRecurringSchedule.mutateAsync({
+        const res = await createRecurringSchedule.mutateAsync({
           studentId: formData.student,
           teacherId: formData.teacher,
           subject_id: formData.subject,
@@ -102,13 +102,15 @@ export default function Sessions() {
           notification_Time: formData.notification_Time || '10',
           sessions: mappedSessions,
         });
+
+        return res?.data;
       } else {
         // Single Session Scheduling
         const [year, month, day] = data.sessionDate.split("-").map(Number);
         const [hour, minute] = data.startTime.split(":").map(Number);
         const localDate = new Date(year, month - 1, day, hour, minute);
 
-        await createSchedule.mutateAsync({
+        const res = await createSchedule.mutateAsync({
           studentId: data.student,
           teacherId: data.teacher,
           subject_id: data.subject,
@@ -120,8 +122,9 @@ export default function Sessions() {
           // type: data.type,
           notification_Time: data.notification_Time,
         });
+        
+        return res?.data;
       }
-      setShowAddModal(false);
     } catch (error) {
       console.error("Add session failed:", error);
       throw error;

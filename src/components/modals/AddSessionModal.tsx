@@ -44,7 +44,7 @@ import { TeacherSubject } from '../../types/teachers';
 interface AddSessionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (data: any) => Promise<void>;
+  onAdd: (data: any) => Promise<{ conflicts: { date: string; conflict: string }[] } | void>;
 }
 
 const DAYS: DayOfWeek[] = [
@@ -70,6 +70,7 @@ export default function AddSessionModal({
     'single'
   );
   const [sessionsLimitError, setSessionsLimitError] = useState('');
+  const [apiConflicts, setApiConflicts] = useState<{date: string, conflict: string}[]>([]);
 
   const { data: students } = useStudents({ limit: 1000 });
   const { data: instructors } = useTeacher({ limit: 100 });
@@ -343,6 +344,8 @@ export default function AddSessionModal({
         endTime: newEndTime,
       },
     }));
+    // Clear conflicts when user modifies a session (conflict may be resolved)
+    setApiConflicts([]);
   };
 
   const handleDeleteSession = (id: string) => {
@@ -353,10 +356,16 @@ export default function AddSessionModal({
         deleted: true,
       },
     }));
+    // Remove conflict for deleted session
+    setApiConflicts((prev) => prev.filter((c) => {
+      const session = previewSessions.find((s) => s.id === id);
+      return session ? c.date !== session.date : true;
+    }));
   };
 
   const handleResetSessions = () => {
     setCustomSessionMap({});
+    setApiConflicts([]);
   };
 
   const remainingSessions = Number(studentPlanInfo?.sessionsRemaining) || 0;
@@ -406,8 +415,9 @@ export default function AddSessionModal({
       return;
     }
 
+    let result;
     if (schedulingMode === 'single') {
-      await onAdd(data as SessionFormData);
+      result = await onAdd(data as SessionFormData);
     } else {
       const batchData: MultipleSessionsPayload & {
         isCustomized?: boolean;
@@ -429,11 +439,17 @@ export default function AddSessionModal({
         })),
       };
 
-      await onAdd(batchData);
+      result = await onAdd(batchData);
+    }
+
+    if (result && result.conflicts && result.conflicts.length > 0) {
+      setApiConflicts(result.conflicts);
+      return; // Do not close modal, so user can fix conflicts
     }
 
     reset();
     setCustomSessionMap({});
+    setApiConflicts([]);
     onClose();
   };
 
@@ -462,7 +478,10 @@ export default function AddSessionModal({
           </div>
 
           <button
-            onClick={onClose}
+            onClick={() => {
+              setApiConflicts([]);
+              onClose();
+            }}
             className="p-2 rounded-full hover:bg-gray-100 transition"
           >
             <X className="w-5 h-5 text-gray-500" />
@@ -729,7 +748,10 @@ export default function AddSessionModal({
 
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => {
+                  setApiConflicts([]);
+                  onClose();
+                }}
                 className="secondary-btn"
               >
                 {t('cancel')}
@@ -737,8 +759,19 @@ export default function AddSessionModal({
 
               <button
                 type="submit"
-                disabled={sessionsExceedRemaining}
-                className={`primary-btn ${sessionsExceedRemaining ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={sessionsExceedRemaining || (schedulingMode === 'batch' && apiConflicts.length > 0)}
+                className={`primary-btn ${
+                  sessionsExceedRemaining || (schedulingMode === 'batch' && apiConflicts.length > 0)
+                    ? 'opacity-50 cursor-not-allowed'
+                    : ''
+                }`}
+                title={
+                  schedulingMode === 'batch' && apiConflicts.length > 0
+                    ? (language === 'ar'
+                        ? 'يرجى حل تعارضات المواعيد قبل المتابعة'
+                        : 'Please resolve schedule conflicts before proceeding')
+                    : undefined
+                }
               >
                 {schedulingMode === 'single'
                   ? t('addSession_create')
@@ -761,6 +794,7 @@ export default function AddSessionModal({
             onDeleteSession={handleDeleteSession}
             onResetSessions={handleResetSessions}
             hasCustomizations={hasCustomizations}
+            apiConflicts={apiConflicts}
           />
         </form>
 

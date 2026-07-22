@@ -27,6 +27,7 @@ interface SessionPreviewProps {
   onDeleteSession?: (id: string) => void;
   onResetSessions?: () => void;
   hasCustomizations?: boolean;
+  apiConflicts?: {date: string, conflict: string}[];
 }
 
 const calcEndTime = (startTimeStr: string, durationMinutes: number = 60): string => {
@@ -73,6 +74,7 @@ export default function SessionPreview({
   onDeleteSession,
   onResetSessions,
   hasCustomizations = false,
+  apiConflicts = [],
 }: SessionPreviewProps) {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split('-')[0];
@@ -160,6 +162,8 @@ export default function SessionPreview({
 
             const formattedStartTime = formatTime12Hour(displayStartTime, language);
             const formattedEndTime = formatTime12Hour(displayEndTime, language);
+            
+            const conflictForSession = apiConflicts.find(c => c.date === session.date);
 
             return (
               <div
@@ -287,7 +291,7 @@ export default function SessionPreview({
                               className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                               title={t('edit') || 'Edit'}
                             >
-                              <Edit2 className="w-3.5 h-3.5" />
+                              <Edit2 className="w-4 h-4" />
                             </button>
                           )}
                           {onDeleteSession && (
@@ -297,11 +301,18 @@ export default function SessionPreview({
                               className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title={t('delete') || 'Delete'}
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           )}
                         </div>
                       </div>
+                      {conflictForSession && (
+                        <div className="mt-2 text-[11.5px] font-bold text-red-500">
+                          {conflictForSession.conflict === 'STUDENT_NOT_AVAILABLE'
+                            ? (language === 'ar' ? 'الطالب غير متوفر في هذا الميعاد' : 'Student is not available at this time')
+                            : (language === 'ar' ? 'المعلم غير متوفر في هذا الميعاد' : 'Teacher is not available at this time')}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
