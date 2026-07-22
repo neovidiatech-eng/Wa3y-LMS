@@ -450,5 +450,13 @@
   "searchPermissions": "Search permissions by name, code, or action...",
   "addedSuccessfully": "Added successfully",
   "updatedSuccessfully": "Updated successfully",
-  "noData": "No data found"
+  "noData": "No data found",
+  "sidebar_notifications": "Notifications",
+  "status_scheduled": "Scheduled",
+  "status_planned": "Planned",
+  "status_completed": "Completed",
+  "status_cancelled": "Cancelled",
+  "teacher_label": "Teacher",
+  "student_label": "Student",
+  "status_label": "Status"
 }

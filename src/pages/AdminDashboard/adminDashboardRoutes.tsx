@@ -263,7 +263,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
   },
   {
     id: "notifications",
-    label: "الإشعارات",
+    label: "sidebar_notifications",
     icon: AlertCircle,
     path: "notifications",
     element: <NotificationsPage />,

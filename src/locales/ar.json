@@ -450,5 +450,13 @@
   "searchPermissions": "ابحث بالاسم أو الكود أو النوع...",
   "addedSuccessfully": "تمت الإضافة بنجاح",
   "updatedSuccessfully": "تم التحديث بنجاح",
-  "noData": "لا توجد بيانات"
+  "noData": "لا توجد بيانات",
+  "sidebar_notifications": "الإشعارات",
+  "status_scheduled": "مجدولة",
+  "status_planned": "مخطط لها",
+  "status_completed": "مكتملة",
+  "status_cancelled": "ملغاة",
+  "teacher_label": "المعلم",
+  "student_label": "الطالب",
+  "status_label": "الحالة"
 }

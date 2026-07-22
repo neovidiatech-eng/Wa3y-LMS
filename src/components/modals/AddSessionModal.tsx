@@ -123,6 +123,7 @@ export default function AddSessionModal({
       language: language === 'ar' ? 'ar' : 'en',
     },
   });
+  
 
   const watchTitle = watch('title');
   const watchSubject = watch('subject');
@@ -130,6 +131,7 @@ export default function AddSessionModal({
   const watchType = watch('type') as 'full' | 'half';
   const watchStartTime = watch('startTime');
   const watchTeacher = watch('teacher');
+
 
   const watchSelectedDays =
     (watch('selectedDays') as DayOfWeek[]) || [];

@@ -617,5 +617,13 @@
   "noLogs": "لا توجد سجلات حالياً",
   "logs": "السجلات",
   "endSession": "إنهاء الحصة",
-  "renewSubscription": "تجديد الاشتراك"
+  "renewSubscription": "تجديد الاشتراك",
+  "sidebar_notifications": "الإشعارات",
+  "status_scheduled": "مجدولة",
+  "status_planned": "مخطط لها",
+  "status_completed": "مكتملة",
+  "status_cancelled": "ملغاة",
+  "teacher_label": "المعلم",
+  "student_label": "الطالب",
+  "status_label": "الحالة"
 }
