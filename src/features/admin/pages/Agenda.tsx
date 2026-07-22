@@ -335,7 +335,7 @@ export default function Agenda() {
                       <span className={`text-xs px-2.5 py-1 rounded-full font-bold border ${badge.className}`}>
                         {badge.label}
                       </span>
-                      {s.title && <p className="font-bold text-gray-900 text-base">{s.title}</p>}
+                      {/* {s.title && <p className="font-bold text-gray-900 text-base">{s.title}</p>} */}
                     </div>
 
                     <div className="text-xs text-gray-600 space-y-1 pt-1 border-t border-gray-100">

@@ -75,7 +75,7 @@ export default function Dashboard() {
   const { data: stats, isLoading, isError } = useAdminDashboard();
   const { data: logsData, isLoading: logsLoading } = useActivityLogs();
   const { data: studentsResponse } = useStudents({ limit: 1000 });
-  const { data: teachersResponse } = useTeacher({ limit: 1000 });
+  const { data: teachersResponse } = useTeacher({ limit: 100 });
 
   const studentMap = useMemo(() => {
     const map = new Map<string, string>();
