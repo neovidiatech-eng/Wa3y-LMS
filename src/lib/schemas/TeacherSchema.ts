@@ -27,6 +27,9 @@ export const getTeacherSchema = (t: TFunc) => z.object({
     z.string().url(t("validation.url")).optional()
   ),
   timezone: z.string().optional(),
+  country: z.string().optional(),
+  age: z.string().optional(),
+  city: z.string().optional(),
 });
 
 export type TeacherFormData = z.infer<ReturnType<typeof getTeacherSchema>>;

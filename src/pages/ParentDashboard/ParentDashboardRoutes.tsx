@@ -28,14 +28,14 @@ const NotificationsPage = lazy(() => import('../../features/admin/pages/Notifica
 export const parentDashboardRoutes: ParentRouteConfig[] = [
       {
         id: 'parent-children',
-        label: 'أبنائي',
+        label: 'sidebar_my_children',
         icon: Users,
         path: 'children',
         element: <ChildrenPage />,
       },
       {
         id: 'child-dashboard',
-        label: 'لوحة الطالب',
+        label: 'sidebar_student_dashboard',
         path: 'children/:studentId/:tab',
         element: <ChildDashboard />,
       },
@@ -62,7 +62,7 @@ export const parentDashboardRoutes: ParentRouteConfig[] = [
       },
       {
         id: 'notifications',
-        label: 'الإشعارات',
+        label: 'sidebar_notifications',
         icon: AlertCircle,
         path: 'notifications',
         element: <NotificationsPage />,

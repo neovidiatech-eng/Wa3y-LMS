@@ -452,5 +452,8 @@
   "searchPermissions": "ابحث بالاسم أو الكود أو النوع...",
   "addedSuccessfully": "تمت الإضافة بنجاح",
   "updatedSuccessfully": "تم التحديث بنجاح",
-  "noData": "لا توجد بيانات"
+  "noData": "لا توجد بيانات",
+  "sidebar_notifications": "الإشعارات",
+  "sidebar_my_children": "أبنائي",
+  "sidebar_student_dashboard": "لوحة الطالب"
 }

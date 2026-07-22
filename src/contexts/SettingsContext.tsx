@@ -34,7 +34,7 @@ export interface PlatformSettings {
 }
 
 const defaultSettings: PlatformSettings = {
-  name: 'Waay Academy',
+  name: 'Waai Academy',
   description: 'Modern learning management platform for students, teachers, parents, and academy admins.',
   logoUrl: '/logo.png',
   faviconUrl: '/logo.png',
@@ -43,9 +43,9 @@ const defaultSettings: PlatformSettings = {
   accentColor: '#06b6d4',
   fontFamily: 'Almarai',
   seo: {
-    metaTitle: 'Waay Academy | أكاديمية وعي | Learning Management System',
-    metaDescription: 'Waay Academy - أكاديمية وعي is a modern learning management platform for students, teachers, parents, and academy admins.',
-    keywords: 'Waay Academy, أكاديمية وعي, LMS, learning management system, online education, courses, students, teachers, academy',
+    metaTitle: 'Waai Academy | أكاديمية وعي | Learning Management System',
+    metaDescription: 'Waai Academy - أكاديمية وعي is a modern learning management platform for students, teachers, parents, and academy admins.',
+    keywords: 'Waai Academy, أكاديمية وعي, LMS, learning management system, online education, courses, students, teachers, academy',
     ogImage: '/logo.png',
     robotsIndex: true,
   },

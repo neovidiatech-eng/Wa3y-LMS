@@ -40,11 +40,12 @@ export interface CreateRecurringSchedulePayload {
     description?: string;
     link?: string;
     notes?: string;
-    startTime: string;
-    days: DayOfWeek[];
-    startDate: string;
-    endDate: string;
+    startTime?: string;
+    days?: DayOfWeek[];
+    startDate?: string;
+    endDate?: string;
     notification_Time: string;
+    sessions?: { date: string; startTime: string }[];
     // type: ScheduleType;
 }
 

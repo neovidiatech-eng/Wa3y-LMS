@@ -11,7 +11,10 @@ export const getPlanSchema = (t: TFunc) => z.object({
   duration: z.coerce.number().min(1, t("validation.min", { count: 1 })),
   sessionsCount: z.coerce.number().min(0),
   sessionTime: z.coerce.number().min(1, t("validation.required")),
+  planType: z.enum(['single', 'group']),
+  studentsNum: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 2, "There must be at least 2 students for a group plan"),
   features: z.array(z.string()).optional().default([]),
+  color: z.string().optional().default('#3b82f6'),
   isPopular: z.boolean(),
   status: z.enum(['active', 'inactive']),
 });

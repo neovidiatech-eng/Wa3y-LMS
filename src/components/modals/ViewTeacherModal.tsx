@@ -74,7 +74,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
         dir={language === 'ar' ? 'rtl' : 'ltr'}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-50">
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-bold text-gray-900">{activeTeacher.user?.name}</h2>
             {isLoading && (
@@ -106,7 +106,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
               </div>
             )}
 
-            {/* Contact */}
+            {/* Contact & Personal Info */}
             <div className="flex items-center gap-4 mb-4 flex-wrap justify-center">
               <a
                 href={`tel:${activeTeacher.user?.code_country}${activeTeacher.user?.phone}`}
@@ -122,6 +122,20 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                 <Mail className="w-4 h-4" />
                 <span className="text-sm">{activeTeacher.user?.email}</span>
               </a>
+
+              {activeTeacher.user?.city && (
+                <div className="flex items-center gap-2 text-gray-600">
+                  <span className="text-sm font-medium">{language === 'ar' ? 'المدينة:' : 'City:'}</span>
+                  <span className="text-sm">{activeTeacher.user?.city}</span>
+                </div>
+              )}
+
+              {activeTeacher.user?.age && (
+                <div className="flex items-center gap-2 text-gray-600">
+                  <span className="text-sm font-medium">{language === 'ar' ? 'السن:' : 'Age:'}</span>
+                  <span className="text-sm">{activeTeacher.user?.age}</span>
+                </div>
+              )}
             </div>
 
             {/* Subjects */}

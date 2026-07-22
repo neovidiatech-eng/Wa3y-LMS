@@ -9,6 +9,8 @@ export interface UserDetails {
     phone: string;
     password:string;
     code_country: string;
+    age?: string | number;
+    city?: string;
     status: string;
     confirmAt: string | null;
     createdAt: string;

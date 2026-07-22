@@ -11,6 +11,7 @@ import { useCurrency } from '../../features/admin/hooks/useCurrency';
 import { useSubjects } from '../../features/admin/hooks/useSubjects';
 import { CustomCheckbox } from '../ui/CustomCheckbox';
 import { DEFAULT_COUNTRIES } from '../../consts/countries';
+import { useGetCities } from '../../features/teacher/hooks/useCity';
 
 interface EditTeacherModalProps {
   isOpen: boolean;
@@ -65,6 +66,9 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
         status: teacherData.active ? 'active' : 'inactive',
         subjects: subjectIds,
         meeting_link: teacherData.meeting_link || '',
+        country: teacherData.country || 'Egypt',
+        city: teacherData.city || '',
+        age: teacherData.age || '',
       });
     }
   }, [teacherData, reset]);
@@ -116,7 +120,19 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
     }));
   }, []);
 
-  if (!isOpen || !teacher) return null;
+  const selectedCountry = watch("country");
+  const selectedCountryObj = DEFAULT_COUNTRIES.find((c) => c.name === selectedCountry);
+  const iso2 = selectedCountryObj?.iso2?.toLowerCase() || "eg";
+  const { data: citiesData } = useGetCities(iso2);
+  const cityOptions = citiesData ? citiesData.map((city: any) => ({
+    value: city.name,
+    label: city.name
+  })) : [];
+
+  const countries = DEFAULT_COUNTRIES.map((c) => ({
+    value: c.name,
+    label: `${c.emoji} ${displayNames.of(c.iso2) || c.name}`,
+  }));
 
   if (isLoadingFullTeacher) {
     return (
@@ -127,6 +143,8 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
       </div>
     );
   }
+
+  if (!isOpen || !teacher) return null;
 
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -148,19 +166,18 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
           <div className="p-6 space-y-6 flex-1">
             {/* Row 1: Name and Email */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Email */}
+              {/* Age */}
               <div className="text-start">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('email')} *
+                  {language === 'ar' ? 'السن' : 'Age'}
                 </label>
                 <input
-                  type="email"
-                  placeholder="example@email.com"
-                  {...register('email')}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-start"
-                  dir="ltr"
+                  type="text"
+                  placeholder="ex: 30"
+                  {...register('age')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age.message}</p>}
               </div>
 
               {/* Name */}
@@ -232,8 +249,8 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
               </div>
             </div>
 
-            {/* Row 4: Currency */}
-            <div className="w-full">
+            {/* Row 4: Currency and Age */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
                 name="currency"
                 control={control}
@@ -243,6 +260,51 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                     value={field.value}
                     options={currencyOptions}
                     onChange={field.onChange}
+                  />
+                )}
+              />
+
+              {/* Email */}
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('email')} *
+                </label>
+                <input
+                  type="email"
+                  placeholder="example@email.com"
+                  {...register('email')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-start"
+                  dir="ltr"
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+            </div>
+
+            {/* Row 4.5: Country and City */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Controller
+                name="country"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('country')}
+                    value={field.value}
+                    options={countries}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+
+              <Controller
+                name="city"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={language === 'ar' ? 'المدينة' : 'City'}
+                    value={field.value}
+                    options={cityOptions}
+                    onChange={field.onChange}
+                    placeholder={language === 'ar' ? 'اختر المدينة' : 'Select City'}
                   />
                 )}
               />

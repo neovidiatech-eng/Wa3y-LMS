@@ -176,7 +176,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         {/* Login Button */}
         <button
           type="submit"
-          className="w-full h-14 bg-gradient-to-r from-primary to-primary-dark text-white rounded-2xl font-bold hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.99] border-none outline-none cursor-pointer text-base"
+          className="w-full h-14 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-[#1a4f47] text-white rounded-2xl font-bold hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.99] border-none outline-none cursor-pointer text-base"
         >
           <span>{t("login")}</span>
           <ArrowIcon className="w-5 h-5 animate-pulse" />

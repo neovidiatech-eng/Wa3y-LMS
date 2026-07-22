@@ -30,6 +30,9 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
       duration: 1,
       sessionsCount: 0,
       sessionTime: 60,
+      planType: "single",
+      studentsNum: "2",
+      color: "#3b82f6",
       features: [''],
       isPopular: false,
       status: 'active',
@@ -37,6 +40,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
 
   });
   const features = watch('features') || [];
+  const planType = watch('planType');
   const addFeature = () => {
     setValue('features', [...features, '']);
   };
@@ -84,6 +88,9 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
           duration: 1,
           sessionsCount: 0,
           sessionTime: 60,
+          planType: "single",
+          studentsNum: "2",
+          color: "#3b82f6",
           features: [''],
           isPopular: false,
           status: 'active',
@@ -99,6 +106,11 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
     title: { ar: initialData ? 'تعديل خطة' : 'إضافة خطة جديدة', en: initialData ? 'Edit Plan' : 'Add New Plan' },
     nameAr: { ar: 'اسم الخطة (عربي)', en: 'Plan Name (Arabic)' },
     nameEn: { ar: 'اسم الخطة (إنجليزي)', en: 'Plan Name (English)' },
+    planType: { ar: 'نوع الخطة', en: 'Plan Type' },
+    single: { ar: 'حصة فردية', en: 'Single Session' },
+    group: { ar: 'حصة جماعية', en: 'Group Session' },
+    studentsNum: { ar: "عدد الطلاب", en: "Number of students" },
+    color: { ar: "لون الخطة", en: "Plan Color" },
     description: { ar: 'الوصف', en: 'Description' },
     price: { ar: 'السعر', en: 'Price' },
     currency: { ar: 'العملة', en: 'Currency' },
@@ -118,7 +130,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
 
   const onSubmit = async (data: PlanFormData) => {
     const filteredFeatures = data.features?.filter(f => typeof f === 'string' && f.trim() !== '') || [];
-    
+
     const payload: any = {
       ...data,
       id: initialData?.id
@@ -141,7 +153,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh]  overflow-y-auto no-scrollbar" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-50">
           <h2 className="text-2xl font-bold text-white">{text.title[language]}</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <X className="w-6 h-6 text-white" />
@@ -172,6 +184,70 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
                   {errors.nameEn.message}
                 </p>
               )}
+            </div>
+
+          </div>
+
+          {/* Plan type  & StudnetsNumber*/}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+              {text.planType[language]}
+            </label>
+            <Controller
+              name="planType"
+              control={control}
+              render={({ field }) => (
+                <CustomSelect
+                  options={[
+                    { label: text.single[language], value: 'single' },
+                    { label: text.group[language], value: 'group' },
+                  ]}
+                  className='text-start'
+                  {...field}
+                />
+              )}
+            />
+            {errors.planType && (
+              <p className="text-red-500 text-sm mt-1 text-start">
+                {errors.planType.message}
+              </p>
+            )}
+          </div>
+
+          {planType === 'group' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+                {text.studentsNum[language]}
+              </label>
+              <input type='text' {...register('studentsNum')} className="w-full px-4 py-2.5 border rounded-lg text-start" />
+              {errors.studentsNum && (
+                <p className="text-red-500 text-sm mt-1 text-start">
+                  {errors.studentsNum.message}
+                </p>
+              )}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+              {text.sessionTime[language]}
+            </label>
+            <input type="number" {...register('sessionTime', { valueAsNumber: true })} className="w-full px-4 py-2.5 border rounded-lg text-start" />
+            {errors.sessionTime && (
+              <p className="text-red-500 text-sm mt-1 text-start">
+                {errors.sessionTime.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+              {text.color[language]}
+            </label>
+            <div className="flex items-center gap-3">
+              <input type="color" {...register('color')} className="w-14 h-10 rounded-lg cursor-pointer border border-gray-300 p-0" />
+              <input type="text" {...register('color')} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-start" placeholder="#3b82f6" dir="ltr" />
             </div>
           </div>
 
@@ -262,7 +338,6 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
                 </p>
               )}
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
                 {text.sessionTime[language]}

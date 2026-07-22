@@ -208,13 +208,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
     ],
   },
 
-      {
-        id: 'roles',
-        label: 'sidebar_roles',
-        icon: ShieldCheck,
-        path: 'roles',
-        element: <RolesPage />
-      },
+  {
+    id: 'roles',
+    label: 'sidebar_roles',
+    icon: ShieldCheck,
+    path: 'roles',
+    element: <RolesPage />
+  },
 
 
   {

@@ -606,6 +606,8 @@
     "noUpcomingSessions": "لا توجد حصص قادمة",
     "scheduledSessionsAppear": "ستظهر الحصص المجدولة هنا"
   },
+  "city": "المدينة",
+  "age": "العمر",
   "registerNewTeacher": "اضافة معلم جديد",
   "common": {
     "retry": "إعادة المحاولة"

@@ -30,15 +30,15 @@
     "invalidUrl": "Please enter a valid URL"
   },
   "login": "Login",
-  "academyName": "Waay Academy",
+  "academyName": "Waai Academy",
   "academySubtitle": "Learning Management System",
   "academyDescription": "A modern learning management platform for students, teachers, parents, and academy admins.",
-  "footerText": "© 2026 Waay Academy - All Rights Reserved",
+  "footerText": "© 2026 Waai Academy - All Rights Reserved",
   "arabic": "Arabic",
   "english": "English",
   "registerNewStudent": "Register New Student",
-  "joinAcademy": "Join Waay Academy and start your educational journey",
-  "joinAcademyTeacher": "Join the teaching staff at Waay Academy and start your journey with us",
+  "joinAcademy": "Join Waai Academy and start your educational journey",
+  "joinAcademyTeacher": "Join the teaching staff at Waai Academy and start your journey with us",
   "fullName": "Full Name",
   "phoneNumber": "Phone Number",
   "choosePackage": "Choose Package",
@@ -606,6 +606,8 @@
     "noUpcomingSessions": "No upcoming sessions",
     "scheduledSessionsAppear": "Scheduled sessions will appear here"
   },
+  "city": "City",
+  "age": "Age",
   "registerNewTeacher": "Register New Teacher",
   "common": {
     "retry": "Retry"

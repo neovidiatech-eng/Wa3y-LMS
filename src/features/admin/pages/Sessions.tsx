@@ -81,19 +81,15 @@ export default function Sessions() {
     try {
       if (data.formData) {
         // Batch / Recurring Scheduling
-        const { formData, sessions, selectedDays } = data as MultipleSessionsPayload;
+        const { formData, sessions } = data as MultipleSessionsPayload & {
+          isCustomized?: boolean;
+          originalGeneratedCount?: number;
+        };
 
-        const tomorrowStr = (() => {
-          const tom = new Date();
-          tom.setDate(tom.getDate() + 1);
-          return tom.toISOString().split("T")[0];
-        })();
-
-        const rawStartDate = formData.batchStartDate || (formData.monthYear ? `${formData.monthYear}-01` : tomorrowStr);
-        const rawEndDate = formData.batchEndDate || (formData.monthYear ? `${formData.monthYear}-28` : tomorrowStr);
-
-        const startDate = rawStartDate < tomorrowStr ? tomorrowStr : rawStartDate;
-        const endDate = rawEndDate;
+        const mappedSessions = sessions.map((session) => ({
+          date: session.date,
+          startTime: session.time || formData.startTime || '14:00',
+        }));
 
         await createRecurringSchedule.mutateAsync({
           studentId: formData.student,
@@ -103,12 +99,8 @@ export default function Sessions() {
           ...(!formData.description ? {} : { description: formData.description }),
           ...(!formData.notes ? {} : { notes: formData.notes }),
           ...(!formData.meetingLink ? {} : { link: formData.meetingLink }),
-          startTime: sessions[0]?.time || "00:00",
-          days: selectedDays,
-          startDate,
-          endDate,
-          notification_Time: formData.notification_Time || "10",
-          // type: formData.type,
+          notification_Time: formData.notification_Time || '10',
+          sessions: mappedSessions,
         });
       } else {
         // Single Session Scheduling

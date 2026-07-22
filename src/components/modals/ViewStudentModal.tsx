@@ -118,6 +118,24 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                 <p className="text-base text-gray-900">{student.country}</p>
               </div>
 
+              {student.user?.city && (
+                <div className="text-start">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">
+                    {language === 'ar' ? 'المدينة' : 'City'}
+                  </label>
+                  <p className="text-base text-gray-900">{student.user.city}</p>
+                </div>
+              )}
+
+              {student.user?.age && (
+                <div className="text-start">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">
+                    {language === 'ar' ? 'السن' : 'Age'}
+                  </label>
+                  <p className="text-base text-gray-900">{student.user.age}</p>
+                </div>
+              )}
+
               {/* Status */}
               <div className="text-start">
                 <label className="text-sm font-medium text-gray-500 block mb-1">

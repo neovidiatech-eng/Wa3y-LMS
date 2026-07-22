@@ -3,6 +3,7 @@ import { useState, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionsProvider } from './contexts/SessionsContext';
 import { SettingsProvider } from './contexts/SettingsContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import ErrorBoundary from './components/layout/ErrorBoundary';
@@ -85,9 +86,10 @@ function FCMProvider() {
       <ErrorBoundary>
         <GoogleOAuthProvider clientId={googleClientId}>
           <QueryClientProvider client={queryClient}>
-            <SettingsProvider>
-              <SessionsProvider>
-                <Router >
+            <ThemeProvider>
+              <SettingsProvider>
+                <SessionsProvider>
+                  <Router >
                   {!isAuthenticated && <LanguageSwitcher />}
                   {isAuthenticated && <SocketProvider />}
                   {isAuthenticated && <FCMProvider />}
@@ -132,7 +134,8 @@ function FCMProvider() {
                 </Router>
               </SessionsProvider>
             </SettingsProvider>
-          </QueryClientProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
         </GoogleOAuthProvider>
       </ErrorBoundary>
     </Provider>

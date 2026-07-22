@@ -5,6 +5,7 @@ import { useSettings } from "../../contexts/SettingsContext";
 import { disconnectSocket } from "../../utils/socket";
 import { useNotifications, useMarkNotificationAsRead, useMarkAllNotificationsAsRead, useDeleteNotification } from "../../features/admin/hooks/useNotification";
 import { useNavigate } from "react-router-dom";
+import ThemeToggle from "../ui/ThemeToggle";
 interface HeaderProps {
   onMenuClick: () => void;
   userRole: "admin" | "teacher" | "student" | "parent";
@@ -112,6 +113,7 @@ export default function Header({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <button
             onClick={toggleLanguage}
             className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"

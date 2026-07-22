@@ -24,6 +24,8 @@ export const getStudentSchema = (t: TFunc) => z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#])[A-Za-z\d@$!%*?&^#]+$/,
       t("validation.passwordComplex")
     ),
+  age: z.string().optional(),
+  city: z.string().optional(),
 });
 
 export type StudentFormData = z.infer<ReturnType<typeof getStudentSchema>>;
