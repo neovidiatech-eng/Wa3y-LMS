@@ -1,0 +1,64 @@
+export type ViolationType = 'warning' | 'penalty';
+
+export interface ViolationItem {
+  id: string;
+  title_ar: string;
+  title_en: string;
+  description: string;
+  defaultType: ViolationType;
+  defaultDeductionAmount: number;
+  active: boolean;
+  createdAt: string;
+}
+
+export interface ViolationsResponse {
+  status: number;
+  message: string;
+  data: ViolationItem[] | { items: ViolationItem[] };
+}
+
+export interface CreateViolationPayload {
+  title_ar: string;
+  title_en: string;
+  description: string;
+  defaultType: ViolationType;
+  defaultDeductionAmount: number;
+}
+
+export interface CreateViolationResponse {
+  status: number;
+  message: string;
+  data: {
+    item: ViolationItem;
+  };
+}
+
+export interface IssueViolationPayload {
+  teacherId: string;
+  scheduleId?: string;
+  infractionItemId: string;
+  type: ViolationType;
+  deductionAmount: number;
+  reason: string;
+}
+
+export interface IssuedViolation {
+  id: string;
+  teacherId: string;
+  supervisorId?: string;
+  scheduleId?: string;
+  infractionItemId: string;
+  type: ViolationType;
+  deductionAmount: number;
+  reason: string;
+  createdAt: string;
+}
+
+export interface IssueViolationResponse {
+  status: number;
+  message: string;
+  data: {
+    violation: IssuedViolation;
+  };
+}
+

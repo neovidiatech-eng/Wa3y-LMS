@@ -61,6 +61,7 @@ const LMSCoursesPage = lazy(() => import("../../features/admin/pages/LMSCourses/
 const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
 const RolesPage = lazy(() => import("../../features/admin/pages/Roles"));
 const NotificationsPage = lazy(() => import("../../features/admin/pages/Notifications"));
+const ViolationsPage = lazy(() => import("../../features/admin/pages/Violations"));
 
 export const adminDashboardRoutes: RouteConfig[] = [
   {
@@ -69,6 +70,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
     icon: Home,
     path: "",
   },
+ 
   {
     id: "lms",
     label: "sidebar_lms",
@@ -260,6 +262,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
     icon: FileQuestion,
     path: "requests",
     element: <TeacherRequestsPage />,
+  },
+   {
+    id: "violations",
+    label: "sidebar_violations",
+    icon: AlertCircle,
+    path: "violations",
+    element: <ViolationsPage />,
   },
   {
     id: "notifications",
