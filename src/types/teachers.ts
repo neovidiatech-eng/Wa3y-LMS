@@ -70,6 +70,9 @@ export interface Teacher {
         confirmAt: string | null;
         nationality?: string;
         timezone?: string;
+        age?: number | string;
+        country?: string;
+        city?: string;
     };
     teacherSubjects: TeacherSubject[];
     meeting_link?: string | null;
@@ -107,6 +110,9 @@ export interface CreateTeacherInput {
     subject_ids: string[];
     meeting_link?: string;
     timezone?: string;
+    country?: string;
+    city?: string;
+    age?: number | string;
 }
 
 export interface UpdateTeacherInput {
@@ -122,6 +128,9 @@ export interface UpdateTeacherInput {
     subject_ids: string[];
     timezone?: string;
     meeting_link?: string;
+    country?: string;
+    city?: string;
+    age?: number | string;
 }
 
 export type TeachersData = TeachersFetchResponse['data'];

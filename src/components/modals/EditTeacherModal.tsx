@@ -20,6 +20,48 @@ interface EditTeacherModalProps {
   teacher: Teacher | null;
 }
 
+const COUNTRY_CURRENCY_MAP: Record<string, string> = {
+  'Egypt': 'EGP',
+  'Saudi Arabia': 'SAR',
+  'United Arab Emirates': 'AED',
+  'Kuwait': 'KWD',
+  'Qatar': 'QAR',
+  'Bahrain': 'BHD',
+  'Oman': 'OMR',
+  'Jordan': 'JOD',
+  'United States': 'USD',
+  'United Kingdom': 'GBP',
+  'Germany': 'EUR',
+  'France': 'EUR',
+  'Italy': 'EUR',
+  'Spain': 'EUR',
+  'Turkey': 'TRY',
+  'Sudan': 'SDG',
+  'Morocco': 'MAD',
+  'Algeria': 'DZD',
+  'Tunisia': 'TND',
+  'Iraq': 'IQD',
+  'Lebanon': 'LBP',
+};
+
+const getMatchingCurrencyId = (countryName: string, currencies: any[]) => {
+  if (!countryName || !currencies || currencies.length === 0) return '';
+  const expectedCode = COUNTRY_CURRENCY_MAP[countryName];
+  if (expectedCode) {
+    const matched = currencies.find(
+      (c: any) => c.code?.toUpperCase() === expectedCode.toUpperCase()
+    );
+    if (matched) return matched.id;
+  }
+  const matchedByName = currencies.find(
+    (c: any) =>
+      c.name_en?.toLowerCase().includes(countryName.toLowerCase()) ||
+      c.code?.toUpperCase().includes(countryName.substring(0, 3).toUpperCase())
+  );
+  if (matchedByName) return matchedByName.id;
+  return '';
+};
+
 export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }: EditTeacherModalProps) {
   const { language, t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
@@ -49,10 +91,19 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
       // Extract subject IDs directly from the API response
       const subjectsArray = teacherData.teacherSubjects || [];
       const subjectIds = subjectsArray.map((s: any) => String(s.subjectId || s.subject?.id)).filter(Boolean);
+      let currencyId = teacherData.currencyId || teacherData.currency?.id || '';
+      const teacherCountry = teacherData.user.country || teacherData.user?.country || 'Egypt';
 
-      const currencyId = teacherData.currencyId || '';
 
-      console.log("==> Extracted Data:", { subjectIds, currencyId });
+      if (!currencyId && currenciesData?.currencies) {
+        currencyId =
+          getMatchingCurrencyId(teacherCountry, currenciesData.currencies) ||
+          currenciesData.default?.id ||
+          currenciesData.currencies[0]?.id ||
+          '';
+      }
+
+      console.log("==> Extracted Data:", { subjectIds, currencyId, teacherCountry });
 
       reset({
         name: teacherData.user?.name || '',
@@ -66,12 +117,23 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
         status: teacherData.active ? 'active' : 'inactive',
         subjects: subjectIds,
         meeting_link: teacherData.meeting_link || '',
-        country: teacherData.country || 'Egypt',
-        city: teacherData.city || '',
-        age: teacherData.age || '',
+        country: teacherCountry,
+        city: teacherData.user.city || '',
+        age: teacherData.user.age ? String(teacherData.user.age) : '',
       });
     }
-  }, [teacherData, reset]);
+  }, [teacherData, reset, currenciesData]);
+
+  const selectedCountry = watch("country");
+
+  useEffect(() => {
+    if (selectedCountry && currenciesData?.currencies?.length) {
+      const matchedCurrencyId = getMatchingCurrencyId(selectedCountry, currenciesData.currencies);
+      if (matchedCurrencyId) {
+        setValue('currency', matchedCurrencyId, { shouldValidate: true });
+      }
+    }
+  }, [selectedCountry, currenciesData, setValue]);
 
   const handleOnSubmit = async (data: TeacherFormData) => {
     await onSubmit(data);
@@ -120,7 +182,6 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
     }));
   }, []);
 
-  const selectedCountry = watch("country");
   const selectedCountryObj = DEFAULT_COUNTRIES.find((c) => c.name === selectedCountry);
   const iso2 = selectedCountryObj?.iso2?.toLowerCase() || "eg";
   const { data: citiesData } = useGetCities(iso2);
@@ -224,19 +285,19 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
 
             {/* Row 3: Country Code and Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Controller
-                  name="phone_code"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomSelect
-                      label={t('countryCode')}
-                      value={field.value}
-                      options={countryCodeOptions}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-                <div className="text-start">
+              <Controller
+                name="phone_code"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('countryCode')}
+                    value={field.value}
+                    options={countryCodeOptions}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+              <div className="text-start">
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('phone')} </label>
                 <input
                   type="tel"

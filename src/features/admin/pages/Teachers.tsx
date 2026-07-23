@@ -174,6 +174,9 @@ export default function Teachers() {
       subject_ids: formData.subjects,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       meeting_link: formData.meeting_link?.trim() || undefined,
+      country: formData.country,
+      city: formData.city,
+      age: formData.age ? Number(formData.age) : undefined,
     };
   };
 
