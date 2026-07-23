@@ -118,7 +118,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                 <p className="text-base text-gray-900">{student.country}</p>
               </div>
 
-              {student.user?.city && (
+              {!!student.user?.city && student.user.city.toLowerCase() !== 'unknown' && student.user.city !== '0' && (
                 <div className="text-start">
                   <label className="text-sm font-medium text-gray-500 block mb-1">
                     {language === 'ar' ? 'المدينة' : 'City'}
@@ -127,7 +127,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                 </div>
               )}
 
-              {student.user?.age && (
+              {!!student.user?.age && (
                 <div className="text-start">
                   <label className="text-sm font-medium text-gray-500 block mb-1">
                     {language === 'ar' ? 'السن' : 'Age'}
@@ -157,6 +157,22 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                 </span>
               </div>
 
+              {/* Rank */}
+              <div className="text-start">
+                <label className="text-sm font-medium text-gray-500 block mb-1">
+                  {language === 'ar' ? 'الرتبة' : 'Rank'}
+                </label>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-sm font-medium bg-[${student.rank.color}]`}
+
+                >
+                  <student.rank.icon className="w-4 h-4 mr-2" />
+                  {language === 'ar' ? student.rank.name_ar : student.rank.name_en}
+
+                </span>
+              </div>
+
+
               {/* Sessions Info */}
               <div className="text-start">
                 <label className="text-sm font-medium text-gray-500 block mb-1">
@@ -169,7 +185,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                   <p className="text-xs text-gray-500">
                     {language === 'ar' ? ' الحصص المتبقية من الخطة :' : 'Remaining Sessions From Plan:'} {student.sessions_remaining || 0}
                   </p>
-                     <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500">
                     {language === 'ar' ? ' الحصص  المتجدولة  :' : 'Scheduled Sessions:'} {scheduledSessions}
                   </p>
 
@@ -177,7 +193,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                 </div>
               </div>
 
-             
+
             </div>
           </div>
         </div>

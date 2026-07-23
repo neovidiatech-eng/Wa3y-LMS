@@ -49,8 +49,6 @@ export default function Sessions() {
   ) => {
     try {
       await updateSchedule.mutateAsync({ id, data });
-      setShowEditModal(false);
-      setSelectedSession(null);
     } catch (error) {
       console.error("Update session failed:", error);
       throw error;

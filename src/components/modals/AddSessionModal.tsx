@@ -44,7 +44,7 @@ import { TeacherSubject } from '../../types/teachers';
 interface AddSessionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (data: any) => Promise<{ conflicts: { date: string; conflict: string }[] } | void>;
+  onAdd: (data: any) => Promise<{ conflicts?: { date: string; conflict: string }[]; skipedSchedules?: { date: string; conflict: string }[] } | void>;
 }
 
 const DAYS: DayOfWeek[] = [
@@ -442,8 +442,9 @@ export default function AddSessionModal({
       result = await onAdd(batchData);
     }
 
-    if (result && result.conflicts && result.conflicts.length > 0) {
-      setApiConflicts(result.conflicts);
+    const conflicts = result?.conflicts || result?.skipedSchedules;
+    if (conflicts && conflicts.length > 0) {
+      setApiConflicts(conflicts);
       return; // Do not close modal, so user can fix conflicts
     }
 
