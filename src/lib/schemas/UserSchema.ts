@@ -21,6 +21,9 @@ export const getUserSchema = (t: TFunc) => z.object({
     ),
   permissions: z.array(z.string()).optional(),
   timezone: z.string().optional(),
+  age: z.string().optional(),
+  country: z.string().optional(),
+  city: z.string().optional(),
 });
 
 export const getEditUserSchema = (t: TFunc) => z.object({
@@ -44,6 +47,9 @@ export const getEditUserSchema = (t: TFunc) => z.object({
   ]).optional(),
   permissions: z.array(z.string()).optional(),
   timezone: z.string().optional(),
+  age: z.string().optional(),
+  country: z.string().optional(),
+  city: z.string().optional(),
 });
 
 export type UserFormData = z.infer<ReturnType<typeof getUserSchema>>;

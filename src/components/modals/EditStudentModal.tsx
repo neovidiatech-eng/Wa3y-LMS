@@ -8,6 +8,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlans } from '../../features/admin/hooks/usePlans';
 import { DEFAULT_COUNTRIES } from '../../consts/countries';
+import { useGetCities } from '../../features/teacher/hooks/useCity';
 
 type EditStudentFormData = StudentFormData;
 
@@ -28,7 +29,7 @@ export default function EditStudentModal({
   const { data: plansData } = usePlans();
   const [countryCodes] = useState<Array<{ name: string; phone_code: string; emoji?: string; iso2: string }>>(DEFAULT_COUNTRIES);
 
-  const { control, handleSubmit, register, reset, formState: { errors, dirtyFields } } = useForm<EditStudentFormData>({
+  const { control, handleSubmit, register, reset, watch, formState: { errors, dirtyFields } } = useForm<EditStudentFormData>({
     resolver: zodResolver(getStudentSchema(t)),
     defaultValues: studentData || undefined,
   });
@@ -42,7 +43,6 @@ export default function EditStudentModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, studentData?.id]);
 
-  if (!isOpen || !studentData) return null;
 
 
   const handleEditSubmit = async (data: EditStudentFormData) => {
@@ -58,6 +58,13 @@ export default function EditStudentModal({
   );
 
 
+
+  const selectedCountry = watch("country");
+  const { data: citiesData } = useGetCities(selectedCountry === 'مصر' ? 'eg' : selectedCountry?.toLowerCase() || 'eg');
+  const cityOptions = citiesData ? citiesData.map((city: any) => ({
+    value: city.name,
+    label: city.name
+  })) : [];
 
   const displayNames = new Intl.DisplayNames([language === 'ar' ? 'ar' : 'en'], { type: 'region' });
 
@@ -106,10 +113,12 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
     { value: 'rejected', label: language === 'ar' ? 'مرفوض' : 'Rejected' },
   ];
 
+  if (!isOpen || !studentData) return null;
+
   return (
     <div className="fixed inset-0 !mt-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh]  overflow-y-auto no-scrollbar">
-        <div className="sticky top-0 bg-primary px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
+        <div className="sticky top-0 bg-primary px-6 py-4 flex items-center justify-between rounded-t-2xl z-50">
 
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <GraduationCap className="w-6 h-6" />
@@ -129,11 +138,11 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
             </div>
 
-            {/* Email */}
+            {/* Age */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{t('email')} *</label>
-              <input {...register('email')} className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-start" dir="ltr" />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              <label className="block text-sm font-medium text-gray-700 mb-2">{language === 'ar' ? 'السن' : 'Age'}</label>
+              <input {...register('age')} className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-start" />
+              {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age.message}</p>}
             </div>
 
             {/* Phone */}
@@ -141,6 +150,13 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
               <label className="block text-sm font-medium text-gray-700 mb-2">{t('phone')} *</label>
               <input {...register('phone')} className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-start" dir="ltr" />
               {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('email')} *</label>
+              <input {...register('email')} className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-start" dir="ltr" />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
             </div>
 
             {/* Country Code */}
@@ -196,6 +212,21 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                   value={value}
                   options={countryOptions}
                   onChange={onChange}
+                />
+              )}
+            />
+
+            {/* City */}
+            <Controller
+              name="city"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  label={language === 'ar' ? 'المدينة' : 'City'}
+                  value={value}
+                  options={cityOptions}
+                  onChange={onChange}
+                  placeholder={language === 'ar' ? 'اختر المدينة' : 'Select City'}
                 />
               )}
             />

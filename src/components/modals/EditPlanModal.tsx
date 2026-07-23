@@ -9,6 +9,8 @@ interface EditPlanModalProps {
     id: string;
     name: string;
     nameEn: string;
+    planType: string;
+    studentsNum: string;
     description: string;
     price: string;
     currency: string;
@@ -16,6 +18,7 @@ interface EditPlanModalProps {
     sessionsCount: number;
     features: string[];
     isPopular: boolean;
+    color?: string;
     status: "active" | "inactive";
   };
   onSave: (plan: any) => void;
@@ -31,6 +34,8 @@ export default function EditPlanModal({
   const [formData, setFormData] = useState({
     name: plan.name,
     nameEn: plan.nameEn,
+    planType: plan.planType,
+    studentsNum: plan.studentsNum,
     description: plan.description,
     price: plan.price,
     currency: plan.currency,
@@ -38,6 +43,7 @@ export default function EditPlanModal({
     sessionsCount: plan.sessionsCount,
     features: [...plan.features],
     isPopular: plan.isPopular,
+    color: plan.color || '#3b82f6',
     status: plan.status,
   });
 
@@ -45,6 +51,11 @@ export default function EditPlanModal({
     title: { ar: "تعديل الخطة", en: "Edit Plan" },
     nameAr: { ar: "اسم الخطة (عربي)", en: "Plan Name (Arabic)" },
     nameEn: { ar: "اسم الخطة (إنجليزي)", en: "Plan Name (English)" },
+    planType: { ar: 'نوع الخطة', en: 'Plan Type' },
+    single: { ar: 'حصة فردية', en: 'Single Session' },
+    group: { ar: 'حصة جماعية', en: 'Group Session' },
+    studentsNum: { ar: "عدد الطلاب", en: "Number of students" },
+    color: { ar: "لون الخطة", en: "Plan Color" },
     description: { ar: "الوصف", en: "Description" },
     price: { ar: "السعر", en: "Price" },
     currency: { ar: "العملة", en: "Currency" },
@@ -114,7 +125,7 @@ export default function EditPlanModal({
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh]  overflow-y-auto no-scrollbar" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-50">
           <h2 className="text-2xl font-bold text-white">{text.title[language]}</h2>
           <button
             onClick={onClose}
@@ -172,6 +183,41 @@ export default function EditPlanModal({
             />
           </div>
 
+           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+              {text.planType[language]}
+            </label>
+            <CustomSelect
+              value={formData.planType}
+              onChange={(val) =>
+                setFormData({ ...formData, planType: val as string })
+              }
+              options={[
+                { label: text.single[language], value: 'single' },
+                { label: text.group[language], value: 'group' },
+              ]}
+              className="text-start"
+            />
+          </div>
+
+          {formData.planType === 'group' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+                {text.studentsNum[language]}
+              </label>
+              <input
+                type="text"
+                value={formData.studentsNum}
+                onChange={(e) =>
+                  setFormData({ ...formData, studentsNum: e.target.value })
+                }
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-start"
+                required
+              />
+            </div>
+          )}
+
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
@@ -206,40 +252,52 @@ export default function EditPlanModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
-                {text.duration[language]}
-              </label>
-              <input
-                type="number"
-                value={formData.duration}
-                onChange={(e) =>
-                  setFormData({ ...formData, duration: e.target.value })
-                }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-start"
-                min="1"
-                required
-              />
-            </div>
+          {formData.planType === 'group' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+                  {text.duration[language]}
+                </label>
+                <input
+                  type="number"
+                  value={formData.duration}
+                  onChange={(e) =>
+                    setFormData({ ...formData, duration: e.target.value })
+                  }
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-start"
+                  min="1"
+                  required
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
-                {text.sessionsCount[language]}
-              </label>
-              <input
-                type="number"
-                value={formData.sessionsCount}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    sessionsCount: parseInt(e.target.value) || 0,
-                  })
-                }
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-start"
-                min="0"
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+                  {text.sessionsCount[language]}
+                </label>
+                <input
+                  type="number"
+                  value={formData.sessionsCount}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      sessionsCount: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-start"
+                  min="0"
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
+              {text.color[language]}
+            </label>
+            <div className="flex items-center gap-3">
+              <input type="color" value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })} className="w-14 h-10 rounded-lg cursor-pointer border border-gray-300 p-0" />
+              <input type="text" value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-start" placeholder="#3b82f6" dir="ltr" />
             </div>
           </div>
 

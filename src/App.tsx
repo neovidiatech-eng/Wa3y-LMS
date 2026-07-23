@@ -3,6 +3,7 @@ import { useState, lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionsProvider } from './contexts/SessionsContext';
 import { SettingsProvider } from './contexts/SettingsContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import ErrorBoundary from './components/layout/ErrorBoundary';
@@ -19,7 +20,8 @@ import { googleClientId } from './components/constants';
 // --- Lazy Loading Core Layouts & Pages ---
 const AuthLayout = lazy(() => import('./pages/AuthLayout/AuthLayout'));
 const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
+const Register = lazy(() => import('./pages/StudentRegister'));
+const TeacherRegister = lazy(() => import('./pages/TeacherRegister'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const VerifyAccount = lazy(() => import('./pages/VerifyAccount'));
@@ -84,9 +86,10 @@ function FCMProvider() {
       <ErrorBoundary>
         <GoogleOAuthProvider clientId={googleClientId}>
           <QueryClientProvider client={queryClient}>
-            <SettingsProvider>
-              <SessionsProvider>
-                <Router >
+            <ThemeProvider>
+              <SettingsProvider>
+                <SessionsProvider>
+                  <Router >
                   {!isAuthenticated && <LanguageSwitcher />}
                   {isAuthenticated && <SocketProvider />}
                   {isAuthenticated && <FCMProvider />}
@@ -97,6 +100,7 @@ function FCMProvider() {
                         <Route element={<AuthLayout />}>
                           <Route path="/login" element={<Login onLoginSuccess={handleLogin} />} />
                           <Route path="/register" element={<Register onRegisterSuccess={handleLogin} />} />
+                          <Route path="/teacher-register" element={<TeacherRegister />} />
                           <Route path="/forgot-password" element={<ForgotPassword />} />
                           <Route path="/reset-password" element={<ResetPassword />} />
                           <Route path="/verify-account" element={<VerifyAccount onVerifySuccess={handleLogin} />} />
@@ -130,7 +134,8 @@ function FCMProvider() {
                 </Router>
               </SessionsProvider>
             </SettingsProvider>
-          </QueryClientProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
         </GoogleOAuthProvider>
       </ErrorBoundary>
     </Provider>

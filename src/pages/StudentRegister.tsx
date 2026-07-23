@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import {
   Eye,
   EyeOff,
@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { getRegisterSchema, RegisterInput } from "../lib/schemas/RegisterSchema";
 import { register as registerService } from "../services/AuthServices";
 import { DEFAULT_COUNTRIES } from "../consts";
+import { useGetCities } from "../features/teacher/hooks/useCity";
 
 interface RegisterProps {
   onRegisterSuccess: () => void;
@@ -53,6 +54,8 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       nationality: "",
       password: "",
       plan_id: "",
+      age: "",
+      city: "",
     },
   });
 
@@ -65,36 +68,45 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     { value: "female", label: t("female") },
   ];
 
-const displayNames = new Intl.DisplayNames(
-  [language === "ar" ? "ar" : "en"],
-  { type: "region" }
-);
+  const displayNames = new Intl.DisplayNames(
+    [language === "ar" ? "ar" : "en"],
+    { type: "region" }
+  );
 
-const countries = DEFAULT_COUNTRIES.map((country) => ({
-  value: country.name,
-  label: `${country.emoji} ${displayNames.of(country.iso2) || country.name}`,
-}));
+  const countries = DEFAULT_COUNTRIES.map((country) => ({
+    value: country.name,
+    label: `${country.emoji} ${displayNames.of(country.iso2) || country.name}`,
+  }));
 
-const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
-  value: country.nationality,
-  label: country.nationality,
-}));
+  const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
+    value: country.nationality,
+    label: country.nationality,
+  }));
 
 
-const countryCodes = Array.from(
-  new Map(
-    DEFAULT_COUNTRIES.map((country) => [
-      `+${country.phone_code}`,
-      {
-        value: `+${country.phone_code}`,
-        label: `${country.emoji} ${
-          displayNames.of(country.iso2) || country.name
-        } (+${country.phone_code})`,
-        country: displayNames.of(country.iso2) || country.name,
-      },
-    ])
-  ).values()
-);
+  const countryCodes = Array.from(
+    new Map(
+      DEFAULT_COUNTRIES.map((country) => [
+        `+${country.phone_code}`,
+        {
+          value: `+${country.phone_code}`,
+          label: `${country.emoji} ${displayNames.of(country.iso2) || country.name
+            } (+${country.phone_code})`,
+          country: displayNames.of(country.iso2) || country.name,
+        },
+      ])
+    ).values()
+  );
+
+  const selectedCountry = watch("country")
+  const selectedCountryObj = DEFAULT_COUNTRIES.find((c) => c.name === selectedCountry);
+  const countryCode = selectedCountryObj?.iso2?.toLowerCase() || "";
+  const { data: citiesData } = useGetCities(countryCode)
+
+  const cityOptions = citiesData ? citiesData.map((city: any) => ({
+    value: city.name,
+    label: city.name
+  })) : []
 
 
 
@@ -102,6 +114,7 @@ const countryCodes = Array.from(
     try {
       const registrationData = {
         ...data,
+        age: data.age ? Number(data.age) : undefined,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
       const result = await registerService(registrationData);
@@ -162,9 +175,9 @@ const countryCodes = Array.from(
 
         <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             {/* Name */}
-            <div className="text-start">
+            <div className="text-start ">
               <label className="block text-sm font-semibold text-slate-700 mb-2">
                 {t("fullName")} *
               </label>
@@ -180,6 +193,24 @@ const countryCodes = Array.from(
                 </div>
               </div>
               {errors.name && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.name.message}</p>}
+            </div>
+            {/* Age */}
+            <div className="text-start">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                {language === 'ar' ? 'السن' : 'Age'}
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  {...register("age")}
+                  placeholder="ex: 15"
+                  className={`w-full h-12 px-4 py-2.5 ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} bg-slate-50 border ${errors.age ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
+                />
+                <div className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-slate-400`}>
+                  <User className="w-5 h-5" />
+                </div>
+              </div>
+              {errors.age && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.age.message}</p>}
             </div>
 
             {/* Email */}
@@ -301,39 +332,66 @@ const countryCodes = Array.from(
                   />
                 )}
               />
-            {errors.country && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.country.message}</p>}
-          </div>
+              {errors.country && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.country.message}</p>}
+            </div>
 
-          {/* Nationality */}
-          <div className="text-start">
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              {t("nationality")} *
-            </label>
-            <Controller
-              name="nationality"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  showSearch
-                  placeholder={t("selectNationality")}
-                  options={nationalityOptions}
-                  className="w-full h-12"
-                  status={errors.nationality ? "error" : ""}
-                  filterOption={(input, option) =>
-                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                  }
-                />
-              )}
-            />
-            {errors.nationality && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.nationality.message}</p>}
-          </div>
+            {/* Nationality */}
+            <div className="text-start">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                {t("nationality")} *
+              </label>
+              <Controller
+                name="nationality"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    showSearch
+                    placeholder={t("selectNationality")}
+                    options={nationalityOptions}
+                    className="w-full h-12"
+                    status={errors.nationality ? "error" : ""}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                    }
+                  />
+                )}
+              />
+              {errors.nationality && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.nationality.message}</p>}
+            </div>
 
-          {/* Password */}
-          <div className="text-start md:col-span-2">
-            <label className="block text-sm font-semibold text-slate-700 mb-2">
-              {t("password")} *
-            </label>
+            {/* City */}
+            <div className="text-start md:col-span-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                {language === 'ar' ? 'المدينة' : 'City'}
+              </label>
+              <Controller
+                name="city"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    showSearch
+                    placeholder={language === 'ar' ? 'اختر المدينة' : 'Select City'}
+                    options={cityOptions}
+                    className="w-full h-12"
+                    status={errors.city ? "error" : ""}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                    }
+                  />
+                )}
+              />
+              {errors.city && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.city.message}</p>}
+            </div>
+
+
+
+            {/* Password */}
+            <div className="text-start md:col-span-2">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                {t("password")} *
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -380,11 +438,10 @@ const countryCodes = Array.from(
                   key={pkg.id}
                   type="button"
                   onClick={() => setValue("plan_id", pkg.id, { shouldValidate: true })}
-                  className={`w-full p-2 rounded-xl border-2 transition-all text-start relative overflow-hidden flex flex-col justify-between min-h-[80px] cursor-pointer ${
-                    selectedPackage === pkg.id
+                  className={`w-full p-2 rounded-xl border-2 transition-all text-start relative overflow-hidden flex flex-col justify-between min-h-[80px] cursor-pointer ${selectedPackage === pkg.id
                       ? "border-primary bg-primary/5 shadow-lg shadow-primary/5 scale-[1.01]"
                       : "border-slate-100 bg-slate-50/50 hover:border-slate-200 hover:bg-white"
-                  }`}
+                    }`}
                 >
                   {selectedPackage === pkg.id && (
                     <div className={`absolute top-0 ${language === 'ar' ? 'left-0 rounded-br-xl' : 'right-0 rounded-bl-xl'} w-6 h-6 bg-primary flex items-center justify-center`}>
@@ -413,7 +470,7 @@ const countryCodes = Array.from(
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-12 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl font-bold hover:shadow-lg hover:shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] border-none outline-none cursor-pointer text-sm"
+            className="w-full h-12 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-[#1a4f47] text-white rounded-xl font-bold hover:shadow-lg hover:shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] border-none outline-none cursor-pointer text-sm"
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

@@ -114,7 +114,7 @@ export const teacherDashboardRoutes: RouteConfig[] = [
   },
   {
     id: 'notifications',
-    label: 'الإشعارات',
+    label: 'sidebar_notifications',
     icon: AlertCircle,
     path: 'notifications',
     element: <NotificationsPage />,

@@ -9,6 +9,7 @@ import { useCurrency } from '../../features/admin/hooks/useCurrency';
 import { useMemo, useState } from 'react';
 import { useSubjects } from '../../features/admin/hooks/useSubjects';
 import { DEFAULT_COUNTRIES } from '../../consts/countries';
+import { useGetCities } from '../../features/teacher/hooks/useCity';
 
 interface AddTeacherModalProps {
   isOpen: boolean;
@@ -39,6 +40,9 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
       status: 'active',
       subjects: [],
       meeting_link: '',
+      country: 'Egypt',
+      city: '',
+      age: ''
     }
   });
 
@@ -57,6 +61,22 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
     }));
   }, []);
 
+  const selectedCountry = watch("country");
+  const selectedCountryObj = DEFAULT_COUNTRIES.find((c) => c.name === selectedCountry);
+  const iso2 = selectedCountryObj?.iso2?.toLowerCase() || "eg";
+  const { data: citiesData } = useGetCities(iso2);
+  const cityOptions = citiesData ? citiesData.map((city: any) => ({
+    value: city.name,
+    label: city.name
+  })) : [];
+
+  const displayNames = new Intl.DisplayNames([language === 'ar' ? 'ar' : 'en'], { type: 'region' });
+
+  const countries = DEFAULT_COUNTRIES.map((c) => ({
+    value: c.name,
+    label: `${c.emoji} ${displayNames.of(c.iso2) || c.name}`,
+  }));
+
 
   const handleOnSubmit = async (data: TeacherFormData) => {
     await onSubmit({
@@ -67,7 +87,6 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
     reset();
   };
 
-  if (!isOpen) return null;
   const subjectsValue = watch('subjects') || [];
 
   if (isError) {
@@ -95,7 +114,6 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
   const uniqueCountryCodes = Array.from(
     new Map(countryCodes.map((c) => [`+${c.phone_code}`, c])).values()
   );
-  const displayNames = new Intl.DisplayNames([language === 'ar' ? 'ar' : 'en'], { type: 'region' });
   const countryCodeOptions = uniqueCountryCodes.map((c) => ({
     value: `+${c.phone_code}`,
     searchText: `${displayNames.of(c.iso2) || c.name} +${c.phone_code}`,
@@ -106,6 +124,8 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
       </div>
     ),
   }));
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -127,19 +147,18 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
           <div className="p-6 space-y-6 flex-1" dir={language === "ar" ? "rtl" : "ltr"}>
             {/* Row 1: Name and Email */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Email */}
+              {/* Age */}
               <div className="text-start">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('email')} *
+                  {language === 'ar' ? 'السن' : 'Age'}
                 </label>
                 <input
-                  type="email"
-                  placeholder="example@email.com"
-                  {...register('email')}
+                  type="text"
+                  placeholder="ex: 30"
+                  {...register('age')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
-                  dir="ltr"
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age.message}</p>}
               </div>
 
               {/* Name */}
@@ -207,8 +226,8 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
               </div>
             </div>
 
-            {/* Row 4: Currency */}
-            <div className="w-full">
+            {/* Row 4: Currency and Age */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
                 name="currency"
                 control={control}
@@ -218,6 +237,51 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     value={field.value}
                     options={currencyOptions}
                     onChange={field.onChange}
+                  />
+                )}
+              />
+
+              {/* Email */}
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('email')} *
+                </label>
+                <input
+                  type="email"
+                  placeholder="example@email.com"
+                  {...register('email')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                  dir="ltr"
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+            </div>
+
+            {/* Row 4.5: Country and City */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Controller
+                name="country"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('country')}
+                    value={field.value}
+                    options={countries}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+
+              <Controller
+                name="city"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={language === 'ar' ? 'المدينة' : 'City'}
+                    value={field.value}
+                    options={cityOptions}
+                    onChange={field.onChange}
+                    placeholder={language === 'ar' ? 'اختر المدينة' : 'Select City'}
                   />
                 )}
               />

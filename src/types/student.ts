@@ -1,3 +1,4 @@
+import { LucideIcon } from "lucide-react";
 import { Plan } from "./plan";
 
 export type StudentStatus = 'pending' | 'approved' | 'rejected';
@@ -7,8 +8,10 @@ export interface UserDetails {
     email: string;
     name: string;
     phone: string;
-    password:string;
+    password: string;
     code_country: string;
+    age?: string | number;
+    city?: string;
     status: string;
     confirmAt: string | null;
     createdAt: string;
@@ -28,6 +31,8 @@ export interface Student {
     sessions: number;
     sessions_attended: number;
     sessions_remaining: number;
+    rankId: string | null;
+    rank?: Rank | null;
     planId: string | null;
     country: string;
     nationality: string;
@@ -53,4 +58,15 @@ export interface StudentsFetchResponse {
         "activeCount": number,
         "inactiveCount": number
     };
+}
+
+
+export interface Rank {
+    id: string;
+    name_ar: string;
+    name_en: string;
+    color: string;
+    icon: LucideIcon;
+    minSessions: string;
+    minPoints: string;
 }

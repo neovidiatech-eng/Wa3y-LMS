@@ -49,8 +49,6 @@ export default function Sessions() {
   ) => {
     try {
       await updateSchedule.mutateAsync({ id, data });
-      setShowEditModal(false);
-      setSelectedSession(null);
     } catch (error) {
       console.error("Update session failed:", error);
       throw error;
@@ -81,21 +79,17 @@ export default function Sessions() {
     try {
       if (data.formData) {
         // Batch / Recurring Scheduling
-        const { formData, sessions, selectedDays } = data as MultipleSessionsPayload;
+        const { formData, sessions } = data as MultipleSessionsPayload & {
+          isCustomized?: boolean;
+          originalGeneratedCount?: number;
+        };
 
-        const tomorrowStr = (() => {
-          const tom = new Date();
-          tom.setDate(tom.getDate() + 1);
-          return tom.toISOString().split("T")[0];
-        })();
+        const mappedSessions = sessions.map((session) => ({
+          date: session.date,
+          startTime: session.time || formData.startTime || '14:00',
+        }));
 
-        const rawStartDate = formData.batchStartDate || (formData.monthYear ? `${formData.monthYear}-01` : tomorrowStr);
-        const rawEndDate = formData.batchEndDate || (formData.monthYear ? `${formData.monthYear}-28` : tomorrowStr);
-
-        const startDate = rawStartDate < tomorrowStr ? tomorrowStr : rawStartDate;
-        const endDate = rawEndDate;
-
-        await createRecurringSchedule.mutateAsync({
+        const res = await createRecurringSchedule.mutateAsync({
           studentId: formData.student,
           teacherId: formData.teacher,
           subject_id: formData.subject,
@@ -103,20 +97,18 @@ export default function Sessions() {
           ...(!formData.description ? {} : { description: formData.description }),
           ...(!formData.notes ? {} : { notes: formData.notes }),
           ...(!formData.meetingLink ? {} : { link: formData.meetingLink }),
-          startTime: sessions[0]?.time || "00:00",
-          days: selectedDays,
-          startDate,
-          endDate,
-          notification_Time: formData.notification_Time || "10",
-          // type: formData.type,
+          notification_Time: formData.notification_Time || '10',
+          sessions: mappedSessions,
         });
+
+        return res?.data;
       } else {
         // Single Session Scheduling
         const [year, month, day] = data.sessionDate.split("-").map(Number);
         const [hour, minute] = data.startTime.split(":").map(Number);
         const localDate = new Date(year, month - 1, day, hour, minute);
 
-        await createSchedule.mutateAsync({
+        const res = await createSchedule.mutateAsync({
           studentId: data.student,
           teacherId: data.teacher,
           subject_id: data.subject,
@@ -128,8 +120,9 @@ export default function Sessions() {
           // type: data.type,
           notification_Time: data.notification_Time,
         });
+        
+        return res?.data;
       }
-      setShowAddModal(false);
     } catch (error) {
       console.error("Add session failed:", error);
       throw error;

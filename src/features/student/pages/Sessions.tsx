@@ -315,7 +315,6 @@ export default function Sessions() {
                           {isRtl ? 'تقديم طلب' : 'Add Request'}
                         </button>
                       </td>
-   </td>
                       <td className="px-6 py-4 text-start">
                         <div className="flex items-center gap-2 justify-start">
                           <button

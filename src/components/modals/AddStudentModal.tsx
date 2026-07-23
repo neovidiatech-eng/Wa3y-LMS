@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlans } from '../../features/admin/hooks/usePlans';
 import { Plan } from '../../types/plan';
 import { DEFAULT_COUNTRIES } from '../../consts/countries';
+import { useGetCities } from '../../features/teacher/hooks/useCity';
 
 interface AddStudentModalProps {
   isOpen: boolean;
@@ -21,17 +22,25 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
   const [showPassword, setShowPassword] = useState(false);
   const [countryCodes] = useState<Array<{ name: string; phone_code: string; emoji?: string; iso2: string }>>(DEFAULT_COUNTRIES);
   const { data: plansData } = usePlans();
-  const { register, handleSubmit, control, reset, formState: { errors } } = useForm<StudentFormData>({
+  const { register, handleSubmit, control, reset, watch, formState: { errors } } = useForm<StudentFormData>({
     resolver: zodResolver(getStudentSchema(t)),
     defaultValues: {
       phone_code: '+20',
-      status: 'approved',
       gender: '',
       plan: '',
-      country: 'مصر',
-      nationality: ''
+      country: 'EG',
+      nationality: '',
+      age: '',
+      city: ''
     }
   });
+
+  const selectedCountry = watch("country");
+  const { data: citiesData } = useGetCities(selectedCountry === 'مصر' ? 'eg' : selectedCountry?.toLowerCase() || 'eg');
+  const cityOptions = citiesData ? citiesData.map((city: any) => ({
+    value: city.name,
+    label: city.name
+  })) : [];
   
   const onFormSubmit = async (data: StudentFormData) => {
     await onSubmit({
@@ -111,7 +120,7 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh]  overflow-y-auto no-scrollbar">
         {/* Header */}
-        <div className="sticky top-0 bg-primary px-6 py-4 flex items-center justify-between rounded-t-2xl">
+        <div className="sticky top-0 bg-primary px-6 py-4 flex items-center justify-between rounded-t-2xl z-50">
 
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <GraduationCap className="w-6 h-6" />
@@ -142,17 +151,15 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
 
               <div className="text-start">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('email')} *
+                  {language === 'ar' ? 'السن' : 'Age'}
                 </label>
                 <input
-                  type="email"
-                  required
-                  {...register('email')}
-                  placeholder="ex :- student@example.com"
+                  type="text"
+                  {...register('age')}
+                  placeholder="ex :- 20"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
-                  dir="ltr"
                 />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age.message}</p>}
               </div>
             </div>
 
@@ -216,7 +223,7 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
               />
             </div>
 
-            {/* Row 4: Plan and Country */}
+            {/* Row 4: Country and City */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
                 name="country"
@@ -233,6 +240,23 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
               />
 
               <Controller
+                name="city"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={language === 'ar' ? 'المدينة' : 'City'}
+                    value={field.value}
+                    options={cityOptions}
+                    placeholder={language === 'ar' ? 'اختر المدينة' : 'Select City'}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+
+            {/* Row 5: Nationality and Plan */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Controller
                 name="nationality"
                 control={control}
                 render={({ field }) => (
@@ -245,7 +269,6 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                     />
                   )}
                 />
-                          </div>
               <Controller
                 name="plan"
                 control={control}
@@ -258,8 +281,40 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                   />
                 )}
               />
+            </div>
 
-            {/* Row 5: Password and Status */}
+            {/* Row 6: Age and Status */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('email')} *
+                </label>
+                <input
+                  type="email"
+                  required
+                  {...register('email')}
+                  placeholder="ex :- student@example.com"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                  dir="ltr"
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('status')}
+                    value={field.value}
+                    options={statusOptions}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+
+            {/* Row 7: Password */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="text-start relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -280,19 +335,6 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
                 </div>
                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
               </div>
-
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <CustomSelect
-                    label={t('status')}
-                    value={field.value}
-                    options={statusOptions}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
             </div>
           </div>
 

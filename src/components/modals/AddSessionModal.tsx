@@ -44,7 +44,7 @@ import { TeacherSubject } from '../../types/teachers';
 interface AddSessionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (data: any) => Promise<void>;
+  onAdd: (data: any) => Promise<{ conflicts?: { date: string; conflict: string }[]; skipedSchedules?: { date: string; conflict: string }[] } | void>;
 }
 
 const DAYS: DayOfWeek[] = [
@@ -70,6 +70,7 @@ export default function AddSessionModal({
     'single'
   );
   const [sessionsLimitError, setSessionsLimitError] = useState('');
+  const [apiConflicts, setApiConflicts] = useState<{date: string, conflict: string}[]>([]);
 
   const { data: students } = useStudents({ limit: 1000 });
   const { data: instructors } = useTeacher({ limit: 100 });
@@ -130,6 +131,7 @@ export default function AddSessionModal({
   const watchStudent = watch('student');
   const watchType = watch('type') as 'full' | 'half';
   const watchStartTime = watch('startTime');
+  const watchEndTime = watch('endTime');
   const watchTeacher = watch('teacher');
 
 
@@ -214,6 +216,8 @@ export default function AddSessionModal({
     };
   }, [selectedStudentData]);
 
+  const [customSessionMap, setCustomSessionMap] = useState<Record<string, { date?: string; time?: string; endTime?: string; deleted?: boolean }>>({});
+
   const selectedSubject = useMemo(() => {
     const found = subjects.find(
       (subject: TeacherSubject) =>
@@ -222,20 +226,31 @@ export default function AddSessionModal({
     return found ? found.subject : null;
   }, [subjects, watchSubject]);
 
-  const previewSessions = useMemo(() => {
+  const defaultSessions = useMemo(() => {
+    const defaultTime = watchStartTime || '14:00';
+    const defaultEndTime = watchEndTime || '15:00';
+
     if (schedulingMode === 'single') {
       const singleDate = watch('sessionDate');
       if (!singleDate) return [];
       return [
         {
+          id: `single-${singleDate}`,
+          originalDate: singleDate,
           date: singleDate,
+          time: defaultTime,
+          endTime: defaultEndTime,
           available: true,
         },
       ];
     }
 
     const sessions: {
+      id: string;
+      originalDate: string;
       date: string;
+      time: string;
+      endTime: string;
       available: boolean;
     }[] = [];
 
@@ -253,6 +268,7 @@ export default function AddSessionModal({
 
     const currentDate = startDate < tomorrow ? new Date(tomorrow) : new Date(startDate);
 
+    let index = 0;
     while (currentDate <= endDate) {
       const currentDay = currentDate.toLocaleDateString('en-US', {
         weekday: 'long',
@@ -262,11 +278,17 @@ export default function AddSessionModal({
         const y = currentDate.getFullYear();
         const m = String(currentDate.getMonth() + 1).padStart(2, '0');
         const d = String(currentDate.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${d}`;
 
         sessions.push({
-          date: `${y}-${m}-${d}`,
+          id: `batch-${dateStr}-${index}`,
+          originalDate: dateStr,
+          date: dateStr,
+          time: defaultTime,
+          endTime: defaultEndTime,
           available: true,
         });
+        index++;
       }
 
       currentDate.setDate(currentDate.getDate() + 1);
@@ -279,7 +301,74 @@ export default function AddSessionModal({
     watch('batchStartDate'),
     watch('batchEndDate'),
     watch('sessionDate'),
+    watchStartTime,
+    watchEndTime,
   ]);
+
+  const previewSessions = useMemo(() => {
+    return defaultSessions
+      .filter((s) => !customSessionMap[s.id]?.deleted)
+      .map((s) => {
+        const custom = customSessionMap[s.id];
+        const date = custom?.date || s.date;
+        const time = custom?.time || s.time;
+        const endTime = custom?.endTime || s.endTime;
+        const isCustomized =
+          date !== s.originalDate ||
+          time !== (watchStartTime || '14:00') ||
+          endTime !== (watchEndTime || '15:00');
+        return {
+          ...s,
+          date,
+          time,
+          endTime,
+          isCustomized,
+        };
+      });
+  }, [defaultSessions, customSessionMap, watchStartTime, watchEndTime]);
+
+  const hasCustomizations = useMemo(() => {
+    return (
+      Object.keys(customSessionMap).length > 0 &&
+      Object.values(customSessionMap).some(
+        (val) => val.date || val.time || val.endTime || val.deleted
+      )
+    );
+  }, [customSessionMap]);
+
+  const handleUpdateSession = (id: string, newDate: string, newStartTime: string, newEndTime?: string) => {
+    setCustomSessionMap((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        date: newDate,
+        time: newStartTime,
+        endTime: newEndTime,
+      },
+    }));
+    // Clear conflicts when user modifies a session (conflict may be resolved)
+    setApiConflicts([]);
+  };
+
+  const handleDeleteSession = (id: string) => {
+    setCustomSessionMap((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        deleted: true,
+      },
+    }));
+    // Remove conflict for deleted session
+    setApiConflicts((prev) => prev.filter((c) => {
+      const session = previewSessions.find((s) => s.id === id);
+      return session ? c.date !== session.date : true;
+    }));
+  };
+
+  const handleResetSessions = () => {
+    setCustomSessionMap({});
+    setApiConflicts([]);
+  };
 
   const remainingSessions = Number(studentPlanInfo?.sessionsRemaining) || 0;
   const requestedSessionsCount = previewSessions.length;
@@ -288,9 +377,9 @@ export default function AddSessionModal({
 
   const sessionsLimitMessage = sessionsExceedRemaining
     ? t('addSession_sessionsLimitMessage', {
-        requestedSessionsCount,
-        remainingSessions,
-      })
+      requestedSessionsCount,
+      remainingSessions,
+    })
     : '';
 
   useEffect(() => {
@@ -304,7 +393,6 @@ export default function AddSessionModal({
         day: 0,
       };
     }
-    // Handle both YYYY-MM-DD and ISO strings safely
     const datePart = date.includes('T') ? date.split('T')[0] : date;
     const [year, month, day] = datePart.split('-').map(Number);
     if (isNaN(year) || isNaN(month) || isNaN(day)) {
@@ -329,12 +417,18 @@ export default function AddSessionModal({
       return;
     }
 
+    let result;
     if (schedulingMode === 'single') {
-      await onAdd(data as SessionFormData);
+      result = await onAdd(data as SessionFormData);
     } else {
-      const batchData: MultipleSessionsPayload = {
+      const batchData: MultipleSessionsPayload & {
+        isCustomized?: boolean;
+        originalGeneratedCount?: number;
+      } = {
         formData: data as MultipleSessionsFormData,
         selectedDays: watchSelectedDays,
+        originalGeneratedCount: defaultSessions.length,
+        isCustomized: hasCustomizations,
         sessions: previewSessions.map((session) => ({
           date: session.date,
           day: new Date(session.date + 'T00:00:00').toLocaleDateString(
@@ -343,15 +437,22 @@ export default function AddSessionModal({
               weekday: 'long',
             }
           ) as DayOfWeek,
-          time: data.startTime,
+          time: session.time || data.startTime,
         })),
       };
 
-      await onAdd(batchData);
+      result = await onAdd(batchData);
+    }
+
+    const conflicts = result?.conflicts || result?.skipedSchedules;
+    if (conflicts && conflicts.length > 0) {
+      setApiConflicts(conflicts);
+      return; // Do not close modal, so user can fix conflicts
     }
 
     reset();
-
+    setCustomSessionMap({});
+    setApiConflicts([]);
     onClose();
   };
 
@@ -380,7 +481,10 @@ export default function AddSessionModal({
           </div>
 
           <button
-            onClick={onClose}
+            onClick={() => {
+              setApiConflicts([]);
+              onClose();
+            }}
             className="p-2 rounded-full hover:bg-gray-100 transition"
           >
             <X className="w-5 h-5 text-gray-500" />
@@ -416,7 +520,7 @@ export default function AddSessionModal({
                           (student: Student) => ({
                             value: String(student.id),
                             label: student.user.name,
-                                                        searchText: student.user.name,
+                            searchText: student.user.name,
 
                           })
                         ) || []
@@ -452,7 +556,7 @@ export default function AddSessionModal({
                           (teacher: Teacher) => ({
                             value: String(teacher.id),
                             label: teacher.user.name,
-                                                        searchText: teacher.user.name,
+                            searchText: teacher.user.name,
 
                           })
                         ) || []
@@ -647,7 +751,10 @@ export default function AddSessionModal({
 
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => {
+                  setApiConflicts([]);
+                  onClose();
+                }}
                 className="secondary-btn"
               >
                 {t('cancel')}
@@ -655,8 +762,19 @@ export default function AddSessionModal({
 
               <button
                 type="submit"
-                disabled={sessionsExceedRemaining}
-                className={`primary-btn ${sessionsExceedRemaining ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={sessionsExceedRemaining || (schedulingMode === 'batch' && apiConflicts.length > 0)}
+                className={`primary-btn ${
+                  sessionsExceedRemaining || (schedulingMode === 'batch' && apiConflicts.length > 0)
+                    ? 'opacity-50 cursor-not-allowed'
+                    : ''
+                }`}
+                title={
+                  schedulingMode === 'batch' && apiConflicts.length > 0
+                    ? (language === 'ar'
+                        ? 'يرجى حل تعارضات المواعيد قبل المتابعة'
+                        : 'Please resolve schedule conflicts before proceeding')
+                    : undefined
+                }
               >
                 {schedulingMode === 'single'
                   ? t('addSession_create')
@@ -671,9 +789,15 @@ export default function AddSessionModal({
             watchTitle={watchTitle}
             selectedSubject={selectedSubject}
             watchStartTime={watchStartTime}
+            watchEndTime={watchEndTime}
             sessionsLimitError={sessionsLimitError}
             requestedSessionsCount={requestedSessionsCount}
             remainingSessions={remainingSessions}
+            onUpdateSession={handleUpdateSession}
+            onDeleteSession={handleDeleteSession}
+            onResetSessions={handleResetSessions}
+            hasCustomizations={hasCustomizations}
+            apiConflicts={apiConflicts}
           />
         </form>
 

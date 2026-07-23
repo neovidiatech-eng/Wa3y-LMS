@@ -56,7 +56,9 @@ export default function Plans() {
           duration: item.duration,
           sessionsCount: item.sessionsCount ?? item.hours ?? 0,
           sessionTime: item.sessionTime || 0,
-
+          planType: item.planType || 'single',
+          studentsNum: item.studentsNum || '2',
+          color: item.color || '#3b82f6',
           features: item.features || [],
           bestSeller: item.bestSeller,
           active: item.active,
@@ -102,6 +104,9 @@ export default function Plans() {
         active: planData.status === "active",
         bestSeller: planData.isPopular,
         currencyId: planData.currencyId,
+        color: planData.color || '#3b82f6',
+        planType: planData.planType,
+        studentsNum: planData.studentsNum,
       };
 
       if (planData.description && planData.description.trim() !== '') {
@@ -131,7 +136,9 @@ export default function Plans() {
         duration: item.duration,
         sessionsCount: item.sessionsCount ?? item.hours ?? 0,
         sessionTime: item.sessionTime || 0,
-
+        planType: item.planType || 'single',
+        studentsNum: item.studentsNum || '2',
+        color: item.color || '#3b82f6',
         features: item.features || [],
         bestSeller: item.bestSeller,
         active: item.active,
@@ -220,7 +227,10 @@ export default function Plans() {
                 </div>
 
 
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 mb-6 text-center">
+                <div 
+                  className="rounded-xl p-6 mb-6 text-center"
+                  style={{ backgroundColor: `${plan.color || '#3b82f6'}15` }}
+                >
                   <div className="flex items-baseline justify-center gap-2">
                     <span className="text-5xl font-bold text-gray-900">
                       {plan.price}
@@ -295,6 +305,7 @@ export default function Plans() {
         initialData={selectedPlan ? {
           name: selectedPlan.name_ar,
           nameEn: selectedPlan.name_en,
+          
           description: selectedPlan.description,
           price: Number(selectedPlan.price),
           currencyId: selectedPlan.currencyId,
@@ -303,6 +314,9 @@ export default function Plans() {
           sessionTime: selectedPlan.sessionTime,
           features: selectedPlan.features,
           isPopular: selectedPlan.bestSeller,
+          planType: selectedPlan.planType || 'single',
+          studentsNum: selectedPlan.studentsNum || '2',
+          color: selectedPlan.color || '#3b82f6',
           status: selectedPlan.active ? 'active' : 'inactive',
           id: selectedPlan.id
         } : null}

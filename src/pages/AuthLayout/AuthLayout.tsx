@@ -12,7 +12,8 @@ const AuthLayout = () => {
 
   const isLogin = location.pathname === "/login";
   const isRegister = location.pathname === "/register";
-  const isAuthTab = isLogin || isRegister;
+  const isTeacherRegister = location.pathname === "/teacher-register";
+  const isAuthTab = isLogin || isRegister || isTeacherRegister;
 
   return (
     <div
@@ -25,13 +26,13 @@ const AuthLayout = () => {
 
       {/* Main Responsive Split Container */}
       <div className="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[680px] relative z-10">
-        
+
         {/* Left Side: Brand Panel (Only visible on lg screens) */}
-        <div className="hidden lg:flex lg:col-span-5 bg-gradient-to-br from-primary via-primary-dark to-[#1e5850] p-12 text-white flex-col justify-between relative overflow-hidden">
+        <div className="auth-brand-panel hidden lg:flex lg:col-span-5 bg-gradient-to-br from-primary via-primary-dark to-[#1e5850] p-12 text-white flex-col justify-between relative overflow-hidden">
           {/* Subtle background overlay patterns */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#daad15_15%,transparent_50%)] opacity-20" />
           <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse" />
-          
+
           <div className="relative z-10">
             {/* Logo and Brand Name */}
             <div className="flex items-center gap-3">
@@ -48,30 +49,40 @@ const AuthLayout = () => {
           {/* Core Brand Message */}
           <div className="relative z-10 my-auto py-8 text-start">
             <h1 className="text-3xl font-bold leading-tight mb-4">
-              {language === 'ar' ? 'رحلتك نحو المعرفة والتميز تبدأ من هنا' : 'Your Journey to Knowledge & Excellence Starts Here'}
+              {isTeacherRegister
+                ? (language === 'ar' ? 'انضم إلى فريق المدرسين في أكاديمية وعي' : 'Join the Teaching Team at Waai Academy')
+                : (language === 'ar' ? 'رحلتك نحو المعرفة والتميز تبدأ من هنا' : 'Your Journey to Knowledge & Excellence Starts Here')}
             </h1>
             <p className="text-white/80 text-sm leading-relaxed mb-8">
-              {t("academyDescription")}
+              {isTeacherRegister
+                ? (language === 'ar' ? 'نحن نبحث دائمًا عن معلمين متميزين للانضمام إلى أكاديميتنا وتقديم محتوى تعليمي هادف لطلابنا. سجل الآن لتكون جزءاً من نجاحنا.' : 'We are always looking for outstanding teachers to join our academy and deliver meaningful educational content. Register now to be part of our success.')
+                : t("academyDescription")}
             </p>
-            
+
             {/* Quick trust metrics or features */}
             <div className="space-y-4 pt-6 border-t border-white/10">
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#daad15] shadow-lg shadow-[#daad15]/50" />
                 <span className="text-xs font-semibold text-white/90">
-                  {language === 'ar' ? 'نخبة من أفضل المعلمين والمعلمات' : 'Elite Certified Instructors'}
+                  {isTeacherRegister
+                    ? (language === 'ar' ? 'بيئة عمل احترافية وداعمة' : 'Professional & Supportive Work Environment')
+                    : (language === 'ar' ? 'نخبة من أفضل المعلمين والمعلمات' : 'Elite Certified Instructors')}
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#daad15] shadow-lg shadow-[#daad15]/50" />
                 <span className="text-xs font-semibold text-white/90">
-                  {language === 'ar' ? 'مناهج دراسية متكاملة وحديثة' : 'Modern & Comprehensive Curriculum'}
+                  {isTeacherRegister
+                    ? (language === 'ar' ? 'الوصول إلى آلاف الطلاب الطموحين' : 'Reach Thousands of Ambitious Students')
+                    : (language === 'ar' ? 'مناهج دراسية متكاملة وحديثة' : 'Modern & Comprehensive Curriculum')}
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#daad15] shadow-lg shadow-[#daad15]/50" />
                 <span className="text-xs font-semibold text-white/90">
-                  {language === 'ar' ? 'جلسات تفاعلية مباشرة ومواعيد مرنة' : 'Live Interactive Sessions & Flexible Schedules'}
+                  {isTeacherRegister
+                    ? (language === 'ar' ? 'تطوير مستمر ومردود مادي مجزي' : 'Continuous Development & Rewarding Compensation')
+                    : (language === 'ar' ? 'جلسات تفاعلية مباشرة ومواعيد مرنة' : 'Live Interactive Sessions & Flexible Schedules')}
                 </span>
               </div>
             </div>
@@ -116,25 +127,34 @@ const AuthLayout = () => {
               <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100 gap-1 mb-8">
                 <button
                   onClick={() => navigate("/login")}
-                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${
-                    isLogin
+                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${isLogin
                       ? "bg-white text-primary shadow-md shadow-slate-200/50 border border-slate-100/50"
                       : "text-slate-500 hover:text-slate-800 hover:bg-slate-100/50"
-                  }`}
+                    }`}
                 >
                   {t("login")}
                 </button>
                 <button
                   onClick={() => navigate("/register")}
-                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${
-                    isRegister
+                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${isRegister
                       ? "bg-white text-primary shadow-md shadow-slate-200/50 border border-slate-100/50"
                       : "text-slate-500 hover:text-slate-800 hover:bg-slate-100/50"
-                  }`}
+                    }`}
                 >
                   {language === "ar" ? "تسجيل طالب جديد" : "Register New Student"}
                 </button>
+
+                <button
+                  onClick={() => navigate("/teacher-register")}
+                  className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 ${isTeacherRegister
+                      ? "bg-white text-primary shadow-md shadow-slate-200/50 border border-slate-100/50"
+                      : "text-slate-500 hover:text-slate-800 hover:bg-slate-100/50"
+                    }`}
+                >
+                  {language === "ar" ? "تسجيل معلم جديد" : "Register New Teacher"}
+                </button>
               </div>
+
             )}
 
             {/* Render forms here */}

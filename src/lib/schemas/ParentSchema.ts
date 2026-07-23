@@ -11,6 +11,8 @@ export const getParentSchema = (t: TFunc) => z.object({
   country: z.string().default("Egypt"),
   timezone: z.string().optional(),
   students: z.array(z.string()).min(1, t("validation.required")),
+  age: z.string().optional(),
+  city: z.string().optional(),
 });
 
 export type ParentFormData = z.infer<ReturnType<typeof getParentSchema>>;

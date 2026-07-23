@@ -42,7 +42,7 @@ export default function PlanSelectionModal({ isOpen, onClose, onConfirm }: PlanS
                 dir={language === 'ar' ? 'rtl' : 'ltr'}
             >
                 {/* Header */}
-                <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+                <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-50">
                     <h2 className="text-2xl font-bold text-white">{text.title[language]}</h2>
                     <button
                         onClick={onClose}
