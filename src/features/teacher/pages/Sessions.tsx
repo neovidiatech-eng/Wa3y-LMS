@@ -10,6 +10,7 @@ import { useJoinToSession, useUserSessions } from '../../../hooks/useSessions';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
 import CreateRequestModal from '../../../components/modals/CreateRequestModal';
 import FeedbackModal from '../components/FeedbackModal';
+import ViolationGuidelinesModal from '../../../components/modals/ViolationGuidelinesModal';
 import { useSettings } from '../../../contexts/SettingsContext';
 import { leaveSession } from '../../../services/SessionsServices';
 
@@ -27,6 +28,8 @@ export default function Sessions() {
   const [now, setNow] = useState(new Date());
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [sessionForFeedback, setSessionForFeedback] = useState<Schedule | null>(null);
+  const [isGuidelinesModalOpen, setIsGuidelinesModalOpen] = useState(false);
+  const [sessionToJoin, setSessionToJoin] = useState<Schedule | null>(null);
 
   const { settings } = useSettings();
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
@@ -38,6 +41,20 @@ export default function Sessions() {
     const timer = setInterval(() => setNow(new Date()), 30000);
     return () => clearInterval(timer);
   }, []);
+
+  const isSessionCompletedOrEnded = (session: Schedule) => {
+    const status = session.status?.toLowerCase();
+    if (status === 'completed' || status === 'cancelled' || status === 'ended') {
+      return true;
+    }
+    if (session.end_time) {
+      const end = new Date(session.end_time);
+      if (!isNaN(end.getTime()) && now > end) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const isJoinable = (startTime: string, endTime: string, link: string) => {
     if (!link) return false;
@@ -52,6 +69,7 @@ export default function Sessions() {
     const fifteenMinutesAfter = new Date(start.getTime() + 900000);
     return now >= fifteenMinutesAfter;
   };
+
 
   const { data: sessionResponse, isLoading } = useUserSessions(debouncedSearch);
   const { mutateAsync: joinToSession, isPending: isJoining } = useJoinToSession();
@@ -288,26 +306,23 @@ export default function Sessions() {
                       </td>
                       <td className="px-6 py-4 text-start">
                         <button
-                          onClick={async () => {
-                            try {
-                              await joinToSession(session.id);
-                              window.open(session.link, '_blank');
-                            } catch (error) {
-                              console.log(error);
-                            }
+                          onClick={() => {
+                            setSessionToJoin(session);
+                            setIsGuidelinesModalOpen(true);
                           }}
-                          disabled={isJoining || session.status?.toLowerCase() === 'completed' || !isJoinable(session.start_time, session.end_time, session.link)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${!isJoinable(session.start_time, session.end_time, session.link) || session.status?.toLowerCase() === 'completed'
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
-                            : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
-                            } ${isJoining ? 'opacity-50 cursor-wait' : ''}`}
+                          disabled={isJoining || isSessionCompletedOrEnded(session) || !isJoinable(session.start_time, session.end_time, session.link)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${
+                            isSessionCompletedOrEnded(session) || !isJoinable(session.start_time, session.end_time, session.link)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                              : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
+                          } ${isJoining ? 'opacity-50 cursor-wait' : ''}`}
                         >
                           <Video className="w-4 h-4" />
                           <span className="text-sm">{isJoining ? t('joining...') || 'Joining...' : t('joinSession')}</span>
                         </button>
                       </td>
 
-                        <td className="px-6 py-4 text-start">
+                      <td className="px-6 py-4 text-start">
                         <button
                           onClick={async () => {
                             try {
@@ -318,54 +333,50 @@ export default function Sessions() {
                               console.log(error);
                             }
                           }}
-                          disabled={session.status?.toLowerCase() === 'completed' || !isEndable(session.start_time)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${session.status?.toLowerCase() === 'completed' || !isEndable(session.start_time)
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                            : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
+                          disabled={isSessionCompletedOrEnded(session) || !isEndable(session.start_time)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium text-sm ${
+                            isSessionCompletedOrEnded(session) || !isEndable(session.start_time)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                              : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
                           }`}
                         >
-                          <X className="w-4 h-4" />
-                          <span className="text-sm">{t('endSession') || 'End Session'}</span>
+                          {t('leaveSession')}
                         </button>
                       </td>
 
-                      <td className="px-3 py-3 text-start">
+                      <td className="px-6 py-4 text-start">
                         <button
                           onClick={() => {
                             setSessionForRequest(session);
                             setIsRequestModalOpen(true);
                           }}
-                          disabled={session.status?.toLowerCase() === 'completed'}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-white font-normal transition-all shadow-sm ${
-                            session.status?.toLowerCase() === 'completed'
-                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
-                              : 'hover:opacity-90 hover:shadow-md'
+                          disabled={isSessionCompletedOrEnded(session)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium text-sm ${
+                            isSessionCompletedOrEnded(session)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                              : 'bg-primary text-white hover:bg-primary-dark shadow-sm hover:shadow-md'
                           }`}
-                          style={
-                            session.status?.toLowerCase() === 'completed'
-                              ? undefined
-                              : { backgroundColor: settings.primaryColor }
-                          }
                         >
-                          <Plus className="w-5 h-5" />
-                          {isRtl ? 'طلب جديد' : 'Add Request'}
+                          <Plus className="w-4 h-4" />
+                          {t('AddRequest')}
                         </button>
                       </td>
+
                       <td className="px-6 py-4 text-start">
-                        <div className="flex items-center gap-2 justify-start">
+                        <div className="flex items-center gap-2">
                           <button
                             onClick={() => {
-                              const grouped = session.parent_recurring_id
-                                ? scheduleData.filter((s: Schedule) => s.parent_recurring_id === session.parent_recurring_id)
-                                : [session];
-                              setGroupedSessions(grouped);
                               setSelectedSession(session);
+                              const group = scheduleData.filter((s: Schedule) =>
+                                s.parent_recurring_id && s.parent_recurring_id === session.parent_recurring_id
+                              );
+                              setGroupedSessions(group);
                               setShowViewModal(true);
                             }}
-                            className="p-2 icon-btn-primary rounded-lg transition-colors"
+                            className="p-2 text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
                             title={t('view')}
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-5 h-5" />
                           </button>
                         </div>
                       </td>
@@ -373,7 +384,7 @@ export default function Sessions() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan={10} className="px-6 py-8 text-center text-gray-500">
                       {t('No Sessions')}
                     </td>
                   </tr>
@@ -419,6 +430,24 @@ export default function Sessions() {
   sessionId={sessionForFeedback?.id || ""}
   sessionTitle={sessionForFeedback?.title || ""}
 />
+
+<ViolationGuidelinesModal
+        isOpen={isGuidelinesModalOpen}
+        onClose={() => {
+          setIsGuidelinesModalOpen(false);
+          setSessionToJoin(null);
+        }}
+        isJoining={isJoining}
+        onConfirmJoin={async () => {
+          if (!sessionToJoin) return;
+          try {
+            await joinToSession(sessionToJoin.id);
+            window.open(sessionToJoin.link, '_blank');
+          } catch (error) {
+            console.log(error);
+          }
+        }}
+      />
     </div>
   );
 }

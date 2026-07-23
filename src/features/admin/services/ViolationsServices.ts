@@ -4,7 +4,9 @@ import {
   CreateViolationPayload,
   CreateViolationResponse,
   IssueViolationPayload,
-  IssueViolationResponse
+  IssueViolationResponse,
+  GetTeacherViolationsParams,
+  TeacherViolationsHistoryResponse
 } from "../../../types/Violations";
 
 export const getViolations = async (): Promise<ViolationsResponse> => {
@@ -21,4 +23,18 @@ export const issueViolation = async (payload: IssueViolationPayload): Promise<Is
     const response = await api.post('/violations/issue', payload);
     return response.data;
 }
+
+export const getTeacherViolationsHistory = async (
+  params?: GetTeacherViolationsParams
+): Promise<TeacherViolationsHistoryResponse> => {
+  const response = await api.get('/violations', { params });
+  return response.data;
+};
+
+export const deleteViolationItem = async (id: string): Promise<{ status: number; message: string }> => {
+  const response = await api.delete(`/violations/items/${id}`);
+  return response.data;
+};
+
+
 

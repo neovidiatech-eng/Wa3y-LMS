@@ -21,7 +21,8 @@ import {
   Package,
   Coins,
   ShieldCheck,
-  Repeat
+  Repeat,
+  Trophy
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -62,6 +63,7 @@ const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
 const RolesPage = lazy(() => import("../../features/admin/pages/Roles"));
 const NotificationsPage = lazy(() => import("../../features/admin/pages/Notifications"));
 const ViolationsPage = lazy(() => import("../../features/admin/pages/Violations"));
+const RanksPage = lazy(() => import("../../features/admin/pages/Ranks"));
 
 export const adminDashboardRoutes: RouteConfig[] = [
   {
@@ -107,6 +109,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
         element: <StudentsPage />,
       },
       {
+        id: "ranks",
+        label: "رتب المستويات",
+        icon: Trophy,
+        path: "ranks",
+        element: <RanksPage />,
+      },
+      {
         id: "parents",
         label: "sidebar_parents",
         icon: Users,
@@ -115,6 +124,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
       },
     ],
   },
+
   {
     id: "teachers-section",
     label: "sidebar_teachers",

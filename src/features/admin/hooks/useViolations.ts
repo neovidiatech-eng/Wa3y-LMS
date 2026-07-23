@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getViolations, createViolation, issueViolation } from "../services/ViolationsServices"
-import { CreateViolationPayload, IssueViolationPayload } from "../../../types/Violations"
+import { getViolations, createViolation, issueViolation, getTeacherViolationsHistory, deleteViolationItem } from "../services/ViolationsServices"
+import { CreateViolationPayload, IssueViolationPayload, GetTeacherViolationsParams } from "../../../types/Violations"
 
 export const useViolations = () => {
     return useQuery({
@@ -8,6 +8,13 @@ export const useViolations = () => {
         queryFn: getViolations,
     })
 }   
+
+export const useTeacherViolationsHistory = (params?: GetTeacherViolationsParams) => {
+    return useQuery({
+        queryKey: ['teacher-violations-history', params],
+        queryFn: () => getTeacherViolationsHistory(params),
+    })
+}
 
 export const useCreateViolation = () => {
     const queryClient = useQueryClient();
@@ -26,7 +33,20 @@ export const useIssueViolation = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['violations'] });
             queryClient.invalidateQueries({ queryKey: ['issued-violations'] });
+            queryClient.invalidateQueries({ queryKey: ['teacher-violations-history'] });
         },
     });
 };
+
+export const useDeleteViolationItem = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => deleteViolationItem(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['violations'] });
+        },
+    });
+};
+
+
 

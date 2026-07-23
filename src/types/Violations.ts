@@ -62,3 +62,48 @@ export interface IssueViolationResponse {
   };
 }
 
+export interface GetTeacherViolationsParams {
+  page?: number;
+  limit?: number;
+  teacherId?: string;
+  type?: ViolationType;
+}
+
+export interface IssuedViolationHistoryItem {
+  id: string;
+  type: ViolationType;
+  deductionAmount: number;
+  reason: string;
+  createdAt: string;
+  teacher?: {
+    id: string;
+    user?: {
+      name: string;
+    };
+  };
+  supervisor?: {
+    id: string;
+    name: string;
+  };
+  infractionItem?: {
+    title_ar?: string;
+    title_en?: string;
+  };
+}
+
+export interface TeacherViolationsHistoryResponse {
+  status: number;
+  message: string;
+  data: {
+    violations: IssuedViolationHistoryItem[];
+    pagination: {
+      total: number;
+      totalItems?: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
+}
+
+

@@ -1,4 +1,5 @@
-import { Modal, Form, Input, InputNumber, Select, Button, message } from "antd";
+import { Form, Input, InputNumber, Select, message } from "antd";
+import { X, Save, ShieldAlert } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useViolations, useIssueViolation } from "../../features/admin/hooks/useViolations";
 import { useTeacher } from "../../features/admin/hooks/useTeacher";
@@ -26,6 +27,8 @@ export default function IssueViolationModal({
   const { data: teachersData, isLoading: isLoadingTeachers } = useTeacher({ page: 1, limit: 100 });
   const { data: schedulesData, isLoading: isLoadingSchedules } = useSearchSchedules("", 1, 100);
   const { mutate: issueMutate, isPending: isSubmitting } = useIssueViolation();
+
+  if (!isOpen) return null;
 
   const violationItems: ViolationItem[] = Array.isArray(violationsData?.data)
     ? violationsData.data
@@ -91,124 +94,155 @@ export default function IssueViolationModal({
   };
 
   return (
-    <Modal
-      title={isRtl ? "إصدار مخالفة / تحذير للمعلم" : "Issue Violation / Warning to Teacher"}
-      open={isOpen}
-      onCancel={() => {
-        onClose();
-        form.resetFields();
-      }}
-      footer={null}
-      destroyOnClose
-      centered
-      style={{ top: 20 }}
-    >
-      <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        {!teacherId && (
+    <div className="fixed inset-0 !mt-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto no-scrollbar"
+        dir={isRtl ? "rtl" : "ltr"}
+      >
+        {/* Header */}
+        <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <ShieldAlert className="w-6 h-6 text-white" />
+            <span>{isRtl ? "إصدار مخالفة / تحذير للمعلم" : "Issue Violation / Warning to Teacher"}</span>
+          </h2>
+          <button
+            onClick={() => {
+              onClose();
+              form.resetFields();
+            }}
+            type="button"
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+        </div>
+
+        {/* Form Body */}
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          className="p-6 space-y-4"
+        >
+          {!teacherId && (
+            <Form.Item
+              name="teacherId"
+              label={<span className="font-medium text-gray-700">{isRtl ? "اختر المعلم *" : "Select Teacher *"}</span>}
+              rules={[{ required: true, message: isRtl ? "يرجى اختيار المعلم" : "Please select teacher" }]}
+            >
+              <Select
+                showSearch
+                placeholder={isRtl ? "ابحث عن المعلم..." : "Search teacher..."}
+                loading={isLoadingTeachers}
+                filterOption={(input, option) =>
+                  (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
+                }
+                options={teachersList.map((t) => ({
+                  value: t.id,
+                  label: t.name || (t as any).user?.name || t.email,
+                }))}
+              />
+            </Form.Item>
+          )}
+
           <Form.Item
-            name="teacherId"
-            label={isRtl ? "اختر المعلم" : "Select Teacher"}
-            rules={[{ required: true, message: isRtl ? "يرجى اختيار المعلم" : "Please select a teacher" }]}
+            name="infractionItemId"
+            label={<span className="font-medium text-gray-700">{isRtl ? "اختر بند المخالفة/التحذير *" : "Select Infraction Item *"}</span>}
+            rules={[{ required: true, message: isRtl ? "يرجى اختيار البند" : "Please select infraction item" }]}
           >
             <Select
-              loading={isLoadingTeachers}
-              showSearch
-              placeholder={isRtl ? "اختر المعلم من القائمة..." : "Select teacher from list..."}
-              optionFilterProp="label"
-              options={teachersList.map((teacher: any) => {
-                const name =
-                  teacher?.user?.name ||
-                  teacher?.name ||
-                  [teacher?.firstName, teacher?.lastName].filter(Boolean).join(" ") ||
-                  teacher?.user?.email ||
-                  (isRtl ? "معلم بدون اسم" : "Unnamed Teacher");
-                return {
-                  value: teacher.id || teacher._id,
-                  label: name,
-                };
-              })}
+              placeholder={isRtl ? "اختر البند..." : "Select item..."}
+              onChange={handleItemSelect}
+              options={violationItems.map((item) => ({
+                value: item.id,
+                label: `${isRtl ? item.title_ar : item.title_en} (${
+                  item.defaultType === "penalty"
+                    ? isRtl
+                      ? "خصم"
+                      : "Penalty"
+                    : isRtl
+                    ? "تحذير"
+                    : "Warning"
+                })`,
+              }))}
             />
           </Form.Item>
-        )}
 
-        {!scheduleId && (
-          <Form.Item name="scheduleId" label={isRtl ? "اختر الحصة / السيشن (اختياري)" : "Select Session / Schedule (Optional)"}>
-            <Select
-              loading={isLoadingSchedules}
-              showSearch
-              allowClear
-              placeholder={isRtl ? "اختر الحصة من القائمة..." : "Select session from list..."}
-              optionFilterProp="label"
-              options={schedulesList.map((sch: any) => {
-                const title =
-                  sch.title ||
-                  sch.subjectName ||
-                  sch.subject?.name_ar ||
-                  sch.subject?.name_en ||
-                  (isRtl ? "حصة" : "Session");
-                const date = sch.date || sch.startTime ? ` (${sch.date || ''} ${sch.startTime || ''})` : '';
-                return {
-                  value: sch.id || sch._id,
-                  label: `${title}${date}`.trim(),
-                };
-              })}
-            />
+          {!scheduleId && (
+            <Form.Item
+              name="scheduleId"
+              label={<span className="font-medium text-gray-700">{isRtl ? "الحصة المرتبطة (اختياري)" : "Related Schedule (Optional)"}</span>}
+            >
+              <Select
+                showSearch
+                allowClear
+                placeholder={isRtl ? "اختر الحصة إن وجدت..." : "Select schedule if applicable..."}
+                loading={isLoadingSchedules}
+                filterOption={(input, option) =>
+                  (option?.label ?? "").toString().toLowerCase().includes(input.toLowerCase())
+                }
+                options={schedulesList.map((s: any) => ({
+                  value: s.id,
+                  label: `${s.title || "Schedule"} - ${s.start_time ? new Date(s.start_time).toLocaleDateString() : ""}`,
+                }))}
+              />
+            </Form.Item>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Form.Item
+              name="type"
+              label={<span className="font-medium text-gray-700">{isRtl ? "نوع الإجراء *" : "Action Type *"}</span>}
+              rules={[{ required: true }]}
+            >
+              <Select
+                options={[
+                  { value: "warning", label: isRtl ? "تحذير (Warning)" : "Warning" },
+                  { value: "penalty", label: isRtl ? "عقوبة / خصم (Penalty)" : "Penalty" },
+                ]}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="deductionAmount"
+              label={<span className="font-medium text-gray-700">{isRtl ? "مبلغ الخصم (ج.م) *" : "Deduction Amount *"}</span>}
+              rules={[{ required: true, message: isRtl ? "يرجى كتابة المبلغ" : "Please enter deduction amount" }]}
+            >
+              <InputNumber className="w-full rounded-lg" min={0} placeholder="0" />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            name="reason"
+            label={<span className="font-medium text-gray-700">{isRtl ? "السبب والتفاصيل *" : "Reason & Explanation *"}</span>}
+            rules={[{ required: true, message: isRtl ? "يرجى كتابة السبب" : "Please enter reason" }]}
+          >
+            <Input.TextArea rows={3} className="rounded-lg" placeholder={isRtl ? "أدخل سبب إصدار المخالفة..." : "Enter reason..."} />
           </Form.Item>
-        )}
 
-        <Form.Item
-          name="infractionItemId"
-          label={isRtl ? "اختر بند المخالفة" : "Select Violation Item"}
-          rules={[{ required: true, message: isRtl ? "يرجى اختيار بند المخالفة" : "Please select item" }]}
-        >
-          <Select
-            placeholder={isRtl ? "اختر البند..." : "Select item..."}
-            onChange={handleItemSelect}
-            options={violationItems.map((item) => ({
-              value: item.id,
-              label: `${isRtl ? item.title_ar : item.title_en} (${item.defaultType === "penalty" ? (isRtl ? "خصم" : "Penalty") : (isRtl ? "تحذير" : "Warning")})`,
-            }))}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="type"
-          label={isRtl ? "نوع الإجراء" : "Action Type"}
-          initialValue="warning"
-          rules={[{ required: true }]}
-        >
-          <Select
-            options={[
-              { value: "warning", label: isRtl ? "تحذير بدون خصم (Warning)" : "Warning (No Money Deducted)" },
-              { value: "penalty", label: isRtl ? "مخالفة مع خصم مالي (Penalty)" : "Penalty (Money Deducted)" },
-            ]}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="deductionAmount"
-          label={isRtl ? "مبلغ الخصم (ج.م)" : "Deduction Amount (EGP)"}
-          initialValue={0}
-          rules={[{ required: true, message: isRtl ? "يرجى كتابة المبلغ" : "Please enter deduction amount" }]}
-        >
-          <InputNumber className="w-full" min={0} placeholder="0" />
-        </Form.Item>
-
-        <Form.Item
-          name="reason"
-          label={isRtl ? "سبب المخالفة / ملاحظات" : "Reason / Notes"}
-          rules={[{ required: true, message: isRtl ? "يرجى كتابة السبب" : "Please enter reason" }]}
-        >
-          <Input.TextArea rows={3} placeholder={isRtl ? "سبب إصدار المخالفة..." : "Reason for issue..."} />
-        </Form.Item>
-
-        <div className="flex justify-end gap-2 mt-6">
-          <Button onClick={onClose}>{isRtl ? "إلغاء" : "Cancel"}</Button>
-          <Button type="primary" htmlType="submit" loading={isSubmitting} className="bg-primary">
-            {isRtl ? "إصدار المخالفة" : "Issue Violation"}
-          </Button>
-        </div>
-      </Form>
-    </Modal>
+          {/* Actions */}
+          <div className="flex gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                form.resetFields();
+              }}
+              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+            >
+              {isRtl ? "إلغاء" : "Cancel"}
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+            >
+              <Save className="w-5 h-5" />
+              <span>{isRtl ? "إصدار المخالفة" : "Issue Violation"}</span>
+            </button>
+          </div>
+        </Form>
+      </div>
+    </div>
   );
 }
