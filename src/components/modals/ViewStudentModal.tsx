@@ -162,14 +162,17 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                 <label className="text-sm font-medium text-gray-500 block mb-1">
                   {language === 'ar' ? 'الرتبة' : 'Rank'}
                 </label>
-                <span
-                  className={`inline-flex px-3 py-1 rounded-full text-sm font-medium bg-[${student.rank.color}]`}
-
-                >
-                  <student.rank.icon className="w-4 h-4 mr-2" />
-                  {language === 'ar' ? student.rank.name_ar : student.rank.name_en}
-
-                </span>
+                {student.rank ? (
+                  <span
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100"
+                    style={student.rank.color ? { backgroundColor: student.rank.color } : undefined}
+                  >
+                    {typeof student.rank.icon === 'function' && student.rank.icon({ className: 'w-4 h-4 mr-2' })}
+                    {language === 'ar' ? student.rank.name_ar : student.rank.name_en}
+                  </span>
+                ) : (
+                  <span className="text-gray-400 text-sm">{language === 'ar' ? 'لا يوجد' : 'None'}</span>
+                )}
               </div>
 
 

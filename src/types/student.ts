@@ -32,7 +32,7 @@ export interface Student {
     sessions_attended: number;
     sessions_remaining: number;
     rankId: string | null;
-    rank: Rank;
+    rank?: Rank | null;
     planId: string | null;
     country: string;
     nationality: string;

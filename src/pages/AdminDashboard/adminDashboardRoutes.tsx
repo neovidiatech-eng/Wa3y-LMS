@@ -72,7 +72,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
     icon: Home,
     path: "",
   },
- 
+
   {
     id: "lms",
     label: "sidebar_lms",
@@ -110,7 +110,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
       },
       {
         id: "ranks",
-        label: "رتب المستويات",
+        label: "sidebar_ranks",
         icon: Trophy,
         path: "ranks",
         element: <RanksPage />,
@@ -273,7 +273,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
     path: "requests",
     element: <TeacherRequestsPage />,
   },
-   {
+  {
     id: "violations",
     label: "sidebar_violations",
     icon: AlertCircle,
