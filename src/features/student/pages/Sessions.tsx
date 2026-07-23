@@ -36,6 +36,20 @@ export default function Sessions() {
     return () => clearInterval(timer);
   }, []);
 
+  const isSessionCompletedOrEnded = (session: Schedule) => {
+    const status = session.status?.toLowerCase();
+    if (status === 'completed' || status === 'cancelled' || status === 'ended') {
+      return true;
+    }
+    if (session.end_time) {
+      const end = new Date(session.end_time);
+      if (!isNaN(end.getTime()) && now > end) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const isJoinable = (startTime: string, endTime: string, link: string) => {
     if (!link) return false;
     const start = new Date(startTime);
@@ -49,6 +63,7 @@ export default function Sessions() {
     const fifteenMinutesAfter = new Date(start.getTime() + 900000);
     return now >= fifteenMinutesAfter;
   };
+
 
   useEffect(() => {
     if (searchTerm.length > 2) {
@@ -243,19 +258,20 @@ export default function Sessions() {
                               console.log(error);
                             }
                           }}
-                          disabled={isJoining || session.status?.toLowerCase() === 'completed' || !isJoinable(session.start_time, session.end_time, session.link)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${!isJoinable(session.start_time, session.end_time, session.link) || session.status?.toLowerCase() === 'completed'
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
-                            : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
-                            } ${isJoining ? 'opacity-50 cursor-wait' : ''}`}
+                          disabled={isJoining || isSessionCompletedOrEnded(session) || !isJoinable(session.start_time, session.end_time, session.link)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${
+                            isSessionCompletedOrEnded(session) || !isJoinable(session.start_time, session.end_time, session.link)
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                              : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
+                          } ${isJoining ? 'opacity-50 cursor-wait' : ''}`}
                         >
                           <Video className="w-4 h-4" />
                           <span className="text-sm">{isJoining ? t('joining...') || 'Joining...' : t('joinSession')}</span>
                         </button>
                       </td>
 
-                        <td className="px-6 py-4 text-start">
-                                                   <button
+                      <td className="px-6 py-4 text-start">
+                        <button
                           onClick={async () => {
                             try {
                               await leaveSession(session.id);
@@ -265,16 +281,17 @@ export default function Sessions() {
                               console.log(error);
                             }
                           }}
-                          disabled={session.status?.toLowerCase() === 'completed' || !isEndable(session.start_time)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${session.status?.toLowerCase() === 'completed' || !isEndable(session.start_time)
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                            : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
+                          disabled={isSessionCompletedOrEnded(session) || !isEndable(session.start_time)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${
+                            isSessionCompletedOrEnded(session) || !isEndable(session.start_time)
+                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                              : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
                           }`}
                         >
                           <X className="w-4 h-4" />
                           <span className="text-sm">{t('endSession') || 'End Session'}</span>
                         </button>
-                                            </td>
+                      </td>
 
                       <td className="px-3 py-3 text-start">
                         <button
@@ -282,14 +299,14 @@ export default function Sessions() {
                             setSessionForRequest(session);
                             setIsRequestModalOpen(true);
                           }}
-                          disabled={session.status?.toLowerCase() === 'completed'}
+                          disabled={isSessionCompletedOrEnded(session)}
                           className={`flex items-center gap-2 px-3 py-2 rounded-xl text-white font-normal transition-all shadow-sm ${
-                            session.status?.toLowerCase() === 'completed'
+                            isSessionCompletedOrEnded(session)
                               ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
                               : 'hover:opacity-90 hover:shadow-md'
                           }`}
                           style={
-                            session.status?.toLowerCase() === 'completed'
+                            isSessionCompletedOrEnded(session)
                               ? undefined
                               : { backgroundColor: settings.primaryColor }
                           }
@@ -298,6 +315,7 @@ export default function Sessions() {
                           {isRtl ? 'تقديم طلب' : 'Add Request'}
                         </button>
                       </td>
+   </td>
                       <td className="px-6 py-4 text-start">
                         <div className="flex items-center gap-2 justify-start">
                           <button

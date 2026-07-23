@@ -206,6 +206,7 @@
   "november": "November",
   "december": "December",
   "sidebar_dashboard": "Dashboard",
+  "sidebar_violations": "Violations & Warnings",
   "sidebar_lms": "LMS",
   "sidebar_courses": "Courses",
   "sidebar_user_management": "User Management",
@@ -454,6 +455,11 @@
   "updatedSuccessfully": "Updated successfully",
   "noData": "No data found",
   "sidebar_notifications": "Notifications",
-  "sidebar_my_children": "My Children",
-  "sidebar_student_dashboard": "Student Panel"
+  "status_scheduled": "Scheduled",
+  "status_planned": "Planned",
+  "status_completed": "Completed",
+  "status_cancelled": "Cancelled",
+  "teacher_label": "Teacher",
+  "student_label": "Student",
+  "status_label": "Status"
 }

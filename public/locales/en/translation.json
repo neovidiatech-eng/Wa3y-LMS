@@ -38,7 +38,6 @@
   "english": "English",
   "registerNewStudent": "Register New Student",
   "joinAcademy": "Join Waai Academy and start your educational journey",
-  "joinAcademyTeacher": "Join the teaching staff at Waai Academy and start your journey with us",
   "fullName": "Full Name",
   "phoneNumber": "Phone Number",
   "choosePackage": "Choose Package",
@@ -203,6 +202,7 @@
   "november": "November",
   "december": "December",
   "sidebar_dashboard": "Dashboard",
+  "sidebar_violations": "Violations & Warnings",
   "sidebar_lms": "LMS",
   "sidebar_courses": "Courses",
   "sidebar_user_management": "User Management",
@@ -622,5 +622,13 @@
   "noLogs": "No logs for now",
   "logs": "Logs",
   "endSession": "End Session",
-  "renewSubscription": "Renew Subscription"
+  "renewSubscription": "Renew Subscription",
+  "sidebar_notifications": "Notifications",
+  "status_scheduled": "Scheduled",
+  "status_planned": "Planned",
+  "status_completed": "Completed",
+  "status_cancelled": "Cancelled",
+  "teacher_label": "Teacher",
+  "student_label": "Student",
+  "status_label": "Status"
 }

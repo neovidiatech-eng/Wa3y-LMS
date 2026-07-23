@@ -205,6 +205,7 @@
   "november": "نوفمبر",
   "december": "ديسمبر",
   "sidebar_dashboard": "الرئيسية",
+  "sidebar_violations": "المخالفات والتحذيرات",
   "sidebar_lms": "LMS",
   "sidebar_courses": "الكورسات",
   "sidebar_user_management": "إدارة المستخدمين",
@@ -454,6 +455,11 @@
   "updatedSuccessfully": "تم التحديث بنجاح",
   "noData": "لا توجد بيانات",
   "sidebar_notifications": "الإشعارات",
-  "sidebar_my_children": "أبنائي",
-  "sidebar_student_dashboard": "لوحة الطالب"
+  "status_scheduled": "مجدولة",
+  "status_planned": "مخطط لها",
+  "status_completed": "مكتملة",
+  "status_cancelled": "ملغاة",
+  "teacher_label": "المعلم",
+  "student_label": "الطالب",
+  "status_label": "الحالة"
 }
