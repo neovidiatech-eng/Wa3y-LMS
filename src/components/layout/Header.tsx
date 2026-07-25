@@ -9,14 +9,16 @@ import ThemeToggle from "../ui/ThemeToggle";
 interface HeaderProps {
   onMenuClick: () => void;
   userRole: "admin" | "teacher" | "student" | "parent";
-  userName: string;
-  userEmail: string;
+  userName?: string;
+  userEmail?: string;
   isCollapsed?: boolean;
 }
 
 export default function Header({
   onMenuClick,
   userRole,
+  userName,
+  userEmail,
   isCollapsed,
 }: HeaderProps) {
   const { language, toggleLanguage, t } = useLanguage();
@@ -58,10 +60,17 @@ export default function Header({
     window.location.href = "/login";
   };
 
-  let role = localStorage.getItem("role");
-  let email = localStorage.getItem("email");
-  if (role === "super_admin") {
-    role = "Super Admin";
+  let role = localStorage.getItem("role") || userRole;
+  let email = localStorage.getItem("email") || userEmail || "";
+
+  if (role === "super_admin" || role === "admin") {
+    role = language === "ar" ? "مسؤول النظام" : "Admin";
+  } else if (role === "teacher") {
+    role = language === "ar" ? "معلم" : "Teacher";
+  } else if (role === "student") {
+    role = language === "ar" ? "طالب" : "Student";
+  } else if (role === "parent") {
+    role = language === "ar" ? "ولي أمر" : "Parent";
   }
 
   return (

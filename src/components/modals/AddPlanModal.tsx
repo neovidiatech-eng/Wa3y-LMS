@@ -31,7 +31,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
       sessionsCount: 0,
       sessionTime: 60,
       planType: "single",
-      studentsNum: "2",
+      maxStudents: "0",
       color: "#3b82f6",
       features: [''],
       isPopular: false,
@@ -89,7 +89,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
           sessionsCount: 0,
           sessionTime: 60,
           planType: "single",
-          studentsNum: "2",
+          maxStudents: "0",
           color: "#3b82f6",
           features: [''],
           isPopular: false,
@@ -100,8 +100,6 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
     }
   }, [initialData, reset, isOpen, availableCurrencies]);
 
-
-
   const text = {
     title: { ar: initialData ? 'تعديل خطة' : 'إضافة خطة جديدة', en: initialData ? 'Edit Plan' : 'Add New Plan' },
     nameAr: { ar: 'اسم الخطة (عربي)', en: 'Plan Name (Arabic)' },
@@ -110,6 +108,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
     single: { ar: 'حصة فردية', en: 'Single Session' },
     group: { ar: 'حصة جماعية', en: 'Group Session' },
     studentsNum: { ar: "عدد الطلاب", en: "Number of students" },
+    unlimitedHint: { ar: "إدخال 0 يعني عدد غير محدود من الطلاب", en: "Entering 0 means unlimited number of students" },
     color: { ar: "لون الخطة", en: "Plan Color" },
     description: { ar: 'الوصف', en: 'Description' },
     price: { ar: 'السعر', en: 'Price' },
@@ -160,7 +159,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit, (errs) => console.log('Form validation errors:', errs))} className="p-6 space-y-6">
 
           {/* Names */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +187,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
 
           </div>
 
-          {/* Plan type  & StudnetsNumber*/}
+          {/* Plan type  & MaxStudents*/}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
@@ -220,26 +219,19 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
               <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
                 {text.studentsNum[language]}
               </label>
-              <input type='text' {...register('studentsNum')} className="w-full px-4 py-2.5 border rounded-lg text-start" />
-              {errors.studentsNum && (
+              <input type='text' {...register('maxStudents')} className="w-full px-4 py-2.5 border rounded-lg text-start" />
+              <p className="text-green-600 text-xs mt-1 text-start font-medium">
+                {text.unlimitedHint[language]}
+              </p>
+              {errors.maxStudents && (
                 <p className="text-red-500 text-sm mt-1 text-start">
-                  {errors.studentsNum.message}
+                  {errors.maxStudents.message}
                 </p>
               )}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-start">
-              {text.sessionTime[language]}
-            </label>
-            <input type="number" {...register('sessionTime', { valueAsNumber: true })} className="w-full px-4 py-2.5 border rounded-lg text-start" />
-            {errors.sessionTime && (
-              <p className="text-red-500 text-sm mt-1 text-start">
-                {errors.sessionTime.message}
-              </p>
-            )}
-          </div>
+          {/*Color*/}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 text-start">

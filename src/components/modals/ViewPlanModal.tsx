@@ -11,13 +11,15 @@ interface ViewPlanModalProps {
     description: string;
     price: number | string;
     currency?: { code: string };
-
     duration: number;
     sessionsCount: number;
     sessionTime: number;
     features: string[];
     bestSeller: boolean;
     active: boolean;
+    planType?: "single" | "group";
+    maxStudents?: string | number;
+    studentsNum?: string;
     createdAt: string;
     updatedAt: string;
   };
@@ -47,12 +49,28 @@ export default function ViewPlanModal({ isOpen, onClose, plan }: ViewPlanModalPr
     inactive: { ar: 'غير نشط', en: 'Inactive' },
     isPopular: { ar: 'الأكثر شعبية', en: 'Most Popular' },
     sessionTime: { ar: 'مدة الحصة (دقيقة)', en: 'Session Time (Minutes)' },
+    planType: { ar: 'نوع الخطة', en: 'Plan Type' },
+    studentsNum: { ar: 'عدد الطلاب', en: 'Number of Students' },
+    student: { ar: 'طالب', en: 'student' },
+    students: { ar: 'طلاب', en: 'students' },
+    unlimited: { ar: 'غير محدود', en: 'Unlimited' },
+    singlePlan: { ar: 'خطة فردية', en: 'Single Plan' },
+    groupPlan: { ar: 'خطة جماعية', en: 'Group Plan' },
     yes: { ar: 'نعم', en: 'Yes' },
-
     no: { ar: 'لا', en: 'No' },
     close: { ar: 'إغلاق', en: 'Close' },
     planInfo: { ar: 'معلومات الخطة', en: 'Plan Information' },
     pricing: { ar: 'التسعير', en: 'Pricing' }
+  };
+
+  const getGroupPlanText = (rawVal: any) => {
+    const strVal = String(rawVal ?? '').trim().toLowerCase();
+    const isUnlimited = !strVal || strVal === '0' || strVal === 'unlimited';
+    if (isUnlimited) return text.unlimited[language];
+    const count = parseInt(strVal, 10) || 0;
+    if (count <= 0) return text.unlimited[language];
+    const unit = count === 1 ? text.student[language] : text.students[language];
+    return `${count} ${unit}`;
   };
 
   if (!isOpen) return null;
@@ -101,6 +119,12 @@ export default function ViewPlanModal({ isOpen, onClose, plan }: ViewPlanModalPr
               <div className="md:col-span-2">
                 <p className="text-sm text-gray-600 mb-1">{text.description[language]}</p>
                 <p className="text-base font-semibold text-gray-900">{plan.description}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 mb-1">{text.planType[language]}</p>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${plan.planType === 'group' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-blue-100 text-blue-700 border border-blue-200'}`}>
+                  {plan.planType === 'group' ? `${text.groupPlan[language]} (${getGroupPlanText(plan.maxStudents ?? plan.studentsNum)})` : text.singlePlan[language]}
+                </span>
               </div>
               <div>
                 <p className="text-sm text-gray-600 mb-1">{text.status[language]}</p>

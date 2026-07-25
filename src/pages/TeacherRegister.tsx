@@ -14,7 +14,7 @@ import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 
 interface TeacherRegisterProps {
-  onRegisterSuccess: () => void;
+  onRegisterSuccess?: () => void;
 }
 
 export default function TeacherRegister({ onRegisterSuccess }: TeacherRegisterProps) {
@@ -65,11 +65,13 @@ export default function TeacherRegister({ onRegisterSuccess }: TeacherRegisterPr
         comfirmPassword: data.password, // Required by backend typo "comfirmPassword"
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
-      
+
       const result = await registerTeacherMutation(registrationData);
       if (result.status === 201 || result.status === 200 || result.success || result.data) {
         message.success(result.message || t("registeredSuccess"));
         sessionStorage.setItem("verify_email", data.email);
+        sessionStorage.setItem("register_role", "teacher");
+        onRegisterSuccess?.();
         navigate("/verify-account");
       }
     } catch (error: any) {
@@ -293,7 +295,7 @@ export default function TeacherRegister({ onRegisterSuccess }: TeacherRegisterPr
           {/*City / governrate*/}
           <div className="text-start">
             <label className="block text-sm font-semibold text-slate-700 mb-2">
-              {t("city")} 
+              {t("city")}
             </label>
             <Controller
               name="city"

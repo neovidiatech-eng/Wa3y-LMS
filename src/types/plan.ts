@@ -20,7 +20,7 @@ export type Plan = {
   active: boolean;
   bestSeller: boolean;
   planType?: "single" | "group";
-  studentsNum?: string;
+  maxStudents?: string;
   color?: string;
   currency?: Currency;
   createdAt: string;

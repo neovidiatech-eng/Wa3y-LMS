@@ -28,6 +28,7 @@ export default function Students() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedGrade, setSelectedGrade] = useState('all');
   const [selectedCountry, setSelectedCountry] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -45,13 +46,29 @@ export default function Students() {
     return () => clearTimeout(timeout);
   }, [searchTerm]);
 
-  const studentsQueryParams = useMemo(() => ({
-    page: currentPage,
-    limit: itemsPerPage,
-    search: debouncedSearch || undefined,
-    country: selectedCountry !== 'all' ? selectedCountry : undefined,
-    planId: selectedGrade !== 'all' ? selectedGrade : undefined,
-  }), [currentPage, itemsPerPage, debouncedSearch, selectedCountry, selectedGrade]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedStatus, selectedCountry, selectedGrade, debouncedSearch]);
+
+  const studentsQueryParams = useMemo(() => {
+    let apiStatus: string | undefined = undefined;
+    if (selectedStatus === 'approved' || selectedStatus === 'active') {
+      apiStatus = 'approved';
+    } else if (selectedStatus === 'pending') {
+      apiStatus = 'pending';
+    } else if (selectedStatus === 'rejected') {
+      apiStatus = 'rejected';
+    }
+
+    return {
+      page: selectedStatus === 'all' ? currentPage : 1,
+      limit: selectedStatus !== 'all' ? 1000 : itemsPerPage,
+      search: debouncedSearch || undefined,
+      country: selectedCountry !== 'all' ? selectedCountry : undefined,
+      planId: selectedGrade !== 'all' ? selectedGrade : undefined,
+      status: apiStatus,
+    };
+  }, [currentPage, itemsPerPage, debouncedSearch, selectedCountry, selectedGrade, selectedStatus]);
 
   const { data: apiResponse, isLoading } = useStudents(studentsQueryParams);
   const { data: plansData } = usePlans();
@@ -61,10 +78,36 @@ export default function Students() {
   const rawData: any = apiResponse?.data.studentsData;
   const studentsList: Student[] = Array.isArray(rawData) ? rawData : (rawData?.students || rawData?.data || []);
   const pagination = apiResponse?.data?.pagination;
-  const totalItems = pagination?.totalItems ?? 0;
   const activeItems = apiResponse?.data?.activeCount ?? 0;
   const inactiveItems = apiResponse?.data?.inactiveCount ?? 0;
-  const totalPages = pagination?.totalPages ?? 1;
+
+  const displayStudents = useMemo(() => {
+    if (selectedStatus === 'all') return studentsList;
+    return studentsList.filter((s) => {
+      if (selectedStatus === 'approved' || selectedStatus === 'active') {
+        return s.status === 'approved' || s.status === 'active' || s.active === true;
+      }
+      if (selectedStatus === 'inactive' || selectedStatus === 'pending') {
+        return s.status === 'pending' || s.status === 'inactive' || s.status === 'rejected' || s.active === false;
+      }
+      return s.status === selectedStatus;
+    });
+  }, [studentsList, selectedStatus]);
+
+  const totalItems = selectedStatus === 'all'
+    ? (pagination?.totalItems ?? 0)
+    : displayStudents.length;
+
+  const totalPages = selectedStatus === 'all'
+    ? (pagination?.totalPages ?? 1)
+    : Math.ceil(displayStudents.length / itemsPerPage) || 1;
+
+  const paginatedStudents = useMemo(() => {
+    if (selectedStatus === 'all') return displayStudents;
+    const start = (currentPage - 1) * itemsPerPage;
+    return displayStudents.slice(start, start + itemsPerPage);
+  }, [displayStudents, selectedStatus, currentPage, itemsPerPage]);
+
   const { mutateAsync: createStudent } = useCreateStudent();
   const { mutateAsync: updateStudent } = useUpdateStudent();
   const { mutateAsync: deleteStudent } = useDeleteStudent();
@@ -107,7 +150,7 @@ export default function Students() {
       iconColor: 'text-purple-600',
       valueColor: 'text-purple-600',
     },
-  ], [studentsList, t]);
+  ], [totalItems, activeItems, inactiveItems, plans, t]);
 
 
   const grades = [
@@ -125,7 +168,7 @@ export default function Students() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearch, selectedGrade, selectedCountry]);
+  }, [debouncedSearch, selectedGrade, selectedCountry, selectedStatus]);
 
 
   const handlePageChange = (page: number) => {
@@ -201,23 +244,87 @@ export default function Students() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat) => (
-          <div
-            key={stat.id}
-            className={`${stat.bgColor} rounded-2xl p-6 border border-gray-200 hover:shadow-lg transition-shadow`}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
+        {stats.map((stat) => {
+          const isClickable = stat.id !== 'plans';
+          const isSelected =
+            (stat.id === 'total' && selectedStatus === 'all') ||
+            (stat.id === 'active' && (selectedStatus === 'approved' || selectedStatus === 'active')) ||
+            (stat.id === 'inactive' && (selectedStatus === 'inactive' || selectedStatus === 'pending'));
+
+          const getSelectionStyle = (id: string) => {
+            if (id === 'active') return 'border-2 border-green-500 shadow-md ring-2 ring-green-200';
+            if (id === 'inactive') return 'border-2 border-orange-500 shadow-md ring-2 ring-orange-200';
+            return 'border-2 border-blue-500 shadow-md ring-2 ring-blue-200';
+          };
+
+          return (
+            <div
+              key={stat.id}
+              onClick={() => {
+                if (!isClickable) return;
+                if (stat.id === 'total') {
+                  setSelectedStatus('all');
+                } else if (stat.id === 'active') {
+                  setSelectedStatus((prev) =>
+                    prev === 'approved' || prev === 'active' ? 'all' : 'approved'
+                  );
+                } else if (stat.id === 'inactive') {
+                  setSelectedStatus((prev) =>
+                    prev === 'inactive' || prev === 'pending' ? 'all' : 'inactive'
+                  );
+                }
+              }}
+              className={`${stat.bgColor} rounded-2xl p-6 border transition-all ${
+                isClickable
+                  ? 'cursor-pointer hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
+                  : ''
+              } ${
+                isSelected && isClickable && selectedStatus !== 'all'
+                  ? getSelectionStyle(stat.id)
+                  : 'border-gray-200'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                  <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
+                </div>
+                {isSelected && isClickable && selectedStatus !== 'all' && (
+                  <span className="text-xs font-semibold px-2.5 py-1 bg-white/90 text-gray-800 rounded-full shadow-sm">
+                    {t('selected') || (language === 'ar' ? 'محدد' : 'Selected')}
+                  </span>
+                )}
+              </div>
+              <div className="text-start">
+                <p className={`text-4xl font-bold ${stat.valueColor} mb-2`}>{stat.value}</p>
+                <p className="text-sm font-medium text-gray-700">{stat.label}</p>
               </div>
             </div>
-            <div className="text-start">
-              <p className={`text-4xl font-bold ${stat.valueColor} mb-2`}>{stat.value}</p>
-              <p className="text-sm font-medium text-gray-700">{stat.label}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* Active Filter Indicator */}
+      {selectedStatus !== 'all' && (
+        <div className="flex items-center justify-between bg-orange-50/80 border border-orange-200 px-4 py-3 rounded-xl mb-6 text-sm text-orange-900 shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+            <span>
+              {language === 'ar' ? 'يتم عرض:' : 'Showing:'}{' '}
+              <strong className="font-semibold">
+                {selectedStatus === 'approved' || selectedStatus === 'active'
+                  ? t('activeStudents')
+                  : t('inactiveStudents')}
+              </strong>
+            </span>
+          </div>
+          <button
+            onClick={() => setSelectedStatus('all')}
+            className="text-xs font-medium text-orange-700 hover:text-orange-950 underline px-2 py-1 rounded-md hover:bg-orange-100/60 transition-colors"
+          >
+            {language === 'ar' ? 'إلغاء الفلترة (عرض الكل)' : 'Clear filter (Show All)'}
+          </button>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
@@ -302,7 +409,7 @@ export default function Students() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {studentsList.length === 0 ? (
+                {paginatedStudents.length === 0 ? (
                   <tr>
                     <td colSpan={isSuperAdmin ? 8 : 7} className="px-6 py-12 text-center text-gray-500 bg-gray-50/30">
                       <div className="flex flex-col items-center gap-2">
@@ -312,7 +419,7 @@ export default function Students() {
                     </td>
                   </tr>
                 ) : (
-                  studentsList.map((student) => (
+                  paginatedStudents.map((student) => (
                     <tr key={student.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">

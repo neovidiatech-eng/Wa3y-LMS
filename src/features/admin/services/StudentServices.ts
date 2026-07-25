@@ -8,10 +8,11 @@ export interface GetStudentsParams {
   search?: string;
   country?: string;
   planId?: string;
+  status?: string;
 }
 
 export const getStudents = async (params: GetStudentsParams = {}): Promise<StudentsFetchResponse> => {
-  const { page, limit, search, country, planId } = params;
+  const { page, limit, search, country, planId, status } = params;
 
   const queryParams: Record<string, string | number> = {};
   if (page !== undefined) queryParams.page = page;
@@ -19,6 +20,7 @@ export const getStudents = async (params: GetStudentsParams = {}): Promise<Stude
   if (search) queryParams.search = search;
   if (country && country !== "all") queryParams.country = country;
   if (planId && planId !== "all") queryParams.planId = planId;
+  if (status && status !== "all") queryParams.status = status;
 
   // If we need all records (limit=1000), fetch the first page to get totalPages, then fetch the rest
   if (limit === 1000) {

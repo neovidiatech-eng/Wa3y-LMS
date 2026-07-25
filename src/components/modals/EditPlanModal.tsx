@@ -10,7 +10,7 @@ interface EditPlanModalProps {
     name: string;
     nameEn: string;
     planType: string;
-    studentsNum: string;
+    maxStudents: string;
     description: string;
     price: string;
     currency: string;
@@ -35,7 +35,7 @@ export default function EditPlanModal({
     name: plan.name,
     nameEn: plan.nameEn,
     planType: plan.planType,
-    studentsNum: plan.studentsNum,
+    maxStudents: plan.maxStudents,
     description: plan.description,
     price: plan.price,
     currency: plan.currency,
@@ -55,6 +55,7 @@ export default function EditPlanModal({
     single: { ar: 'حصة فردية', en: 'Single Session' },
     group: { ar: 'حصة جماعية', en: 'Group Session' },
     studentsNum: { ar: "عدد الطلاب", en: "Number of students" },
+    unlimitedHint: { ar: "إدخال 0 يعني عدد غير محدود من الطلاب", en: "Entering 0 means unlimited number of students" },
     color: { ar: "لون الخطة", en: "Plan Color" },
     description: { ar: "الوصف", en: "Description" },
     price: { ar: "السعر", en: "Price" },
@@ -207,13 +208,16 @@ export default function EditPlanModal({
               </label>
               <input
                 type="text"
-                value={formData.studentsNum}
+                value={formData.maxStudents}
                 onChange={(e) =>
-                  setFormData({ ...formData, studentsNum: e.target.value })
+                  setFormData({ ...formData, maxStudents: e.target.value })
                 }
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-start"
                 required
               />
+              <p className="text-green-600 text-xs mt-1 text-start font-medium">
+                {text.unlimitedHint[language]}
+              </p>
             </div>
           )}
 

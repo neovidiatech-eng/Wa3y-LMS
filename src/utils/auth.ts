@@ -42,12 +42,12 @@ const routeResources: Record<string, string[]> = {
 };
 
 export const getDashboardPathForRole = (role?: string | null) => {
-  if (!role) return "/login";
+  if (!role || role === "No role assigned") return "/login";
   return fixedDashboardPaths[role] || "/dashboard";
 };
 
 export const isAdminDashboardRole = (role?: string | null) => {
-  if (!role) return false;
+  if (!role || role === "No role assigned") return false;
   return !nonAdminDashboardRoles.includes(role);
 };
 
