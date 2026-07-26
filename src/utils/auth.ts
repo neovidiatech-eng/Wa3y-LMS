@@ -30,6 +30,7 @@ const routeResources: Record<string, string[]> = {
   assignments: ["homework", "assignments"],
   "lms-courses": ["courses", "lectures"],
   "subscription-requests": ["subscriptions"],
+  "teacher-subscriptions": ["subscriptions", "teachers"],
   "all-subscriptions": ["subscriptions"],
   plans: ["plans"],
   roles: ["roles"],
