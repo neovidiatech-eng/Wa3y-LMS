@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, lazy, useCallback } from 'react';
-import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX , Copy, Check} from 'lucide-react';
+import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX, Copy, Check } from 'lucide-react';
 import WhatsAppPhone from '../../../components/ui/WhatsAppPhone';
 // import AddTeacherModal from '../../../components/modals/AddTeacherModal';
 // import ViewTeacherModal from '../../../components/modals/ViewTeacherModal';
@@ -60,10 +60,7 @@ export default function Teachers() {
   const updateTeacherMutation = useUpdateTeacher();
   const { confirm, ConfirmDialog } = useConfirm();
 
-  // Bulletproof data extraction
-  const teachers = useMemo(() => {
-    return teachersResponse?.teachers || [];
-  }, [teachersResponse]);
+  const teachers = useMemo(() => teachersResponse?.teachers || [], [teachersResponse]);
 
   // Currency lookup map for the table
   const currencyLookup = useMemo(() => {

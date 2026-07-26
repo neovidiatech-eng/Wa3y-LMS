@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, Eye, Package, CheckCircle } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Package, CheckCircle, Users, User } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import AddPlanModal from "../../../components/modals/AddPlanModal";
 import ViewPlanModal from "../../../components/modals/ViewPlanModal";
@@ -57,7 +57,7 @@ export default function Plans() {
           sessionsCount: item.sessionsCount ?? item.hours ?? 0,
           sessionTime: item.sessionTime || 0,
           planType: item.planType || 'single',
-          studentsNum: item.studentsNum || '2',
+          maxStudents: item.maxStudents ?? item.studentsNum ?? 0,
           color: item.color || '#3b82f6',
           features: item.features || [],
           bestSeller: item.bestSeller,
@@ -106,7 +106,7 @@ export default function Plans() {
         currencyId: planData.currencyId,
         color: planData.color || '#3b82f6',
         planType: planData.planType,
-        studentsNum: planData.studentsNum,
+        maxStudents: planData.maxStudents,
       };
 
       if (planData.description && planData.description.trim() !== '') {
@@ -137,7 +137,7 @@ export default function Plans() {
         sessionsCount: item.sessionsCount ?? item.hours ?? 0,
         sessionTime: item.sessionTime || 0,
         planType: item.planType || 'single',
-        studentsNum: item.studentsNum || '2',
+        maxStudents: item.maxStudents ?? item.studentsNum ?? 0,
         color: item.color || '#3b82f6',
         features: item.features || [],
         bestSeller: item.bestSeller,
@@ -211,9 +211,36 @@ export default function Plans() {
               <div className="p-6 flex flex-col flex-1 justify-center">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1 text-start">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      {language === "ar" ? plan.name_ar : plan.name_en}
-                    </h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-2xl font-bold text-gray-900">
+                        {language === "ar" ? plan.name_ar : plan.name_en}
+                      </h3>
+                      {plan.planType === 'group' ? (
+                        <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold border border-purple-200">
+                          <Users className="w-3.5 h-3.5" />
+                          {(() => {
+                            const raw = plan.maxStudents ?? (plan as any).studentsNum;
+                            const str = String(raw ?? '').trim().toLowerCase();
+                            const isUnlimited = !str || str === '0' || str === 'unlimited';
+                            if (isUnlimited) {
+                              return language === 'ar' ? 'جماعية (غير محدود)' : 'Group (Unlimited)';
+                            }
+                            const count = parseInt(str, 10) || 0;
+                            if (count <= 0) {
+                              return language === 'ar' ? 'جماعية (غير محدود)' : 'Group (Unlimited)';
+                            }
+                            return language === 'ar'
+                              ? `جماعية (${count} ${count === 1 ? 'طالب' : 'طلاب'})`
+                              : `Group (${count} ${count === 1 ? 'student' : 'students'})`;
+                          })()}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium border border-blue-100">
+                          <User className="w-3.5 h-3.5 text-blue-500" />
+                          {language === 'ar' ? 'فردية' : 'Single'}
+                        </span>
+                      )}
+                    </div>
                     <p className="text-gray-600 text-sm" style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}>{plan.description}</p>
                   </div>
                   <span
@@ -227,7 +254,7 @@ export default function Plans() {
                 </div>
 
 
-                <div 
+                <div
                   className="rounded-xl p-6 mb-6 text-center"
                   style={{ backgroundColor: `${plan.color || '#3b82f6'}15` }}
                 >
@@ -305,7 +332,7 @@ export default function Plans() {
         initialData={selectedPlan ? {
           name: selectedPlan.name_ar,
           nameEn: selectedPlan.name_en,
-          
+
           description: selectedPlan.description,
           price: Number(selectedPlan.price),
           currencyId: selectedPlan.currencyId,
@@ -315,7 +342,7 @@ export default function Plans() {
           features: selectedPlan.features,
           isPopular: selectedPlan.bestSeller,
           planType: selectedPlan.planType || 'single',
-          studentsNum: selectedPlan.studentsNum || '2',
+          maxStudents: String(selectedPlan.maxStudents ?? selectedPlan.maxStudents ?? '0'),
           color: selectedPlan.color || '#3b82f6',
           status: selectedPlan.active ? 'active' : 'inactive',
           id: selectedPlan.id

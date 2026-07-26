@@ -53,9 +53,20 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           sessionStorage.setItem("token", token);
         }
 
-        const role = result.data?.role || result.role;
+        const apiRole =
+          result.data?.role ||
+          result.role ||
+          (typeof result.data?.user?.role === 'string' ? result.data?.user?.role : result.data?.user?.role?.name) ||
+          (typeof result.user?.role === 'string' ? result.user?.role : result.user?.role?.name) ||
+          result.data?.user?.role_name ||
+          result.data?.user?.user_type ||
+          result.data?.user?.type ||
+          (Array.isArray(result.data?.user?.roles) ? (typeof result.data.user.roles[0] === 'string' ? result.data.user.roles[0] : result.data.user.roles[0]?.name) : undefined);
+        const role = (apiRole && apiRole !== "No role assigned") ? apiRole : "teacher";
         const permissions = result.data?.permissions || result.permissions || [];
-        localStorage.setItem("role", role);
+        if (role) {
+          localStorage.setItem("role", role);
+        }
         storeAuthPermissions(permissions, data.rememberMe || false);
         onLoginSuccess();
         message.success(result.message || t('loginSuccess'));

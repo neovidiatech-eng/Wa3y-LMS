@@ -15,7 +15,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
   const { language, t } = useLanguage();
   const { data: fetchedTeacher, isLoading } = useTeacherById(isOpen && teacher ? teacher.id : undefined);
 
-  const [selectedStudentForPrice, setSelectedStudentForPrice] = useState<{id: string, name: string, currentPrice?: number} | null>(null);
+  const [selectedStudentForPrice, setSelectedStudentForPrice] = useState<{ id: string, name: string, currentPrice?: number } | null>(null);
 
   if (!isOpen || !teacher) return null;
 
@@ -26,22 +26,22 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
   const stats = activeTeacher.stats;
   const fin = stats?.financials;
 
-  const totalStudents    = stats?.totalStudents    ?? 0;
+  const totalStudents = stats?.totalStudents ?? 0;
   const completedSessions = stats?.completedSessions ?? 0;
-  const todaySessions    = stats?.todaySessions    ?? 0;
-  const upcomingSessions = stats?.upcomingSessions  ?? 0;
+  const todaySessions = stats?.todaySessions ?? 0;
+  const upcomingSessions = stats?.upcomingSessions ?? 0;
 
-  const totalHours       = fin?.totalHours       ?? 0;
-  const hourPrice        = fin?.hourPrice        ?? activeTeacher.hour_price ?? 0;
-  const totalDue         = fin?.totalDue         ?? 0;
+  const totalHours = fin?.totalHours ?? 0;
+  const hourPrice = fin?.hourPrice ?? activeTeacher.hour_price ?? 0;
+  const totalDue = fin?.totalDue ?? 0;
   const completedEarnings = fin?.completedEarnings ?? 0;
-  const completedHours   = fin?.completedHours   ?? 0;
-  const pendingEarnings  = fin?.pendingEarnings  ?? 0;
-  const pendingHours     = fin?.pendingHours     ?? 0;
+  const completedHours = fin?.completedHours ?? 0;
+  const pendingEarnings = fin?.pendingEarnings ?? 0;
+  const pendingHours = fin?.pendingHours ?? 0;
   const availableBalance = fin?.availableBalance ?? 0;
   const pendingWithdrawals = fin?.pendingWithdrawals ?? 0;
 
-  const avgRating    = activeTeacher.avgRating   ?? 0;
+  const avgRating = activeTeacher.avgRating ?? 0;
   const totalReviews = activeTeacher.totalReviews ?? 0;
 
   // Currency: prefer embedded currency object from API, fallback to symbol
@@ -283,41 +283,41 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
             </div>
 
             {isLoading ? (
-               <div className="flex justify-center p-8">
-                 <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-               </div>
+              <div className="flex justify-center p-8">
+                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
             ) : students.length > 0 ? (
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                 {students.map((student: any) => (
-                   <div key={student.id} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-shadow">
-                     <div>
-                       <h5 className="font-bold text-gray-900 text-start">{student.user.name}</h5>
-                       <p className="text-sm text-gray-500 text-start mb-1">{student.email}</p>
-                       <p className="text-sm text-gray-500 text-start" dir="ltr">{student.code_country} {student.phone}</p>
-                     </div>
-                     <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end items-center justify-between">
-                       <span className="text-sm font-semibold text-gray-700">
-                         {student.hour_price ? `${student.hour_price} ${currencySymbol}` : (language === 'ar' ? 'غير محدد' : 'Not set')}
-                       </span>
-                       <button
-                         onClick={() => setSelectedStudentForPrice({
-                            id:student.id,
-                            name: student.name || '',
-                            currentPrice: student.hour_price
-                         })}
-                         className="flex items-center gap-2 px-4 py-2 bg-[#31867B]/90 text-white hover:bg-[#31867B]/100 rounded-lg text-sm font-medium transition-colors"
-                       >
-                         <Settings className="w-4 h-4" />
-                         {language === 'ar' ? 'تحديد السعر' : 'Set Price'}
-                       </button>
-                     </div>
-                   </div>
-                 ))}
-               </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {students.map((student: any) => (
+                  <div key={student.id} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col justify-between hover:shadow-md transition-shadow">
+                    <div>
+                      <h5 className="font-bold text-gray-900 text-start">{student.user.name}</h5>
+                      <p className="text-sm text-gray-500 text-start mb-1">{student.email}</p>
+                      <p className="text-sm text-gray-500 text-start" dir="ltr">{student.code_country} {student.phone}</p>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end items-center justify-between">
+                      <span className="text-sm font-semibold text-gray-700">
+                        {student.hour_price ? `${student.hour_price} ${currencySymbol}` : (language === 'ar' ? 'غير محدد' : 'Not set')}
+                      </span>
+                      <button
+                        onClick={() => setSelectedStudentForPrice({
+                          id: student.id,
+                          name: student.name || '',
+                          currentPrice: student.hour_price
+                        })}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#31867B]/90 text-white hover:bg-[#31867B]/100 rounded-lg text-sm font-medium transition-colors"
+                      >
+                        <Settings className="w-4 h-4" />
+                        {language === 'ar' ? 'تحديد السعر' : 'Set Price'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
-               <div className="text-center py-8 bg-gray-50 rounded-xl border border-gray-200">
-                 <p className="text-gray-500">{language === 'ar' ? 'لا يوجد طلاب مسجلين' : 'No registered students'}</p>
-               </div>
+              <div className="text-center py-8 bg-gray-50 rounded-xl border border-gray-200">
+                <p className="text-gray-500">{language === 'ar' ? 'لا يوجد طلاب مسجلين' : 'No registered students'}</p>
+              </div>
             )}
           </div>
         </div>

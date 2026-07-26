@@ -1,7 +1,7 @@
 import { LucideIcon } from "lucide-react";
 import { Plan } from "./plan";
 
-export type StudentStatus = 'pending' | 'approved' | 'rejected';
+export type StudentStatus = 'pending' | 'approved' | 'rejected' | 'active' | 'inactive';
 
 export interface UserDetails {
     id: string;

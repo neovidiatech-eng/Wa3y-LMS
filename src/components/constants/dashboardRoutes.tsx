@@ -53,6 +53,9 @@ const CurrenciesPage = lazy(() => import("../../features/admin/pages/Currencies"
 const ExpensesPage = lazy(() => import("../../features/admin/pages/Expenses"));
 const TransactionsPage = lazy(() => import("../../features/admin/pages/Transactions"));
 const TeacherRequestsPage = lazy(() => import("../../features/admin/pages/TeacherRequests"));
+const TeacherSubscriptionsPage = lazy(
+  () => import("../../features/admin/pages/TeacherSubscriptions"),
+);
 const TeacherAvailabilityPage = lazy(
   () => import("../../features/admin/pages/TeacherAvailability"),
 );
@@ -123,6 +126,13 @@ export const dashboardRoutes: RouteConfig[] = [
         icon: GraduationCap,
         path: "teachers",
         element: <TeachersPage />,
+      },
+      {
+        id: "teacher-subscriptions",
+        label: "sidebar_teacher_subscriptions",
+        icon: UserCheck,
+        path: "teacher-subscriptions",
+        element: <TeacherSubscriptionsPage />,
       },
       {
         id: "requests",
