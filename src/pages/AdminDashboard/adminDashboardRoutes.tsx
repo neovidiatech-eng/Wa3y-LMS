@@ -142,13 +142,6 @@ export const adminDashboardRoutes: RouteConfig[] = [
         element: <TeachersPage />,
       },
       {
-        id: "teacher-subscriptions",
-        label: "sidebar_teacher_subscriptions",
-        icon: UserCheck,
-        path: "teacher-subscriptions",
-        element: <TeacherSubscriptionsPage />,
-      },
-      {
         id: "teacher-availability",
         label: "sidebar_available",
         icon: Clock,
@@ -212,6 +205,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
         icon: AlertCircle,
         path: "subscription-requests",
         element: <SubscriptionRequestsPage />,
+      },
+      {
+        id: "teacher-subscriptions",
+        label: "sidebar_teacher_subscriptions",
+        icon: UserCheck,
+        path: "teacher-subscriptions",
+        element: <TeacherSubscriptionsPage />,
       },
       {
         id: "all-subscriptions",

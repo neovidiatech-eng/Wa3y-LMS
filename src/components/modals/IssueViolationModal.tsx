@@ -139,7 +139,7 @@ export default function IssueViolationModal({
                 }
                 options={teachersList.map((t) => ({
                   value: t.id,
-                  label: t.name || (t as any).user?.name || t.email,
+                  label: (t as any).name || t.user?.name || (t as any).email || t.user?.email || t.id,
                 }))}
               />
             </Form.Item>
