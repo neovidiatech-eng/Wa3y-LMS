@@ -1,4 +1,4 @@
-import { useState, lazy, useMemo, useEffect } from 'react';
+import { useState, lazy, useMemo, useEffect, ElementType } from 'react';
 import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX, ClipboardList, Check, Copy } from 'lucide-react';
 import WhatsAppPhone from '../../../components/ui/WhatsAppPhone';
 // import AddStudentModal from '../../../components/modals/AddStudentModal';
@@ -11,7 +11,6 @@ import { useStudents, useCreateStudent, useUpdateStudent, useDeleteStudent } fro
 import { Student } from '../../../types/student';
 import { useConfirm } from '../../../hooks/useConfirm';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
-import { usePlans } from '../hooks/usePlans';
 
 const AddStudentModal = lazy(() => import('../../../components/modals/AddStudentModal'));
 const ViewStudentModal = lazy(() => import('../../../components/modals/ViewStudentModal'));
@@ -71,15 +70,22 @@ export default function Students() {
   }, [currentPage, itemsPerPage, debouncedSearch, selectedCountry, selectedGrade, selectedStatus]);
 
   const { data: apiResponse, isLoading } = useStudents(studentsQueryParams);
-  const { data: plansData } = usePlans();
-
-  const plans = plansData?.length;
+  const { data: allStudentsResponse } = useStudents({ limit: 1000 });
 
   const rawData: any = apiResponse?.data.studentsData;
   const studentsList: Student[] = Array.isArray(rawData) ? rawData : (rawData?.students || rawData?.data || []);
   const pagination = apiResponse?.data?.pagination;
   const activeItems = apiResponse?.data?.activeCount ?? 0;
   const inactiveItems = apiResponse?.data?.inactiveCount ?? 0;
+
+  const allRawData: any = allStudentsResponse?.data?.studentsData;
+  const allStudentsList: Student[] = useMemo(() => {
+    return Array.isArray(allRawData) ? allRawData : (allRawData?.students || allRawData?.data || []);
+  }, [allRawData]);
+
+  const studentsWithNoPlansCount = useMemo(() => {
+    return allStudentsList.filter((student) => !student.planId).length;
+  }, [allStudentsList]);
 
   const displayStudents = useMemo(() => {
     if (selectedStatus === 'all') return studentsList;
@@ -113,7 +119,17 @@ export default function Students() {
   const { mutateAsync: deleteStudent } = useDeleteStudent();
   const { confirm, ConfirmDialog } = useConfirm();
 
-  const stats = useMemo(() => [
+interface StatCard {
+  id: string;
+  label: string;
+  value: number;
+  icon: ElementType;
+  bgColor: string;
+  iconColor: string;
+  valueColor: string;
+}
+
+  const stats = useMemo<StatCard[]>(() => [
     {
       id: 'total',
       label: t('totalStudents'),
@@ -142,15 +158,15 @@ export default function Students() {
       valueColor: 'text-orange-600',
     },
     {
-      id: 'plans',
-      label: t('numberOfPlans'),
-      value: plans,
+      id: 'studentsWithNoPlans',
+      label: t('studentsWithNoPlans'),
+      value: studentsWithNoPlansCount,
       icon: ClipboardList,
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
       valueColor: 'text-purple-600',
     },
-  ], [totalItems, activeItems, inactiveItems, plans, t]);
+  ], [totalItems, activeItems, inactiveItems, studentsWithNoPlansCount, t]);
 
 
   const grades = [
@@ -245,7 +261,7 @@ export default function Students() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat) => {
-          const isClickable = stat.id !== 'plans';
+          const isClickable = stat.id === 'total' || stat.id === 'active' || stat.id === 'inactive';
           const isSelected =
             (stat.id === 'total' && selectedStatus === 'all') ||
             (stat.id === 'active' && (selectedStatus === 'approved' || selectedStatus === 'active')) ||

@@ -165,7 +165,7 @@
   "activeStudents": "الطلاب النشطون",
   "suspendedStudents": "الطلاب المتوقفون",
   "numberOfPlans": "عدد الخطط",
-  "allPlans": "كل الخطط",
+  "studentsWithNoPlans": "طلاب بدون خطط",
   "studentManagement": "إدارة الطلاب",
   "manageStudentsDescription": "إدارة بيانات جميع الطلاب والخطط الدراسية",
   "addNewStudent": "إضافة طالب جديد",
