@@ -125,6 +125,27 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
     ),
   }));
 
+  const handleNationalityChange = (val: string) => {
+    setValue('nationality', val, { shouldValidate: true });
+    const matched = DEFAULT_COUNTRIES.find(
+      (c) => c.nationality.toLowerCase() === val.toLowerCase() || c.name.toLowerCase() === val.toLowerCase()
+    );
+    if (matched) {
+      setValue('country', matched.name, { shouldValidate: true });
+      setValue('phone_code', `+${matched.phone_code}`, { shouldValidate: true });
+      setValue('city', '', { shouldValidate: true });
+    }
+  };
+
+  const handleCountryChange = (val: string) => {
+    setValue('country', val, { shouldValidate: true });
+    setValue('city', '', { shouldValidate: true });
+    const matched = DEFAULT_COUNTRIES.find((c) => c.name === val);
+    if (matched) {
+      setValue('phone_code', `+${matched.phone_code}`, { shouldValidate: true });
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -145,22 +166,9 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
         {/* Form */}
         <form onSubmit={handleSubmit(handleOnSubmit)} className="flex-1 overflow-y-auto no-scrollbar flex flex-col">
           <div className="p-6 space-y-6 flex-1" dir={language === "ar" ? "rtl" : "ltr"}>
-            {/* Row 1: Name and Email */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Age */}
-              <div className="text-start">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {language === 'ar' ? 'السن' : 'Age'}
-                </label>
-                <input
-                  type="text"
-                  placeholder="ex: 30"
-                  {...register('age')}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
-                />
-                {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age.message}</p>}
-              </div>
 
+            {/* Row 1: Name & Email */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Name */}
               <div className="text-start">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -174,10 +182,58 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
               </div>
+
+              {/* Email */}
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('email')} *
+                </label>
+                <input
+                  type="email"
+                  placeholder="example@email.com"
+                  {...register('email')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                  dir="ltr"
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
             </div>
 
-            {/* Row 2: Password */}
-            <div className="grid grid-cols-1 gap-4">
+            {/* Row 2: Phone (with Country Code) & Password */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Phone & Country Code */}
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('phone')} *
+                </label>
+                <div className="flex gap-2 items-start" dir="ltr">
+                  <div className="w-32 shrink-0">
+                    <Controller
+                      name="phone_code"
+                      control={control}
+                      render={({ field }) => (
+                        <CustomSelect
+                          value={field.value}
+                          options={countryCodeOptions}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="tel"
+                      placeholder="123456789"
+                      {...register('phone')}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
+              </div>
+
+              {/* Password */}
               <div className="text-start relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('password')} *
@@ -199,66 +255,25 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
               </div>
             </div>
 
-            {/* Row 3: Country Code and Phone */}
+            {/* Row 3: Nationality & Country */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
-                name="phone_code"
+                name="nationality"
                 control={control}
                 render={({ field }) => (
                   <CustomSelect
-                    label={t('countryCode')}
+                    label={t('nationality')}
                     value={field.value}
-                    options={countryCodeOptions}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-              <div className="text-start">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('phone')} *</label>
-                <input
-                  type="tel"
-                  placeholder="123456789"
-                  {...register('phone')}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
-                  dir="ltr"
-                />
-                {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
-              </div>
-            </div>
-
-            {/* Row 4: Currency and Age */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Controller
-                name="currency"
-                control={control}
-                render={({ field }) => (
-                  <CustomSelect
-                    label={t('currency')}
-                    value={field.value}
-                    options={currencyOptions}
-                    onChange={field.onChange}
+                    options={nationalityOptions}
+                    placeholder={t('selectNationality')}
+                    onChange={(val) => {
+                      field.onChange(val);
+                      handleNationalityChange(val as string);
+                    }}
                   />
                 )}
               />
 
-              {/* Email */}
-              <div className="text-start">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('email')} *
-                </label>
-                <input
-                  type="email"
-                  placeholder="example@email.com"
-                  {...register('email')}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
-                  dir="ltr"
-                />
-                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
-              </div>
-            </div>
-
-            {/* Row 4.5: Country and City */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
                 name="country"
                 control={control}
@@ -267,11 +282,17 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     label={t('country')}
                     value={field.value}
                     options={countries}
-                    onChange={field.onChange}
+                    onChange={(val) => {
+                      field.onChange(val);
+                      handleCountryChange(val as string);
+                    }}
                   />
                 )}
               />
+            </div>
 
+            {/* Row 4: City & Currency */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
                 name="city"
                 control={control}
@@ -285,41 +306,23 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                   />
                 )}
               />
-            </div>
 
-            {/* Row 4: Gender and Status */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Status */}
               <Controller
-                name="status"
+                name="currency"
                 control={control}
                 render={({ field }) => (
                   <CustomSelect
-                    label={t('status')}
+                    label={t('currency')}
                     value={field.value}
-                    options={statuses.map(s => ({ value: s.id, label: language === 'ar' ? s.label : s.labelEn }))}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-
-              {/* Gender */}
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field }) => (
-                  <CustomSelect
-                    label={t('gender')}
-                    value={field.value}
-                    options={genders.map(g => ({ value: g.id, label: language === 'ar' ? g.label : g.labelEn }))}
+                    options={currencyOptions}
                     onChange={field.onChange}
                   />
                 )}
               />
             </div>
 
-            {/* Row 5: Zoom Link and Nationality */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Row 5: Zoom Link / Note */}
+            <div className="grid grid-cols-1 gap-4">
               <div className="text-start">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('zoomLink')}
@@ -332,23 +335,54 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                 />
                 {errors.meeting_link && <p className="text-red-500 text-xs mt-1">{errors.meeting_link.message}</p>}
               </div>
+            </div>
 
+            {/* Row 6: Gender & Age */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
-                name="nationality"
+                name="gender"
                 control={control}
                 render={({ field }) => (
                   <CustomSelect
-                    label={t('nationality')}
+                    label={t('gender')}
                     value={field.value}
-                    options={nationalityOptions}
-                    placeholder={t('selectNationality')}
+                    options={genders.map(g => ({ value: g.id, label: language === 'ar' ? g.label : g.labelEn }))}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {language === 'ar' ? 'السن' : 'Age'}
+                </label>
+                <input
+                  type="text"
+                  placeholder="ex: 30"
+                  {...register('age')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                />
+                {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age.message}</p>}
+              </div>
+            </div>
+
+            {/* Row 7: Status */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('status')}
+                    value={field.value}
+                    options={statuses.map(s => ({ value: s.id, label: language === 'ar' ? s.label : s.labelEn }))}
                     onChange={field.onChange}
                   />
                 )}
               />
             </div>
 
-            {/* Subjects */}
+            {/* Row 8: Subjects */}
             <div className="text-start">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 {t('subject')}
