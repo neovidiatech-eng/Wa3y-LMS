@@ -408,6 +408,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                 </label>
                 <input
                   type="text"
+                  disabled={teacherData?.meeting_link !== null ? true : false}
                   placeholder="https://zoom.us/j/123456789"
                   {...register('meeting_link')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"

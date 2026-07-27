@@ -1,4 +1,4 @@
-import { lazy, ReactNode } from "react";
+import { ReactNode } from "react";
 import {
   Home,
   Users,
@@ -36,37 +36,39 @@ export interface RouteConfig {
   subItems?: RouteConfig[];
 }
 
+import { lazyWithRetry } from "../../utils/lazyWithRetry";
+
 // --- Lazy Loading Admin Page Components from Features ---
-const UsersPage = lazy(() => import("../../features/admin/pages/Users"));
-const StudentsPage = lazy(() => import("../../features/admin/pages/Students"));
-const TeachersPage = lazy(() => import("../../features/admin/pages/Teachers"));
-const ParentsPage = lazy(() => import("../../features/admin/pages/Parents"));
-const SessionsPage = lazy(() => import("../../features/admin/pages/Sessions"));
-const AgendaPage = lazy(() => import("../../features/admin/pages/Agenda"));
-const ExamsPage = lazy(() => import("../../features/admin/pages/Exams"));
-const AssignmentsPage = lazy(() => import("../../features/admin/pages/Assignments"));
-const SubscriptionRequestsPage = lazy(
+const UsersPage = lazyWithRetry(() => import("../../features/admin/pages/Users"));
+const StudentsPage = lazyWithRetry(() => import("../../features/admin/pages/Students"));
+const TeachersPage = lazyWithRetry(() => import("../../features/admin/pages/Teachers"));
+const ParentsPage = lazyWithRetry(() => import("../../features/admin/pages/Parents"));
+const SessionsPage = lazyWithRetry(() => import("../../features/admin/pages/Sessions"));
+const AgendaPage = lazyWithRetry(() => import("../../features/admin/pages/Agenda"));
+const ExamsPage = lazyWithRetry(() => import("../../features/admin/pages/Exams"));
+const AssignmentsPage = lazyWithRetry(() => import("../../features/admin/pages/Assignments"));
+const SubscriptionRequestsPage = lazyWithRetry(
   () => import("../../features/admin/pages/SubscriptionRequests"),
 );
-const AllSubscriptionsPage = lazy(() => import("../../features/admin/pages/AllSubscriptions"));
-const PlansPage = lazy(() => import("../../features/admin/pages/Plans"));
-const CurrenciesPage = lazy(() => import("../../features/admin/pages/Currencies"));
-const ExpensesPage = lazy(() => import("../../features/admin/pages/Expenses"));
-const TransactionsPage = lazy(() => import("../../features/admin/pages/Transactions"));
-const TeacherRequestsPage = lazy(() => import("../../features/admin/pages/TeacherRequests"));
-const TeacherSubscriptionsPage = lazy(
+const AllSubscriptionsPage = lazyWithRetry(() => import("../../features/admin/pages/AllSubscriptions"));
+const PlansPage = lazyWithRetry(() => import("../../features/admin/pages/Plans"));
+const CurrenciesPage = lazyWithRetry(() => import("../../features/admin/pages/Currencies"));
+const ExpensesPage = lazyWithRetry(() => import("../../features/admin/pages/Expenses"));
+const TransactionsPage = lazyWithRetry(() => import("../../features/admin/pages/Transactions"));
+const TeacherRequestsPage = lazyWithRetry(() => import("../../features/admin/pages/TeacherRequests"));
+const TeacherSubscriptionsPage = lazyWithRetry(
   () => import("../../features/admin/pages/TeacherSubscriptions"),
 );
-const TeacherAvailabilityPage = lazy(
+const TeacherAvailabilityPage = lazyWithRetry(
   () => import("../../features/admin/pages/TeacherAvailability"),
 );
-const SubjectsPage = lazy(() => import("../../features/admin/pages/Subjects"));
-const LMSCoursesPage = lazy(() => import("../../features/admin/pages/LMSCourses/LMSCourses"));
-const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
-const RolesPage = lazy(() => import("../../features/admin/pages/Roles"));
-const NotificationsPage = lazy(() => import("../../features/admin/pages/Notifications"));
-const ViolationsPage = lazy(() => import("../../features/admin/pages/Violations"));
-const RanksPage = lazy(() => import("../../features/admin/pages/Ranks"));
+const SubjectsPage = lazyWithRetry(() => import("../../features/admin/pages/Subjects"));
+const LMSCoursesPage = lazyWithRetry(() => import("../../features/admin/pages/LMSCourses/LMSCourses"));
+const SettingsPage = lazyWithRetry(() => import("../../features/admin/pages/Settings"));
+const RolesPage = lazyWithRetry(() => import("../../features/admin/pages/Roles"));
+const NotificationsPage = lazyWithRetry(() => import("../../features/admin/pages/Notifications"));
+const ViolationsPage = lazyWithRetry(() => import("../../features/admin/pages/Violations"));
+const RanksPage = lazyWithRetry(() => import("../../features/admin/pages/Ranks"));
 
 export const adminDashboardRoutes: RouteConfig[] = [
   {

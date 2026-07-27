@@ -1,4 +1,4 @@
-import { lazy, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
   Play,
   FileText,
@@ -17,13 +17,15 @@ export interface ParentRouteConfig {
   subItems?: ParentRouteConfig[];
 }
 
+import { lazyWithRetry } from '../../utils/lazyWithRetry';
+
 // --- Lazy Loading Page Components for Student from Features ---
-const SessionsPage = lazy(() => import('../../features/parent/pages/Sessions'));
-const ExamsPage = lazy(() => import('../../features/parent/pages/Exams'));
-const AssignmentsPage = lazy(() => import('../../features/parent/pages/Assignments'));
-const ChildrenPage = lazy(() => import('../../features/parent/pages/Children'));
-const ChildDashboard = lazy(() => import('../../features/parent/pages/ChildDashboard'));
-const NotificationsPage = lazy(() => import('../../features/admin/pages/Notifications'));
+const SessionsPage = lazyWithRetry(() => import('../../features/parent/pages/Sessions'));
+const ExamsPage = lazyWithRetry(() => import('../../features/parent/pages/Exams'));
+const AssignmentsPage = lazyWithRetry(() => import('../../features/parent/pages/Assignments'));
+const ChildrenPage = lazyWithRetry(() => import('../../features/parent/pages/Children'));
+const ChildDashboard = lazyWithRetry(() => import('../../features/parent/pages/ChildDashboard'));
+const NotificationsPage = lazyWithRetry(() => import('../../features/admin/pages/Notifications'));
 
 export const parentDashboardRoutes: ParentRouteConfig[] = [
       {

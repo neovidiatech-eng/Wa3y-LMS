@@ -83,6 +83,7 @@ export default function Transactions() {
     debit: { ar: 'سحب', en: 'Debit' },
     subscription: { ar: 'اشتراك', en: 'Subscription' },
     payout: { ar: 'دفعة لمعلم', en: 'Payout' },
+    penalty: { ar: 'خصم / غرامة', en: 'Penalty' },
     allStatuses: { ar: 'كل الحالات', en: 'All Statuses' },
     allTypes: { ar: 'كل الأنواع', en: 'All Types' },
     fromDate: { ar: 'من تاريخ', en: 'From Date' },
@@ -94,6 +95,15 @@ export default function Transactions() {
     error: { ar: 'حدث خطأ أثناء تحميل البيانات', en: 'Error loading data' }
   };
 
+  const getReasonText = (reason: any, lang: string) => {
+    if (!reason) return '';
+    if (typeof reason === 'string') return reason;
+    if (typeof reason === 'object') {
+      return reason[lang] || reason.ar || reason.en || Object.values(reason).filter(Boolean).join(' ');
+    }
+    return String(reason);
+  };
+
   const getTransactionLabel = (type: TransactionType) => {
     switch (type) {
       case 'credit': return text.credit[language];
@@ -101,14 +111,16 @@ export default function Transactions() {
       case 'expense': return text.expense[language];
       case 'subscription': return text.subscription[language];
       case 'payout': return text.payout[language];
+      case 'penalty': return text.penalty[language];
       default: return type;
     }
   };
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => {
-      const matchesSearch = t.reason?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           t.id.toLowerCase().includes(searchQuery.toLowerCase());
+      const reasonStr = getReasonText(t.reason, language).toLowerCase();
+      const matchesSearch = reasonStr.includes(searchQuery.toLowerCase()) || 
+                           String(t.id ?? '').toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = filterStatus === 'all' || t.status === filterStatus;
       const matchesType = filterType === 'all' || t.type === filterType;
       const transactionDate = new Date(t.createdAt);
@@ -119,7 +131,7 @@ export default function Transactions() {
 
       return matchesSearch && matchesStatus && matchesType && matchesFromDate && matchesToDate;
     });
-  }, [transactions, searchQuery, filterStatus, filterType, fromDate, toDate]);
+  }, [transactions, searchQuery, filterStatus, filterType, fromDate, toDate, language]);
 
   const totalItems = serverPagination?.totalItems ?? filteredTransactions.length;
   const totalPages = Math.max(1, serverPagination?.totalPages ?? Math.ceil(totalItems / itemsPerPage));
@@ -345,7 +357,7 @@ export default function Transactions() {
                       </div>
                     </td>
                     <td className="px-5 py-4 text-start">
-                      <span className="text-sm text-gray-900">{transaction.reason || '-'}</span>
+                      <span className="text-sm text-gray-900">{getReasonText(transaction.reason, language) || '-'}</span>
                     </td>
                     <td className="px-5 py-4 text-start">
                       <div className="flex items-center gap-1 justify-start">
@@ -366,7 +378,7 @@ export default function Transactions() {
                           ? 'bg-yellow-100 text-yellow-700'
                           : 'bg-red-100 text-red-700'
                       }`}>
-                        {text[transaction.status] ? text[transaction.status][language] : transaction.status}
+                        {(text as any)[transaction.status] ? (text as any)[transaction.status][language] : transaction.status}
                       </span>
                     </td>
                     <td className="px-5 py-4">

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, lazy, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionsProvider } from './contexts/SessionsContext';
 import { SettingsProvider } from './contexts/SettingsContext';
@@ -17,24 +17,26 @@ import LanguageSwitcher from './components/ui/LanguageSwitcher';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { googleClientId } from './components/constants';
 
+import { lazyWithRetry } from './utils/lazyWithRetry';
+
 // --- Lazy Loading Core Layouts & Pages ---
-const AuthLayout = lazy(() => import('./pages/AuthLayout/AuthLayout'));
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/StudentRegister'));
-const TeacherRegister = lazy(() => import('./pages/TeacherRegister'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword'));
-const VerifyAccount = lazy(() => import('./pages/VerifyAccount'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard/AdminDashboard'));
-const StudentDashboard = lazy(() => import('./features/student/pages/StudentDashboard'));
-const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard/TeacherDashboard'));
+const AuthLayout = lazyWithRetry(() => import('./pages/AuthLayout/AuthLayout'));
+const Login = lazyWithRetry(() => import('./pages/Login'));
+const Register = lazyWithRetry(() => import('./pages/StudentRegister'));
+const TeacherRegister = lazyWithRetry(() => import('./pages/TeacherRegister'));
+const ForgotPassword = lazyWithRetry(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'));
+const VerifyAccount = lazyWithRetry(() => import('./pages/VerifyAccount'));
+const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard/AdminDashboard'));
+const StudentDashboard = lazyWithRetry(() => import('./features/student/pages/StudentDashboard'));
+const TeacherDashboard = lazyWithRetry(() => import('./pages/TeacherDashboard/TeacherDashboard'));
 import AuthGuard from './components/guards/AuthGuard';
 import GuestGuard from './components/guards/GuestGuard';
 import { Provider } from "react-redux";
 import { store } from './store/store';
 import { useChatSocket } from './hooks/useChat';
 import { useFCM } from './hooks/useFCM';
-const ParentDashboard = lazy(() => import('./features/parent/pages/ParentDashboard'));
+const ParentDashboard = lazyWithRetry(() => import('./features/parent/pages/ParentDashboard'));
 
 // Centralized Loading Fallback UI
 const LoadingFallback = () => (
