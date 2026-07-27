@@ -9,41 +9,20 @@ export interface GetStudentsParams {
   country?: string;
   planId?: string;
   status?: string;
+  active?: boolean;
 }
 
 export const getStudents = async (params: GetStudentsParams = {}): Promise<StudentsFetchResponse> => {
-  const { page, limit, search, country, planId, status } = params;
+  const { page, limit, search, country, planId, status , active } = params;
 
-  const queryParams: Record<string, string | number> = {};
+  const queryParams: Record<string, string | number | boolean> = {};
   if (page !== undefined) queryParams.page = page;
-  if (limit !== undefined && limit !== 1000) queryParams.limit = limit;
+  if (limit !== undefined) queryParams.limit = limit;
   if (search) queryParams.search = search;
   if (country && country !== "all") queryParams.country = country;
   if (planId && planId !== "all") queryParams.planId = planId;
   if (status && status !== "all") queryParams.status = status;
-
-  // If we need all records (limit=1000), fetch the first page to get totalPages, then fetch the rest
-  if (limit === 1000) {
-    queryParams.page = 1;
-    const firstResponse = await api.get("/students", { params: queryParams });
-    const data = firstResponse.data;
-    
-    if (data.data?.pagination?.totalPages > 1) {
-      const totalPages = data.data.pagination.totalPages;
-      const promises = [];
-      for (let i = 2; i <= totalPages; i++) {
-        promises.push(api.get("/students", { params: { ...queryParams, page: i } }));
-      }
-      
-      const results = await Promise.all(promises);
-      results.forEach(res => {
-        if (res.data?.data?.studentsData) {
-          data.data.studentsData = data.data.studentsData.concat(res.data.data.studentsData);
-        }
-      });
-    }
-    return data;
-  }
+  if (active !== undefined) queryParams.active = active;
 
   const response = await api.get("/students", {
     params: queryParams
@@ -80,5 +59,10 @@ export const createStudent = async (
   data: StudentFormData | Partial<Student>,
 ) => {
   const response = await api.post(`/students/create`, data);
+  return response.data;
+};
+
+export const updateStudentPlan= async (id: string, planId: string) => {
+  const response = await api.patch(`/students/updatePlan/${id}`, { planId });
   return response.data;
 };

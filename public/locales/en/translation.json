@@ -61,6 +61,7 @@
   "delete": "Delete",
   "active": "Active",
   "inactive": "Inactive",
+  "approved":"approved",
   "roles": "Roles",
   "roleManagement": "Role Management",
   "addNewRole": "Add New Role",

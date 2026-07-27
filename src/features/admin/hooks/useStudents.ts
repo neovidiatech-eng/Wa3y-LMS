@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createStudent, deleteStudent, getStudentById, getStudents, GetStudentsParams, updateStudent } from "../services/StudentServices";
+import { createStudent, deleteStudent, getStudentById, getStudents, GetStudentsParams, updateStudent, updateStudentPlan } from "../services/StudentServices";
 import { Student } from "../../../types/student";
 import { StudentFormData } from "../../../lib/schemas/StudentSchema";
 import { message } from "antd";
@@ -8,6 +8,7 @@ export const useStudents = (params: GetStudentsParams = {}) => {
     return useQuery({
         queryKey: ["students", params],
         queryFn: () => getStudents(params),
+        staleTime: 60 * 1000,
     });
 }
 export const useStudentById = (id?: string) => {
@@ -48,4 +49,15 @@ export const useCreateStudent = () => {
             message.success(data.message || 'Student Added Successfully');
         }
     });
+}
+
+export const useUpdateStudentPlan = () => {
+    const queryClient = useQueryClient();
+    return useMutation<void, Error, { id: string; planId: string }>({
+        mutationFn: ({ id, planId }) => updateStudentPlan(id, planId),
+        onSuccess: (data:any) => {
+            queryClient.invalidateQueries({ queryKey: ['students'] });
+            message.success(data.message || 'Student Plan Updated Successfully');
+        }
+    })
 }

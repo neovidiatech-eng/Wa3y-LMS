@@ -62,6 +62,7 @@
   "delete": "حذف",
   "active": "نشط",
   "inactive": "غير نشط",
+  "approved":"مقبول",
   "roles": "الأدوار",
   "roleManagement": "إدارة الصلاحيات",
   "addNewRole": "إضافة دور جديد",

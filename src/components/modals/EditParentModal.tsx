@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { X, User, Mail, Phone, Lock, Users, Eye, EyeOff, MapPin, CalendarDays, Globe } from 'lucide-react';
+import { X, User, Mail, Phone, Lock, Users, Eye, EyeOff ,CalendarDays } from 'lucide-react';
 import { useGetCities } from '../../features/teacher/hooks/useCity';
 import { DEFAULT_COUNTRIES } from '../../consts';
 import { useLanguage } from '../../contexts/LanguageContext';

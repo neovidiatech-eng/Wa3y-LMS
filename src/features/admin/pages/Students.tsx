@@ -1,13 +1,10 @@
 import { useState, lazy, useMemo, useEffect, ElementType } from 'react';
 import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX, ClipboardList, Check, Copy } from 'lucide-react';
 import WhatsAppPhone from '../../../components/ui/WhatsAppPhone';
-// import AddStudentModal from '../../../components/modals/AddStudentModal';
-// import ViewStudentModal from '../../../components/modals/ViewStudentModal';
-// import EditStudentModal from '../../../components/modals/EditStudentModal';
 import Pagination from '../../../components/ui/Pagination';
 import CustomSelect from '../../../components/ui/CustomSelect';
 import { useTranslation } from 'react-i18next';
-import { useStudents, useCreateStudent, useUpdateStudent, useDeleteStudent } from '../hooks/useStudents';
+import { useStudents, useCreateStudent, useUpdateStudent, useDeleteStudent, useUpdateStudentPlan } from '../hooks/useStudents';
 import { Student } from '../../../types/student';
 import { useConfirm } from '../../../hooks/useConfirm';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
@@ -15,6 +12,7 @@ import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
 const AddStudentModal = lazy(() => import('../../../components/modals/AddStudentModal'));
 const ViewStudentModal = lazy(() => import('../../../components/modals/ViewStudentModal'));
 const EditStudentModal = lazy(() => import('../../../components/modals/EditStudentModal'));
+const EditStudentPlanModal = lazy(() => import('../../../components/modals/EditStudentPlanModal'));
 
 
 
@@ -32,8 +30,11 @@ export default function Students() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditPlanModalOpen, setIsEditPlanModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [copiedPasswordId, setCopiedPasswordId] = useState<string | null>(null);
+
+  const { mutateAsync: updateStudentPlan } = useUpdateStudentPlan();
 
   const itemsPerPage = 7;
 
@@ -51,8 +52,12 @@ export default function Students() {
 
   const studentsQueryParams = useMemo(() => {
     let apiStatus: string | undefined = undefined;
+    let apiActive: boolean | undefined = undefined;
+
     if (selectedStatus === 'approved' || selectedStatus === 'active') {
-      apiStatus = 'approved';
+      apiActive = true;
+    } else if (selectedStatus === 'inactive') {
+      apiActive = false;
     } else if (selectedStatus === 'pending') {
       apiStatus = 'pending';
     } else if (selectedStatus === 'rejected') {
@@ -60,12 +65,13 @@ export default function Students() {
     }
 
     return {
-      page: selectedStatus === 'all' ? currentPage : 1,
-      limit: selectedStatus !== 'all' ? 1000 : itemsPerPage,
+      page: currentPage,
+      limit: itemsPerPage,
       search: debouncedSearch || undefined,
       country: selectedCountry !== 'all' ? selectedCountry : undefined,
       planId: selectedGrade !== 'all' ? selectedGrade : undefined,
       status: apiStatus,
+      active: apiActive,
     };
   }, [currentPage, itemsPerPage, debouncedSearch, selectedCountry, selectedGrade, selectedStatus]);
 
@@ -83,36 +89,15 @@ export default function Students() {
     return Array.isArray(allRawData) ? allRawData : (allRawData?.students || allRawData?.data || []);
   }, [allRawData]);
 
+
+
   const studentsWithNoPlansCount = useMemo(() => {
     return allStudentsList.filter((student) => !student.planId).length;
   }, [allStudentsList]);
 
-  const displayStudents = useMemo(() => {
-    if (selectedStatus === 'all') return studentsList;
-    return studentsList.filter((s) => {
-      if (selectedStatus === 'approved' || selectedStatus === 'active') {
-        return s.status === 'approved' || s.status === 'active' || s.active === true;
-      }
-      if (selectedStatus === 'inactive' || selectedStatus === 'pending') {
-        return s.status === 'pending' || s.status === 'inactive' || s.status === 'rejected' || s.active === false;
-      }
-      return s.status === selectedStatus;
-    });
-  }, [studentsList, selectedStatus]);
-
-  const totalItems = selectedStatus === 'all'
-    ? (pagination?.totalItems ?? 0)
-    : displayStudents.length;
-
-  const totalPages = selectedStatus === 'all'
-    ? (pagination?.totalPages ?? 1)
-    : Math.ceil(displayStudents.length / itemsPerPage) || 1;
-
-  const paginatedStudents = useMemo(() => {
-    if (selectedStatus === 'all') return displayStudents;
-    const start = (currentPage - 1) * itemsPerPage;
-    return displayStudents.slice(start, start + itemsPerPage);
-  }, [displayStudents, selectedStatus, currentPage, itemsPerPage]);
+  const totalItems = pagination?.totalItems ?? studentsList.length;
+  const totalPages = pagination?.totalPages ?? 1;
+  const paginatedStudents = studentsList;
 
   const { mutateAsync: createStudent } = useCreateStudent();
   const { mutateAsync: updateStudent } = useUpdateStudent();
@@ -201,6 +186,11 @@ interface StatCard {
     setIsEditModalOpen(true);
   };
 
+  const handleOpenEditPlan = (student: Student) => {
+    setSelectedStudent(student);
+    setIsEditPlanModalOpen(true);
+  };
+
   const handleCloseViewModal = () => {
     setIsViewModalOpen(false);
     setSelectedStudent(null);
@@ -208,6 +198,11 @@ interface StatCard {
 
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
+    setSelectedStudent(null);
+  };
+
+  const handleCloseEditPlanModal = () => {
+    setIsEditPlanModalOpen(false);
     setSelectedStudent(null);
   };
 
@@ -417,6 +412,9 @@ interface StatCard {
                     {t('country')}
                   </th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
+                    {t('active')}
+                  </th>
+                  <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('status')}
                   </th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
@@ -479,9 +477,15 @@ interface StatCard {
                         />
                       </td>
                       <td className="px-6 py-4 text-start">
-                        <span className="inline-flex px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium border border-purple-100">
-                          {student.plan?.name_ar || student.plan?.name_en || t('noPlan')}
-                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEditPlan(student)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-full text-xs font-medium border border-purple-100 transition-all cursor-pointer group/plan"
+                          title={language === 'ar' ? 'تعديل الباقة' : 'Edit Plan'}
+                        >
+                          <span>{student.plan?.name_ar || student.plan?.name_en || t('noPlan')}</span>
+                          <Pencil className="w-3 h-3 opacity-50 group-hover/plan:opacity-100 transition-opacity" />
+                        </button>
                       </td>
                       <td className="px-6 py-4 text-start">
                         <div className="text-start">
@@ -500,17 +504,38 @@ interface StatCard {
                         <span className="text-sm text-gray-600">{student.country}</span>
                       </td>
                       <td className="px-6 py-4 text-start">
+                        <span className="text-sm text-gray-600">{student.active ? t('active') : t('inactive')}</span>
+                      </td>
+                      <td className="px-6 py-4 text-start">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${student.status === 'approved'
-                            ? 'bg-green-100 text-green-700'
-                            : student.status === 'pending'
-                              ? 'bg-orange-100 text-orange-700'
-                              : 'bg-gray-100 text-gray-700'
-                            }`}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                            student.status === 'approved' || student.status === 'active'
+                              ? 'bg-green-100 text-green-700'
+                              : student.status === 'pending'
+                                ? 'bg-orange-100 text-orange-700'
+                                : student.status === 'rejected'
+                                  ? 'bg-red-100 text-red-700'
+                                  : 'bg-gray-100 text-gray-700'
+                          }`}
                         >
-                          <span className={`w-1.5 h-1.5 rounded-full ${language === 'ar' ? 'ml-1.5' : 'mr-1.5'} ${student.status === 'approved' ? 'bg-green-500' : student.status === 'pending' ? 'bg-orange-500' : 'bg-gray-500'
-                            }`} />
-                          {student.status === 'approved' ? t('active') : student.status === 'pending' ? t('pending') : t('inactive')}
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${language === 'ar' ? 'ml-1.5' : 'mr-1.5'} ${
+                              student.status === 'approved' || student.status === 'active'
+                                ? 'bg-green-500'
+                                : student.status === 'pending'
+                                  ? 'bg-orange-500'
+                                  : student.status === 'rejected'
+                                    ? 'bg-red-500'
+                                    : 'bg-gray-500'
+                            }`}
+                          />
+                          {student.status === 'approved' || student.status === 'active'
+                            ? t('approved')
+                            : student.status === 'pending'
+                              ? t('pending')
+                              : student.status === 'rejected'
+                                ? t('rejected')
+                                : t('inactive')}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -590,6 +615,21 @@ interface StatCard {
             setSelectedStudent(null);
           } catch (error) {
             console.error('Error adding student:', error);
+            throw error;
+          }
+        }}
+      />
+      <EditStudentPlanModal
+        isOpen={isEditPlanModalOpen}
+        onClose={handleCloseEditPlanModal}
+        student={selectedStudent}
+        onSubmit={async (studentId: string, planId: string) => {
+          try {
+            await updateStudentPlan({ id: studentId, planId });
+            setIsEditPlanModalOpen(false);
+            setSelectedStudent(null);
+          } catch (error) {
+            console.error('Error updating student plan:', error);
             throw error;
           }
         }}
