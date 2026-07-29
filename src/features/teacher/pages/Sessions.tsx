@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Eye, Plus, Video, X } from 'lucide-react';
+import { Search, Eye, Plus, Video, X, Users } from 'lucide-react';
 import Pagination from '../../../components/ui/Pagination';
 import { useTranslation } from 'react-i18next';
 import ViewSessionModal from '../../../components/modals/ViewSessionModal';
@@ -13,6 +13,7 @@ import FeedbackModal from '../components/FeedbackModal';
 import ViolationGuidelinesModal from '../../../components/modals/ViolationGuidelinesModal';
 import { useSettings } from '../../../contexts/SettingsContext';
 import { leaveSession } from '../../../services/SessionsServices';
+import { Tooltip } from 'antd';
 
 
 
@@ -109,15 +110,15 @@ export default function Sessions() {
 
   const calculateDuration = (startTime: any, endTime: any) => {
     if (!startTime || !endTime) return 0;
-    
+
     // Check if they are full ISO/Date strings by trying to parse them with Date
     const start = new Date(startTime).getTime();
     const end = new Date(endTime).getTime();
-    
+
     if (!isNaN(start) && !isNaN(end)) {
       return Math.max(0, Math.round((end - start) / 60000));
     }
-    
+
     // If not parseable as full dates, fall back to "HH:MM" string split
     try {
       const getMinutes = (timeStr: string) => {
@@ -128,11 +129,11 @@ export default function Sessions() {
         const m = Number(parts[1]) || 0;
         return h * 60 + m;
       };
-      
+
       const startTotal = getMinutes(String(startTime));
       const endTotal = getMinutes(String(endTime));
       let diff = endTotal - startTotal;
-      if (diff < 0) diff += 24 * 60*5;
+      if (diff < 0) diff += 24 * 60 * 5;
       return diff;
     } catch {
       return 0;
@@ -259,7 +260,81 @@ export default function Sessions() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-gray-700 text-start">
-                        {session.student.user.name}
+                        {(() => {
+                          let names: string[] = [];
+                          if (session.groupStudents && Array.isArray(session.groupStudents) && session.groupStudents.length > 0) {
+                            names = session.groupStudents.map((gs: any) => gs?.student?.user?.name || gs?.student?.name).filter(Boolean);
+                          } else if (session.students && Array.isArray(session.students) && session.students.length > 0) {
+                            names = session.students.map((st: any) => st?.user?.name || st?.name).filter(Boolean);
+                          } else if (session.student) {
+                            const singleName = session.student?.user?.name || (session.student as any)?.name;
+                            if (singleName) names = [singleName];
+                          }
+
+                          if (!names || names.length === 0) {
+                            return <span className="text-gray-400 font-medium">{language === 'ar' ? 'غير محدد' : 'N/A'}</span>;
+                          }
+
+                          const AVATAR_BG = [
+                            "from-indigo-500 to-purple-600",
+                            "from-blue-500 to-cyan-600",
+                            "from-emerald-500 to-teal-600",
+                            "from-amber-500 to-orange-600",
+                            "from-rose-500 to-pink-600",
+                          ];
+
+                          if (names.length === 1) {
+                            return (
+                              <div className="flex items-center justify-start gap-2">
+                                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-[11px] shadow-sm ring-2 ring-white shrink-0">
+                                  {names[0].charAt(0).toUpperCase()}
+                                </div>
+                                <span className="font-semibold text-gray-800 text-xs">{names[0]}</span>
+                              </div>
+                            );
+                          }
+
+                          const maxVisible = 3;
+                          const overflowCount = names.length - maxVisible;
+
+                          return (
+                            <div className="flex items-center justify-start">
+                              <div className="flex -space-x-2 space-x-reverse items-center p-0.5">
+                                {names.slice(0, maxVisible).map((name, idx) => (
+                                  <Tooltip key={idx} title={name} placement="top">
+                                    <div
+                                      className={`w-7 h-7 rounded-full text-white flex items-center justify-center font-bold text-[11px] ring-2 ring-white shadow-sm bg-gradient-to-br ${AVATAR_BG[idx % AVATAR_BG.length]} cursor-pointer hover:z-10 hover:scale-110 transition-all`}
+                                    >
+                                      {name.charAt(0).toUpperCase()}
+                                    </div>
+                                  </Tooltip>
+                                ))}
+                                {overflowCount > 0 && (
+                                  <Tooltip
+                                    placement="top"
+                                    title={
+                                      <div className="p-1 space-y-1 text-xs max-h-48 overflow-y-auto custom-scrollbar">
+                                        <div className="font-bold border-b border-gray-700 pb-1 mb-1 text-gray-200">
+                                          {language === 'ar' ? `جميع الطلاب (${names.length})` : `All Students (${names.length})`}
+                                        </div>
+                                        {names.map((n, i) => (
+                                          <div key={i} className="flex items-center gap-1.5">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
+                                            {n}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    }
+                                  >
+                                    <div className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-900 text-white flex items-center justify-center font-bold text-[10px] ring-2 ring-white shadow-sm cursor-pointer hover:z-10 hover:scale-110 transition-all">
+                                      +{overflowCount}
+                                    </div>
+                                  </Tooltip>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td className="px-6 py-4 text-start">
                         <span className="text-primary font-medium">
@@ -311,11 +386,10 @@ export default function Sessions() {
                             setIsGuidelinesModalOpen(true);
                           }}
                           disabled={isJoining || isSessionCompletedOrEnded(session) || !isJoinable(session.start_time, session.end_time, session.link)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${
-                            isSessionCompletedOrEnded(session) || !isJoinable(session.start_time, session.end_time, session.link)
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium ${isSessionCompletedOrEnded(session) || !isJoinable(session.start_time, session.end_time, session.link)
                               ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
                               : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md'
-                          } ${isJoining ? 'opacity-50 cursor-wait' : ''}`}
+                            } ${isJoining ? 'opacity-50 cursor-wait' : ''}`}
                         >
                           <Video className="w-4 h-4" />
                           <span className="text-sm">{isJoining ? t('joining...') || 'Joining...' : t('joinSession')}</span>
@@ -334,11 +408,10 @@ export default function Sessions() {
                             }
                           }}
                           disabled={isSessionCompletedOrEnded(session) || !isEndable(session.start_time)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium text-sm ${
-                            isSessionCompletedOrEnded(session) || !isEndable(session.start_time)
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium text-sm ${isSessionCompletedOrEnded(session) || !isEndable(session.start_time)
                               ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
                               : 'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md'
-                          }`}
+                            }`}
                         >
                           {t('leaveSession')}
                         </button>
@@ -351,11 +424,10 @@ export default function Sessions() {
                             setIsRequestModalOpen(true);
                           }}
                           disabled={isSessionCompletedOrEnded(session)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium text-sm ${
-                            isSessionCompletedOrEnded(session)
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-medium text-sm ${isSessionCompletedOrEnded(session)
                               ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
                               : 'bg-primary text-white hover:bg-primary-dark shadow-sm hover:shadow-md'
-                          }`}
+                            }`}
                         >
                           <Plus className="w-4 h-4" />
                           {t('AddRequest')}
@@ -421,17 +493,17 @@ export default function Sessions() {
         sessionTitle={sessionForRequest?.title}
       />
 
- <FeedbackModal
-  visible={showFeedbackModal}
-  onClose={() => {
-    setShowFeedbackModal(false);
-    setSessionForFeedback(null);
-  }}
-  sessionId={sessionForFeedback?.id || ""}
-  sessionTitle={sessionForFeedback?.title || ""}
-/>
+      <FeedbackModal
+        visible={showFeedbackModal}
+        onClose={() => {
+          setShowFeedbackModal(false);
+          setSessionForFeedback(null);
+        }}
+        sessionId={sessionForFeedback?.id || ""}
+        sessionTitle={sessionForFeedback?.title || ""}
+      />
 
-<ViolationGuidelinesModal
+      <ViolationGuidelinesModal
         isOpen={isGuidelinesModalOpen}
         onClose={() => {
           setIsGuidelinesModalOpen(false);

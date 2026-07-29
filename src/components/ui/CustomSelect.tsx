@@ -1,4 +1,4 @@
-﻿import React, { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { Select } from 'antd';
 import type { SelectProps } from 'antd';
 
@@ -38,6 +38,7 @@ const CustomSelect = forwardRef<any, CustomSelectProps>(({
           <Select.Option 
             key={option.value} 
             value={option.value}
+            disabled={(option as any).disabled}
             searchText={option.searchText || String(option.value)}
             label={option.searchText || option.label}
           >

@@ -3,12 +3,10 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { TeacherRegisterInput, TeacherRegisterSchema } from "../lib/schemas/RegisterSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DEFAULT_COUNTRIES } from "../consts";
-import { Check, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { Check, Eye, EyeOff, Lock, Mail, User, ListTree } from "lucide-react";
 import { Input, Select } from "antd";
 import { useState } from "react";
 import { useGetCities } from "../features/teacher/hooks/useCity";
-
-
 import { useTeacherRegister } from "../features/teacher/hooks/useTeacherRegister";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +25,7 @@ export default function TeacherRegister({ onRegisterSuccess }: TeacherRegisterPr
     handleSubmit: handleFormSubmit,
     control,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<TeacherRegisterInput>({
     resolver: zodResolver(TeacherRegisterSchema(t)),
     mode: "onChange",
@@ -42,13 +40,14 @@ export default function TeacherRegister({ onRegisterSuccess }: TeacherRegisterPr
       country: "",
       nationality: "",
       password: "",
+      notes: ""
     },
   });
 
   const selectedCountry = watch("country")
   const selectedCountryObj = DEFAULT_COUNTRIES.find((c) => c.name === selectedCountry);
   const countryCode = selectedCountryObj?.iso2?.toLowerCase() || "";
-  const { data: citiesData, isLoading: isCityLoading } = useGetCities(countryCode)
+  const { data: citiesData } = useGetCities(countryCode)
 
   const cityOptions = citiesData ? citiesData.map((city: any) => ({
     value: city.name,
@@ -62,7 +61,7 @@ export default function TeacherRegister({ onRegisterSuccess }: TeacherRegisterPr
       const registrationData = {
         ...data,
         age: data.age ? Number(data.age) : undefined,
-        comfirmPassword: data.password, // Required by backend typo "comfirmPassword"
+        comfirmPassword: data.password,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
@@ -343,6 +342,25 @@ export default function TeacherRegister({ onRegisterSuccess }: TeacherRegisterPr
             </div>
             {errors.password && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.password.message}</p>}
           </div>
+        </div>
+
+        {/* Experience */}
+        <div className="text-start">
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            {t("notes")}
+          </label>
+          <div className="relative">
+            <textarea
+              {...register("notes")}
+              placeholder="I have experience in ... "
+              className={`w-full min-h-24 max-h-40 px-4 py-2.5 ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} bg-slate-50 border ${errors.email ? 'border-red-400 focus:ring-red-100' : 'border-slate-200 focus:border-primary focus:ring-primary/10'} rounded-xl outline-none transition-all focus:ring-4 hover:border-slate-300 font-medium`}
+              dir="ltr"
+            />
+            <div className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-2 text-slate-400`}>
+              <ListTree className="w-5 h-5" />
+            </div>
+          </div>
+          {errors.email && <p className="text-red-500 text-xs mt-1.5 font-semibold">{errors.email.message}</p>}
         </div>
 
         {/* Submit Button */}

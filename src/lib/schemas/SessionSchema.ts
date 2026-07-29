@@ -4,7 +4,10 @@ import { DayOfWeek } from '../../types/scheduales';
 type TFunc = (key: string, options?: any) => string;
 
 const getBaseSession = (t: TFunc) => z.object({
-  student: z.string().min(1, t("validation.required")),
+  student: z.union([
+    z.string().min(1, t("validation.required")),
+    z.array(z.string()).min(1, t("validation.required"))
+  ]),
   teacher: z.string().min(1, t("validation.required")),
   subject: z.string().min(1, t("validation.required")),
   title: z.string().min(3, t("validation.min", { count: 3 })),

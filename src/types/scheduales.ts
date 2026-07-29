@@ -1,7 +1,8 @@
 export type ScheduleType = 'full' | 'half';
 
 export interface CreateSchedulePayload {
-    studentId: string;
+    studentId?: string;
+    studentIds?: string[];
     teacherId: string;
     subject_id: string;
     title: string;
@@ -33,7 +34,8 @@ export type DayOfWeek =
     | 'Friday';
 
 export interface CreateRecurringSchedulePayload {
-    studentId: string;
+    studentId?: string;
+    studentIds?: string[];
     teacherId: string;
     subject_id: string;
     title: string;
@@ -106,7 +108,7 @@ export interface ScheduleSubject {
 export interface Schedule {
     id: string;
     teacherId: string;
-    studentId: string;
+    studentId?: string;
     subjectId: string;
     status: string;
     title: string;
@@ -121,7 +123,15 @@ export interface Schedule {
     is_recurring: boolean;
     day_of_week: string | null;
     parent_recurring_id: string | null;
-    student: Student;
+    student?: Student;
+    students?: Student[];
+    groupStudents?: {
+        id?: string;
+        student_id?: string;
+        studentId?: string;
+        schedule_id?: string;
+        student?: Student;
+    }[];
     teacher: Teacher;
     subject?: ScheduleSubject;
 }

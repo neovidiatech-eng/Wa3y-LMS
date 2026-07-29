@@ -21,6 +21,7 @@ import {
 
 import { useSubjects } from "../hooks/useSubjects";
 import { Subject } from "../../../types/subject";
+import { Tooltip } from "antd";
 
 export default function Sessions() {
   const { t, i18n } = useTranslation();
@@ -62,13 +63,7 @@ export default function Sessions() {
   const confirmDelete = async () => {
     if (!sessionToDelete) return;
     try {
-      if (sessionToDelete.is_recurring) {
-        await deleteGroupedSchedule.mutateAsync(
-          sessionToDelete.parent_recurring_id || sessionToDelete.id,
-        );
-      } else {
-        await deleteSchedule.mutateAsync(sessionToDelete.id);
-      }
+      await deleteSchedule.mutateAsync(sessionToDelete.id);
       setSessionToDelete(null);
     } catch (error) {
       console.error("Delete session failed:", error);
@@ -89,8 +84,14 @@ export default function Sessions() {
           startTime: session.time || formData.startTime || '14:00',
         }));
 
-        const res = await createRecurringSchedule.mutateAsync({
-          studentId: formData.student,
+        const studentIdsList = Array.isArray(formData.student)
+          ? formData.student.map(String).filter(Boolean)
+          : (formData.student ? [String(formData.student)] : []);
+
+        const payload: any = {
+          ...(studentIdsList.length > 1
+            ? { studentIds: studentIdsList }
+            : { studentId: studentIdsList[0] || '' }),
           teacherId: formData.teacher,
           subject_id: formData.subject,
           title: formData.title,
@@ -99,28 +100,36 @@ export default function Sessions() {
           ...(!formData.meetingLink ? {} : { link: formData.meetingLink }),
           notification_Time: formData.notification_Time || '10',
           sessions: mappedSessions,
-        });
+        };
 
+        const res = await createRecurringSchedule.mutateAsync(payload);
         return res?.data;
       } else {
         // Single Session Scheduling
-        const [year, month, day] = data.sessionDate.split("-").map(Number);
-        const [hour, minute] = data.startTime.split(":").map(Number);
-        const localDate = new Date(year, month - 1, day, hour, minute);
+        const studentIdsList = Array.isArray(data.student)
+          ? data.student.map(String).filter(Boolean)
+          : (data.student ? [String(data.student)] : []);
 
-        const res = await createSchedule.mutateAsync({
-          studentId: data.student,
+        const formattedStartTime = data.sessionDate && data.startTime
+          ? `${data.sessionDate} ${data.startTime.length === 5 ? `${data.startTime}:00` : data.startTime}`
+          : new Date().toISOString();
+
+        const payload: any = {
+          ...(studentIdsList.length > 1
+            ? { studentIds: studentIdsList }
+            : { studentId: studentIdsList[0] || '' }),
           teacherId: data.teacher,
           subject_id: data.subject,
           title: data.title,
           ...(!data.description ? {} : { description: data.description }),
           ...(!data.notes ? {} : { notes: data.notes }),
           ...(!data.meetingLink ? {} : { link: data.meetingLink }),
-          start_time: localDate.toISOString(),
+          start_time: formattedStartTime,
           // type: data.type,
-          notification_Time: data.notification_Time,
-        });
-        
+          notification_Time: data.notification_Time || '10',
+        };
+
+        const res = await createSchedule.mutateAsync(payload);
         return res?.data;
       }
     } catch (error) {
@@ -438,10 +447,84 @@ export default function Sessions() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-gray-700 text-right">
-                    {session.student.user.name}
+                    {(() => {
+                      let names: string[] = [];
+                      if (session.groupStudents && Array.isArray(session.groupStudents) && session.groupStudents.length > 0) {
+                        names = session.groupStudents.map((gs: any) => gs?.student?.user?.name || gs?.student?.name).filter(Boolean);
+                      } else if (session.students && Array.isArray(session.students) && session.students.length > 0) {
+                        names = session.students.map((st: any) => st?.user?.name || st?.name).filter(Boolean);
+                      } else if (session.student) {
+                        const singleName = session.student?.user?.name || (session.student as any)?.name;
+                        if (singleName) names = [singleName];
+                      }
+
+                      if (!names || names.length === 0) {
+                        return <span className="text-gray-400 font-medium">{language === 'ar' ? 'غير محدد' : 'N/A'}</span>;
+                      }
+
+                      const AVATAR_BG = [
+                        "from-indigo-500 to-purple-600",
+                        "from-blue-500 to-cyan-600",
+                        "from-emerald-500 to-teal-600",
+                        "from-amber-500 to-orange-600",
+                        "from-rose-500 to-pink-600",
+                      ];
+
+                      if (names.length === 1) {
+                        return (
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="font-semibold text-gray-800 text-xs">{names[0]}</span>
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-[11px] shadow-sm ring-2 ring-white shrink-0">
+                              {names[0].charAt(0).toUpperCase()}
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      const maxVisible = 3;
+                      const overflowCount = names.length - maxVisible;
+
+                      return (
+                        <div className="flex items-center justify-end">
+                          <div className="flex -space-x-2 space-x-reverse items-center p-0.5">
+                            {names.slice(0, maxVisible).map((name, idx) => (
+                              <Tooltip key={idx} title={name} placement="top">
+                                <div
+                                  className={`w-7 h-7 rounded-full text-white flex items-center justify-center font-bold text-[11px] ring-2 ring-white shadow-sm bg-gradient-to-br ${AVATAR_BG[idx % AVATAR_BG.length]} cursor-pointer hover:z-10 hover:scale-110 transition-all`}
+                                >
+                                  {name.charAt(0).toUpperCase()}
+                                </div>
+                              </Tooltip>
+                            ))}
+                            {overflowCount > 0 && (
+                              <Tooltip
+                                placement="top"
+                                title={
+                                  <div className="p-1 space-y-1 text-xs max-h-48 overflow-y-auto custom-scrollbar">
+                                    <div className="font-bold border-b border-gray-700 pb-1 mb-1 text-gray-200">
+                                      {language === 'ar' ? `جميع الطلاب (${names.length})` : `All Students (${names.length})`}
+                                    </div>
+                                    {names.map((n, i) => (
+                                      <div key={i} className="flex items-center gap-1.5">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
+                                        {n}
+                                      </div>
+                                    ))}
+                                  </div>
+                                }
+                              >
+                                <div className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-900 text-white flex items-center justify-center font-bold text-[10px] ring-2 ring-white shadow-sm cursor-pointer hover:z-10 hover:scale-110 transition-all">
+                                  +{overflowCount}
+                                </div>
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className="px-6 py-4 text-gray-700 text-right">
-                    {session.teacher.user.name}
+                    {session.teacher?.user?.name || (language === 'ar' ? 'غير محدد' : 'N/A')}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <span className="text-primary font-medium">
@@ -482,13 +565,12 @@ export default function Sessions() {
                     <div className="flex items-center gap-2 justify-end">
                       <button
                         onClick={() => {
-                          const grouped = session.parent_recurring_id
-                            ? scheduleData.filter(
-                              (s: Schedule) =>
-                                s.parent_recurring_id ===
-                                session.parent_recurring_id,
-                            )
-                            : [session];
+                          const grouped = scheduleData.filter((s: Schedule) => {
+                            if (session.parent_recurring_id && s.parent_recurring_id) {
+                              return s.parent_recurring_id === session.parent_recurring_id;
+                            }
+                            return s.title === session.title && s.start_time === session.start_time;
+                          });
                           setGroupedSessions(grouped);
                           setSelectedSession(session);
                           setShowViewModal(true);
@@ -500,13 +582,12 @@ export default function Sessions() {
                       </button>
                       <button
                         onClick={() => {
-                          const grouped = session.parent_recurring_id
-                            ? scheduleData.filter(
-                              (s: Schedule) =>
-                                s.parent_recurring_id ===
-                                session.parent_recurring_id,
-                            )
-                            : [session];
+                          const grouped = scheduleData.filter((s: Schedule) => {
+                            if (session.parent_recurring_id && s.parent_recurring_id) {
+                              return s.parent_recurring_id === session.parent_recurring_id;
+                            }
+                            return s.title === session.title && s.start_time === session.start_time;
+                          });
                           setGroupedSessions(grouped);
                           setSelectedSession(session);
                           setShowEditModal(true);

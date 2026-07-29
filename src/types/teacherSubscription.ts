@@ -12,6 +12,7 @@ export interface TeacherSubscriptionRequest {
   city?: string;
   age?: number | string;
   createdAt: string;
+  notes?: string;
   status?: 'pending' | 'approved' | 'rejected' | string;
   user?: {
     id: string;
@@ -25,6 +26,8 @@ export interface TeacherSubscriptionRequest {
     nationality?: string;
     createdAt?: string;
   };
+
+
 }
 
 export interface ApproveTeacherRequestBody {

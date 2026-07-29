@@ -1,5 +1,5 @@
 import { X, Calendar, Clock, FileText, User, GraduationCap, Bell, MonitorPlay, Video, AlertTriangle, Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Schedule } from '../../types/scheduales';
 import CustomSelect from '../ui/CustomSelect';
@@ -189,6 +189,30 @@ export default function EditSessionModal({
 
   // ─── Derived values ───────────────────────────────────────────────────────
 
+  const enrolledStudents = useMemo(() => {
+    const s = currentSession || session;
+    if (!s) return [];
+
+    if (s.groupStudents && Array.isArray(s.groupStudents) && s.groupStudents.length > 0) {
+      return s.groupStudents
+        .map((gs: any) => gs?.student?.user?.name || gs?.student?.name || "")
+        .filter(Boolean);
+    }
+
+    if (s.students && Array.isArray(s.students) && s.students.length > 0) {
+      return s.students
+        .map((st: any) => st?.user?.name || st?.name || "")
+        .filter(Boolean);
+    }
+
+    if (s.student) {
+      const singleName = s.student.user?.name || (s.student as any).name || "";
+      return singleName ? [singleName] : [];
+    }
+
+    return [];
+  }, [currentSession, session]);
+
   if (!isOpen || !session || !currentSession) return null;
 
   /** Total number of sessions that will be saved on submit. */
@@ -243,9 +267,26 @@ export default function EditSessionModal({
                 <div className="p-2 rounded-xl bg-primary-50 text-blue-500">
                   <User className="w-4 h-4" />
                 </div>
-                <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('studentLabel')}</p>
-                  <p className="text-sm font-bold text-gray-900">{currentSession.student?.user?.name || '—'}</p>
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    {t('studentLabel')} {enrolledStudents.length > 1 ? `(${enrolledStudents.length})` : ''}
+                  </p>
+                  {enrolledStudents.length === 0 ? (
+                    <p className="text-sm font-bold text-gray-900">—</p>
+                  ) : enrolledStudents.length === 1 ? (
+                    <p className="text-sm font-bold text-gray-900">{enrolledStudents[0]}</p>
+                  ) : (
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                      {enrolledStudents.map((name, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary-50 text-indigo-700 border border-indigo-100/60 shadow-sm"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-gray-50 rounded-2xl p-4 border border-gray-100">

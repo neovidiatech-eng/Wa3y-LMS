@@ -162,15 +162,72 @@ export default function AddSessionModal({
     setValue('endTime', `${endHours}:${endMinutes}`);
   }, [watchStartTime, watchType, setValue]);
 
-  const selectedStudentData = useMemo(() => {
-    if (!watchStudent || !students?.data?.studentsData) return null;
-
-    return (
-      students.data.studentsData.find(
-        (s: Student) => String(s.id) === String(watchStudent)
-      ) || null
+  const isGroupPlanStudent = (student?: Student | null) =>
+    Boolean(
+      student?.plan &&
+      (student.plan.planType === 'group' ||
+        student.plan.name_ar?.includes('جماعية') ||
+        student.plan.name_en?.toLowerCase().includes('group'))
     );
+
+  const selectedStudentData = useMemo(() => {
+    const list = students?.data?.studentsData;
+    if (!watchStudent || !list) return null;
+    const firstId = Array.isArray(watchStudent) ? watchStudent[0] : watchStudent;
+    return list.find((s: Student) => String(s.id) === String(firstId)) || null;
   }, [watchStudent, students]);
+
+  const isGroupPlan = isGroupPlanStudent(selectedStudentData);
+
+  const maxStudentsCount = useMemo(() => {
+    if (!isGroupPlan || !selectedStudentData?.plan) return 0;
+    const rawMax = selectedStudentData.plan.maxStudents ?? (selectedStudentData.plan as any).studentsNum;
+    if (!rawMax || rawMax === 'unlimited' || rawMax === '0') return 0;
+    const parsed = parseInt(String(rawMax), 10);
+    return isNaN(parsed) ? 0 : parsed;
+  }, [isGroupPlan, selectedStudentData]);
+
+  const selectedStudentIds = useMemo(() => {
+    if (!watchStudent) return [];
+    return Array.isArray(watchStudent) ? watchStudent.map(String) : [String(watchStudent)];
+  }, [watchStudent]);
+
+  const studentOptions = useMemo(() => {
+    const list = students?.data?.studentsData;
+    if (!list) return [];
+
+    const isReachedMax = maxStudentsCount > 0 && selectedStudentIds.length >= maxStudentsCount;
+
+    return list.map((student: Student) => {
+      const planName = (language === 'ar' ? student.plan?.name_ar : student.plan?.name_en) || '';
+      const isGroup = isGroupPlanStudent(student);
+      const isSelected = selectedStudentIds.includes(String(student.id));
+
+      let badge = planName ? ` (${planName})` : '';
+      let disabled = false;
+
+      if (isGroupPlan) {
+        if (!isGroup) {
+          disabled = true;
+          badge = planName
+            ? ` (${planName} - ${language === 'ar' ? 'غير متاح' : 'Unavailable'})`
+            : ` (${language === 'ar' ? 'خطة فردية - غير متاح' : 'Single Plan - Unavailable'})`;
+        } else if (isReachedMax && !isSelected) {
+          disabled = true;
+          badge = planName
+            ? ` (${planName} - ${language === 'ar' ? 'الحد الأقصى ممتلئ' : 'Max Limit Full'})`
+            : ` (${language === 'ar' ? 'الحد الأقصى ممتلئ' : 'Max Limit Full'})`;
+        }
+      }
+
+      return {
+        value: String(student.id),
+        label: `${student.user.name}${badge}`,
+        searchText: `${student.user.name} ${student.user.email || ''}`,
+        disabled,
+      };
+    });
+  }, [students, language, isGroupPlan, maxStudentsCount, selectedStudentIds]);
 
   const selectedTeacherData = useMemo(() => {
     if (!watchTeacher || !instructors?.teachers) return null;
@@ -504,32 +561,60 @@ export default function AddSessionModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
 
               {/* Student */}
-              <div>
-                <label className="label">
-                  <Search className="w-3.5 h-3.5" />
-                  {t('studentLabel') || 'Student'}
-                </label>
+              <div className={isGroupPlan ? "sm:col-span-2" : ""}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="label mb-0">
+                    <Search className="w-3.5 h-3.5" />
+                    {t('studentLabel') || (language === 'ar' ? 'الطالب' : 'Student')}
+                  </label>
+                  {isGroupPlan && (
+                    <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                      {language === 'ar'
+                        ? `خطة جماعية (المحدد ${selectedStudentIds.length}${maxStudentsCount > 0 ? ` من ${maxStudentsCount}` : ''})`
+                        : `Group Plan (${selectedStudentIds.length}${maxStudentsCount > 0 ? ` of ${maxStudentsCount}` : ''} selected)`
+                      }
+                    </span>
+                  )}
+                </div>
 
                 <Controller
                   name="student"
                   control={control}
-                  render={({ field }) => (
-                    <CustomSelect
-                      options={
-                        students?.data?.studentsData?.map(
-                          (student: Student) => ({
-                            value: String(student.id),
-                            label: student.user.name,
-                            searchText: student.user.name,
+                  render={({ field }) => {
+                    const selectValue = isGroupPlan
+                      ? (Array.isArray(field.value) ? field.value : (field.value ? [String(field.value)] : []))
+                      : (Array.isArray(field.value) ? field.value[0] || '' : field.value || '');
 
-                          })
-                        ) || []
-                      }
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder={t('selectStudent') || 'Select Student'}
-                    />
-                  )}
+                    return (
+                      <CustomSelect
+                        mode={isGroupPlan ? "multiple" : undefined}
+                        options={studentOptions}
+                        value={selectValue}
+                        onChange={(val) => {
+                          if (isGroupPlan) {
+                            let arr = Array.isArray(val) ? val.map(String) : [String(val)];
+                            // Only allow students subscribed to a group plan
+                            arr = arr.filter((id) => {
+                              const s = students?.data?.studentsData?.find((st: Student) => String(st.id) === id);
+                              return isGroupPlanStudent(s);
+                            });
+                            // Limit to maxStudentsCount if specified
+                            if (maxStudentsCount > 0 && arr.length > maxStudentsCount) {
+                              arr = arr.slice(0, maxStudentsCount);
+                            }
+                            field.onChange(arr);
+                          } else {
+                            field.onChange(Array.isArray(val) ? val[0] || '' : val);
+                          }
+                        }}
+                        placeholder={
+                          isGroupPlan
+                            ? (language === 'ar' ? 'اختر الطلاب المشتركين في الباقة الجماعية' : 'Select Group Plan Students')
+                            : (t('selectStudent') || 'Select Student')
+                        }
+                      />
+                    );
+                  }}
                 />
 
                 {errors.student && (

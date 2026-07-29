@@ -73,6 +73,7 @@ export const useCreateSchedule = () => {
     mutationFn: (data: CreateSchedulePayload) => createSchedule(data),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      queryClient.invalidateQueries({ queryKey: ["students"] });
       message.success(data.message || 'Schedule Created Successfully');
     },
   });
@@ -85,6 +86,7 @@ export const useCreateRecurringSchedule = () => {
       createRecurringSchedule(data),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      queryClient.invalidateQueries({ queryKey: ["students"] });
       message.success(data.message || 'Recurring Schedules Created Successfully');
     },
   });
@@ -96,6 +98,7 @@ export const useDeleteSchedule = () => {
     mutationFn: (id: string) => deleteSchedule(id),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      queryClient.invalidateQueries({ queryKey: ["students"] });
       message.success(data.message || 'Schedule Deleted Successfully');
     },
   });
@@ -107,6 +110,7 @@ export const useDeleteGroupedSchedule = () => {
     mutationFn: (id: string) => deleteRecurringScheduale(id),
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      queryClient.invalidateQueries({ queryKey: ["students"] });
       message.success(data.message || 'Grouped Schedule Deleted Successfully');
     },
   });
