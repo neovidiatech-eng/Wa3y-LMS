@@ -1,4 +1,4 @@
-import { X, Calendar, Clock, FileText, User, GraduationCap, Bell, MonitorPlay, Video, AlertTriangle, Loader2 } from 'lucide-react';
+import { X, Calendar, Clock, FileText, User, GraduationCap, Bell, MonitorPlay,  AlertTriangle, Loader2 } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Schedule } from '../../types/scheduales';

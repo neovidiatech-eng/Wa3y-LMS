@@ -3,7 +3,6 @@ import {
   Calendar,
   Clock,
   User,
-  Users,
   GraduationCap,
   Video,
   FileText,

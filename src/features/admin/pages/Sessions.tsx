@@ -42,7 +42,7 @@ export default function Sessions() {
   const createRecurringSchedule = useCreateRecurringSchedule();
   const updateSchedule = useUpdateSchedule();
   const deleteSchedule = useDeleteSchedule();
-  const deleteGroupedSchedule = useDeleteGroupedSchedule();
+  // const deleteGroupedSchedule = useDeleteGroupedSchedule();
 
   const handleUpdateSession = async (
     id: string,
