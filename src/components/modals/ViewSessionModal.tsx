@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { Schedule } from "../../types/scheduales";
 import { useGetBatchSchedules } from "../../features/admin/hooks/useSchedules";
 import { useMemo } from "react";
+import { Tooltip } from "antd";
 
 interface ViewSessionModalProps {
   isOpen: boolean;
@@ -49,6 +50,29 @@ export default function ViewSessionModal({
     }
     return initialGroupedSessions || [];
   }, [session, allSchedulesData, initialGroupedSessions]);
+
+  const enrolledStudents = useMemo(() => {
+    if (!session) return [];
+
+    if (session.groupStudents && Array.isArray(session.groupStudents) && session.groupStudents.length > 0) {
+      return session.groupStudents
+        .map((gs: any) => gs?.student?.user?.name || gs?.student?.name || "")
+        .filter(Boolean);
+    }
+
+    if (session.students && Array.isArray(session.students) && session.students.length > 0) {
+      return session.students
+        .map((st: any) => st?.user?.name || st?.name || "")
+        .filter(Boolean);
+    }
+
+    if (session.student) {
+      const singleName = session.student.user?.name || (session.student as any).name || "";
+      return singleName ? [singleName] : [];
+    }
+
+    return [];
+  }, [session]);
 
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -174,13 +198,65 @@ export default function ViewSessionModal({
                 <div className="p-2.5 rounded-xl bg-primary-50 text-blue-500 group-hover:scale-110 transition-transform">
                   <User className="w-4 h-4" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
-                    {t("studentLabel")}
+                    {t("studentLabel")} {enrolledStudents.length > 1 ? `(${enrolledStudents.length})` : ''}
                   </p>
-                  <p className="text-sm font-bold text-gray-900">
-                    {session.student?.user?.name || "—"}
-                  </p>
+                  {enrolledStudents.length === 0 ? (
+                    <p className="text-sm font-bold text-gray-900">—</p>
+                  ) : enrolledStudents.length === 1 ? (
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-white">
+                        {enrolledStudents[0].charAt(0).toUpperCase()}
+                      </div>
+                      <p className="text-sm font-bold text-gray-900">{enrolledStudents[0]}</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex -space-x-2 space-x-reverse items-center p-0.5">
+                        {enrolledStudents.slice(0, 4).map((name, idx) => {
+                          const AVATAR_BG = [
+                            "from-indigo-500 to-purple-600",
+                            "from-blue-500 to-cyan-600",
+                            "from-emerald-500 to-teal-600",
+                            "from-amber-500 to-orange-600",
+                            "from-rose-500 to-pink-600",
+                          ];
+                          return (
+                            <Tooltip key={idx} title={name} placement="top">
+                              <div
+                                className={`w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm bg-gradient-to-br ${AVATAR_BG[idx % AVATAR_BG.length]} cursor-pointer hover:z-10 hover:scale-110 transition-all`}
+                              >
+                                {name.charAt(0).toUpperCase()}
+                              </div>
+                            </Tooltip>
+                          );
+                        })}
+                        {enrolledStudents.length > 4 && (
+                          <Tooltip
+                            placement="top"
+                            title={
+                              <div className="p-1 space-y-1 text-xs max-h-48 overflow-y-auto custom-scrollbar">
+                                <div className="font-bold border-b border-gray-700 pb-1 mb-1 text-gray-200">
+                                  {language === 'ar' ? `بقية الطلاب (${enrolledStudents.length - 4}):` : `Other Students (${enrolledStudents.length - 4}):`}
+                                </div>
+                                {enrolledStudents.slice(4).map((n, idx) => (
+                                  <div key={idx} className="flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
+                                    {n}
+                                  </div>
+                                ))}
+                              </div>
+                            }
+                          >
+                            <div className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-900 text-white flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm cursor-pointer hover:z-10 hover:scale-110 transition-all">
+                              +{enrolledStudents.length - 4}
+                            </div>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -346,8 +422,8 @@ export default function ViewSessionModal({
                       <div
                         key={s.id}
                         className={`bg-white border rounded-2xl p-4 transition-all ${isCurrent
-                            ? "border-indigo-200 ring-2 ring-indigo-500/10 shadow-sm"
-                            : "border-gray-100 hover:border-gray-200"
+                          ? "border-indigo-200 ring-2 ring-indigo-500/10 shadow-sm"
+                          : "border-gray-100 hover:border-gray-200"
                           }`}
                       >
                         <div className="flex items-center justify-between gap-3">

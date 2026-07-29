@@ -20,13 +20,13 @@ export type Plan = {
   active: boolean;
   bestSeller: boolean;
   planType?: "single" | "group";
+  isGroup?: boolean;
   maxStudents?: string;
   color?: string;
   currency?: Currency;
   createdAt: string;
   updatedAt: string;
 };
-
 
 export type PlansResponse = {
   message: string;
@@ -53,6 +53,7 @@ export interface PlanBody {
   currencyId: string;
   sessionTime: number;
   planType?: "single" | "group";
+  isGroup?: boolean;
   studentsNum?: string;
   color?: string;
 }

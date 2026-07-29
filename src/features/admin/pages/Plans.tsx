@@ -106,6 +106,7 @@ export default function Plans() {
         currencyId: planData.currencyId,
         color: planData.color || '#3b82f6',
         planType: planData.planType,
+        isGroup: planData.planType === 'group',
         maxStudents: planData.maxStudents,
       };
 

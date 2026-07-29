@@ -78,6 +78,9 @@ export interface Teacher {
     meeting_link?: string | null;
     currency?: TeacherCurrency;
     stats?: TeacherStats;
+    additionalData: {
+        notes?: string
+    };
 }
 
 export interface TeachersFetchResponse {

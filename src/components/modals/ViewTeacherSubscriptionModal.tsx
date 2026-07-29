@@ -1,4 +1,4 @@
-import { X, Mail, Phone, Globe, User, Calendar, Clock, CheckCircle, GraduationCap } from 'lucide-react';
+import { X, Mail, Phone, Globe, User, Calendar, Clock, CheckCircle, GraduationCap, ListTree } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import WhatsAppPhone from '../ui/WhatsAppPhone';
 import { TeacherSubscriptionRequest } from '../../types/teacherSubscription';
@@ -29,7 +29,7 @@ export default function ViewTeacherSubscriptionModal({
   const nationality = request.nationality || request.user?.nationality || '-';
   const age = request.age || request.user?.age || '-';
   const regDate = request.createdAt || request.user?.createdAt;
-
+  const notes = request.notes || '';
   return (
     <div className="fixed inset-0 !mt-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div
@@ -147,6 +147,19 @@ export default function ViewTeacherSubscriptionModal({
                 </p>
               </div>
             </div>
+            {notes && (
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-start gap-3">
+                <div className="p-2.5 bg-yellow-100 text-yellow-600 rounded-lg shrink-0">
+                  <ListTree className="w-5 h-5" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-0.5">
+                    {language === 'ar' ? 'الملاحظات' : 'Notes'}
+                  </label>
+                  <p className="text-sm font-medium text-gray-900">{notes}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

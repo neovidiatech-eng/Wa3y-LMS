@@ -265,8 +265,8 @@ export default function Agenda() {
                   key={s.id}
                   className="bg-white border rounded-xl p-4 text-right shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
                 >
-                  <div 
-                    className="absolute top-0 right-0 w-1.5 h-full transition-all group-hover:w-2" 
+                  <div
+                    className="absolute top-0 right-0 w-1.5 h-full transition-all group-hover:w-2"
                     style={{ backgroundColor: s.subject?.color || '#3b82f6' }}
                   />
                   <div className="pr-3">
@@ -277,7 +277,7 @@ export default function Agenda() {
                         </span>
                         <span className="text-sm text-gray-500 font-medium">{t("subject")}:</span>
                       </div>
-                      
+
                       {s.title && (
                         <div className="flex items-center justify-end gap-2">
                           <span className="text-sm text-gray-800 font-medium">{s.title}</span>
@@ -294,7 +294,7 @@ export default function Agenda() {
                         </span>
                         <Clock className="w-4 h-4 text-gray-400" />
                       </div>
-                      
+
                       {s.student?.user?.name && (
                         <div className="flex items-center justify-end gap-2 text-sm text-gray-600">
                           <span className="font-medium text-gray-800">{s.student.user.name}</span>
@@ -307,11 +307,10 @@ export default function Agenda() {
                     </div>
 
                     <div className="flex items-center justify-between mt-4">
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                        s.status === 'completed' ? 'bg-gray-100 text-gray-600' :
-                        s.status === 'scheduled' ? 'bg-blue-100 text-blue-700' :
-                        'bg-amber-100 text-amber-700'
-                      }`}>
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${s.status === 'completed' ? 'bg-gray-100 text-gray-600' :
+                          s.status === 'scheduled' ? 'bg-blue-100 text-blue-700' :
+                            'bg-amber-100 text-amber-700'
+                        }`}>
                         {s.status}
                       </span>
 
