@@ -482,26 +482,36 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
 
               {filteredPlans?.map((pkg) => {
                 const isGroup = pkg.planType === 'group';
+                const pkgColor = pkg.color || '#369589';
+                const isSelected = selectedPackage === pkg.id;
+
                 return (
                   <button
                     key={pkg.id}
                     type="button"
                     onClick={() => setValue("plan_id", pkg.id, { shouldValidate: true })}
-                    className={`w-full p-3 rounded-2xl border-2 transition-all text-start relative overflow-hidden flex flex-col justify-between min-h-[95px] cursor-pointer ${selectedPackage === pkg.id
-                      ? isGroup
-                        ? "border-purple-600 bg-purple-50/50 shadow-lg shadow-purple-500/10 scale-[1.01]"
-                        : "border-primary bg-primary/5 shadow-lg shadow-primary/5 scale-[1.01]"
-                      : "border-slate-100 bg-slate-50/50 hover:border-slate-200 hover:bg-white"
-                      }`}
+                    className={`w-full rounded-2xl border-2 transition-all text-start relative overflow-hidden flex flex-col justify-between min-h-[95px] cursor-pointer ${
+                      isSelected ? "shadow-lg scale-[1.01]" : "hover:shadow-md hover:border-slate-300"
+                    }`}
+                    style={{
+                      borderColor: pkgColor,
+                      backgroundColor: isSelected ? `${pkgColor}12` : '#ffffff',
+                    }}
                   >
-                    {selectedPackage === pkg.id && (
-                      <div className={`absolute top-0 ${language === 'ar' ? 'left-0 rounded-br-xl' : 'right-0 rounded-bl-xl'} w-6 h-6 ${isGroup ? 'bg-purple-600' : 'bg-primary'} flex items-center justify-center`}>
+                    {isSelected && (
+                      <div
+                        className={`absolute top-0 ${language === 'ar' ? 'left-0 rounded-br-xl' : 'right-0 rounded-bl-xl'} w-6 h-6 flex items-center justify-center shadow-sm`}
+                        style={{ backgroundColor: pkgColor }}
+                      >
                         <Check className="w-3.5 h-3.5 text-white" />
                       </div>
                     )}
-                    <div className="text-start">
+                    <div className="p-3 w-full">
                       <div className="flex items-center justify-between gap-1 mb-1">
-                        <div className={`font-bold text-sm ${selectedPackage === pkg.id ? (isGroup ? "text-purple-700" : "text-primary") : "text-slate-800"}`}>
+                        <div
+                          className="font-bold text-sm"
+                          style={{ color: isSelected ? pkgColor : '#1e293b' }}
+                        >
                           {language === "ar" ? pkg.name_ar : pkg.name_en}
                         </div>
                         {isGroup ? (
@@ -534,7 +544,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
                         {pkg.sessionsCount} {t("sessionsCount")}
                       </div>
                     </div>
-                    <div className="mt-2 pt-2 border-t border-slate-100 w-full flex items-baseline gap-1" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                    <div className="p-3 pt-2 border-t border-slate-100 w-full flex items-baseline gap-1" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                       <span className="text-xs text-slate-400 font-semibold">{pkg.currency?.symbol}</span>
                       <span className="text-lg font-extrabold text-slate-800">{pkg.price}</span>
                     </div>

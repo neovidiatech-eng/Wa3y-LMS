@@ -206,9 +206,11 @@ export default function ViewSessionModal({
                     <p className="text-sm font-bold text-gray-900">—</p>
                   ) : enrolledStudents.length === 1 ? (
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-white">
-                        {enrolledStudents[0].charAt(0).toUpperCase()}
-                      </div>
+                      <Tooltip title={enrolledStudents[0]} placement="top">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-white cursor-pointer hover:scale-110 transition-all">
+                          {enrolledStudents[0].charAt(0).toUpperCase()}
+                        </div>
+                      </Tooltip>
                       <p className="text-sm font-bold text-gray-900">{enrolledStudents[0]}</p>
                     </div>
                   ) : (

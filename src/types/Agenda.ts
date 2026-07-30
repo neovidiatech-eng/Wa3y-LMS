@@ -28,6 +28,41 @@ export interface AgendaSession {
   rescheduledFromId?: string | null;
   rescheduledToId?: string | null;
 
+  reviews?: {
+    id?: string;
+    role?: string;
+    scheduleId: string;
+    reviewerId: string;
+    revieweeId: string;
+    rating: number | string;
+    comment: string;
+    reviewee: {
+      email: string;
+      password: string;
+      name: string;
+      phone: string;
+      createdAt: string;
+      updatedAt?:string|null
+      roleId: string;
+      code_country:string;
+
+    }
+    reviewer:{
+      email:string;
+      password:string;
+      name:string;
+      phone:string;
+      createdAt: string;
+      updatedAt?:string|null
+      roleId: string;
+      code_country:string;
+    }
+  }[] | null;
+  
+
+
+
+
   display_start_time?: string;
   display_end_time?: string;
   display_timezone?: string;

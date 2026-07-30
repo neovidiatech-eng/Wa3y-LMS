@@ -56,7 +56,7 @@ export default function Plans() {
           duration: item.duration,
           sessionsCount: item.sessionsCount ?? item.hours ?? 0,
           sessionTime: item.sessionTime || 0,
-          planType: item.planType || 'single',
+          planType: item.planType || 'individual',
           maxStudents: item.maxStudents ?? item.studentsNum ?? 0,
           color: item.color || '#3b82f6',
           features: item.features || [],
@@ -137,7 +137,7 @@ export default function Plans() {
         duration: item.duration,
         sessionsCount: item.sessionsCount ?? item.hours ?? 0,
         sessionTime: item.sessionTime || 0,
-        planType: item.planType || 'single',
+        planType: item.planType || 'individual',
         maxStudents: item.maxStudents ?? item.studentsNum ?? 0,
         color: item.color || '#3b82f6',
         features: item.features || [],
@@ -195,64 +195,73 @@ export default function Plans() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <div
-              key={plan.id}
-              className={`bg-white rounded-2xl shadow-sm border-2 transition-all hover:shadow-xl overflow-hidden flex flex-col ${plan.bestSeller
-                ? "border-primary ring-primary"
-                : "border-gray-200"
-                }`}
-            >
-              {plan.bestSeller && (
-                <div className="bg-gradient-to-r from-primary to-primary-dark text-white text-center py-2 rounded-t-2xl font-bold text-sm">
-                  {text.popular[language]}
-                </div>
-              )}
-
-              <div className="p-6 flex flex-col flex-1 justify-center">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1 text-start">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-2xl font-bold text-gray-900">
-                        {language === "ar" ? plan.name_ar : plan.name_en}
-                      </h3>
-                      {plan.planType === 'group' ? (
-                        <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold border border-purple-200">
-                          <Users className="w-3.5 h-3.5" />
-                          {(() => {
-                            const raw = plan.maxStudents ?? (plan as any).studentsNum;
-                            const str = String(raw ?? '').trim().toLowerCase();
-                            const isUnlimited = !str || str === '0' || str === 'unlimited';
-                            if (isUnlimited) {
-                              return language === 'ar' ? 'جماعية (غير محدود)' : 'Group (Unlimited)';
-                            }
-                            const count = parseInt(str, 10) || 0;
-                            if (count <= 0) {
-                              return language === 'ar' ? 'جماعية (غير محدود)' : 'Group (Unlimited)';
-                            }
-                            return language === 'ar'
-                              ? `جماعية (${count} ${count === 1 ? 'طالب' : 'طلاب'})`
-                              : `Group (${count} ${count === 1 ? 'student' : 'students'})`;
-                          })()}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium border border-blue-100">
-                          <User className="w-3.5 h-3.5 text-blue-500" />
-                          {language === 'ar' ? 'فردية' : 'Single'}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-600 text-sm" style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}>{plan.description}</p>
+          {plans.map((plan) => {
+            const cardColor = plan.color;
+            return (
+              <div
+                key={plan.id}
+                className="bg-white rounded-2xl shadow-sm border-2 transition-all hover:shadow-xl overflow-hidden flex flex-col"
+                style={{ borderColor: cardColor }}
+              >
+                {/* Header with plan color */}
+                <div
+                  className="px-6 py-4 text-white flex items-center justify-between flex-wrap gap-2"
+                  style={{ backgroundColor: cardColor }}
+                >
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-xl font-bold text-white">
+                      {language === "ar" ? plan.name_ar : plan.name_en}
+                    </h3>
+                    {plan.planType === 'group' ? (
+                      <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold backdrop-blur-sm border border-white/30">
+                        <Users className="w-3.5 h-3.5" />
+                        {(() => {
+                          const raw = plan.maxStudents ?? (plan as any).studentsNum;
+                          const str = String(raw ?? '').trim().toLowerCase();
+                          const isUnlimited = !str || str === '0' || str === 'unlimited';
+                          if (isUnlimited) {
+                            return language === 'ar' ? 'جماعية (غير محدود)' : 'Group (Unlimited)';
+                          }
+                          const count = parseInt(str, 10) || 0;
+                          if (count <= 0) {
+                            return language === 'ar' ? 'جماعية (غير محدود)' : 'Group (Unlimited)';
+                          }
+                          return language === 'ar'
+                            ? `جماعية (${count} ${count === 1 ? 'طالب' : 'طلاب'})`
+                            : `Group (${count} ${count === 1 ? 'student' : 'students'})`;
+                        })()}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-full bg-white/20 text-white font-medium backdrop-blur-sm border border-white/30">
+                        <User className="w-3.5 h-3.5" />
+                        {language === 'ar' ? 'فردية' : 'Single'}
+                      </span>
+                    )}
                   </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium border ${plan.active
-                      ? "bg-green-50 text-green-700 border-green-200"
-                      : "bg-gray-50 text-gray-700 border-gray-200"
-                      }`}
-                  >
-                    {plan.active ? text.active[language] : text.inactive[language]}
-                  </span>
+
+                  <div className="flex items-center gap-2">
+                    {plan.bestSeller && (
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-400 text-gray-900 shadow-sm">
+                        {text.popular[language]}
+                      </span>
+                    )}
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${plan.active
+                        ? "bg-white/20 text-white border border-white/30"
+                        : "bg-black/25 text-gray-200 border border-black/20"
+                        }`}
+                    >
+                      {plan.active ? text.active[language] : text.inactive[language]}
+                    </span>
+                  </div>
                 </div>
+
+                <div className="p-6 flex flex-col flex-1 justify-between">
+                  {plan.description && (
+                    <p className="text-gray-600 text-sm mb-4" style={{ overflowWrap: 'break-word', wordBreak: 'break-word' }}>
+                      {plan.description}
+                    </p>
+                  )}
 
 
                 <div
@@ -319,7 +328,8 @@ export default function Plans() {
                 </div>
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
       )}
 
@@ -342,7 +352,7 @@ export default function Plans() {
           sessionTime: selectedPlan.sessionTime,
           features: selectedPlan.features,
           isPopular: selectedPlan.bestSeller,
-          planType: selectedPlan.planType || 'single',
+          planType: selectedPlan.planType || 'individual',
           maxStudents: String(selectedPlan.maxStudents ?? selectedPlan.maxStudents ?? '0'),
           color: selectedPlan.color || '#3b82f6',
           status: selectedPlan.active ? 'active' : 'inactive',

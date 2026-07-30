@@ -17,9 +17,10 @@ interface ViewPlanModalProps {
     features: string[];
     bestSeller: boolean;
     active: boolean;
-    planType?: "single" | "group";
+    planType?: "individual" | "group";
     maxStudents?: string | number;
     studentsNum?: string;
+    color?: string;
     createdAt: string;
     updatedAt: string;
   };
@@ -29,6 +30,7 @@ interface ViewPlanModalProps {
 
 export default function ViewPlanModal({ isOpen, onClose, plan }: ViewPlanModalProps) {
   const { language } = useLanguage();
+  const modalColor = plan.color || '#369589';
 
   const text = {
     title: { ar: 'تفاصيل الخطة', en: 'Plan Details' },
@@ -84,11 +86,14 @@ export default function ViewPlanModal({ isOpen, onClose, plan }: ViewPlanModalPr
   return (
     <div className="fixed inset-0  !mt-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh]  overflow-y-auto no-scrollbar" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-50">
+        <div
+          className="sticky top-0 border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-50 text-white"
+          style={{ backgroundColor: modalColor }}
+        >
           <h2 className="text-2xl font-bold text-white">{text.title[language]}</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
           >
             <X className="w-6 h-6 text-white" />
           </button>
