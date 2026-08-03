@@ -9,7 +9,8 @@ import {
   Play,
   Calendar,
   ClipboardList,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle
 } from 'lucide-react';
 import { RouteConfig } from '../../components/constants/dashboardRoutes';
 
@@ -28,7 +29,7 @@ const StudentsPage = lazyWithRetry(() => import('../../features/teacher/pages/St
 const ChatPage = lazyWithRetry(() => import('../../features/teacher/pages/Chat'));
 const RequestsPage = lazyWithRetry(() => import('../../features/teacher/pages/Requests'));
 const NotificationsPage = lazyWithRetry(() => import('../../features/admin/pages/Notifications'));
-
+const ViolationsPage = lazyWithRetry(() => import('../../features/teacher/pages/Violations'));
 export const teacherDashboardRoutes: RouteConfig[] = [
   {
     id: 'dashboard',
@@ -104,6 +105,14 @@ export const teacherDashboardRoutes: RouteConfig[] = [
     icon: Send,
     path: 'requests',
     element: <RequestsPage />,
+  },
+
+  {
+    id: 'teacher-violations',
+    label: 'sidebar_violations',
+    icon: AlertTriangle,
+    path: 'violations',
+    element: <ViolationsPage />
   },
 
   {

@@ -38,6 +38,7 @@ export interface Student {
     nationality: string;
     status: StudentStatus;
     user: UserDetails;
+    paid:string;
     plan: Plan | null;
 }
 
@@ -56,7 +57,8 @@ export interface StudentsFetchResponse {
 
         "totalCount": number;
         "activeCount": number,
-        "inactiveCount": number
+        "inactiveCount": number,
+        "unpaidCount":number
     };
 }
 

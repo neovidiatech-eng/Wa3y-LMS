@@ -53,6 +53,7 @@ export default function Students() {
   const studentsQueryParams = useMemo(() => {
     let apiStatus: string | undefined = undefined;
     let apiActive: boolean | undefined = undefined;
+    let apiPaid: string | undefined = undefined;
 
     if (selectedStatus === 'approved' || selectedStatus === 'active') {
       apiActive = true;
@@ -62,6 +63,8 @@ export default function Students() {
       apiStatus = 'pending';
     } else if (selectedStatus === 'rejected') {
       apiStatus = 'rejected';
+    } else if (selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid') {
+      apiPaid = 'unpaid';
     }
 
     return {
@@ -72,6 +75,7 @@ export default function Students() {
       planId: selectedGrade !== 'all' ? selectedGrade : undefined,
       status: apiStatus,
       active: apiActive,
+      paid: apiPaid,
     };
   }, [currentPage, itemsPerPage, debouncedSearch, selectedCountry, selectedGrade, selectedStatus]);
 
@@ -83,6 +87,7 @@ export default function Students() {
   const pagination = apiResponse?.data?.pagination;
   const activeItems = apiResponse?.data?.activeCount ?? 0;
   const inactiveItems = apiResponse?.data?.inactiveCount ?? 0;
+  const unPaidItems = apiResponse?.data?.unpaidCount??0;
 
   const allRawData: any = allStudentsResponse?.data?.studentsData;
   const allStudentsList: Student[] = useMemo(() => {
@@ -97,7 +102,13 @@ export default function Students() {
 
   const totalItems = pagination?.totalItems ?? studentsList.length;
   const totalPages = pagination?.totalPages ?? 1;
-  const paginatedStudents = studentsList;
+
+  const paginatedStudents = useMemo(() => {
+    if (selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid') {
+      return studentsList.filter((student) => student.paid === 'unpaid');
+    }
+    return studentsList;
+  }, [studentsList, selectedStatus]);
 
   const { mutateAsync: createStudent } = useCreateStudent();
   const { mutateAsync: updateStudent } = useUpdateStudent();
@@ -151,7 +162,16 @@ interface StatCard {
       iconColor: 'text-purple-600',
       valueColor: 'text-purple-600',
     },
-  ], [totalItems, activeItems, inactiveItems, studentsWithNoPlansCount, t]);
+    {
+      id:'studentsWithUnpaid',
+      label:t('studentsWithUnpaid'),
+      value:unPaidItems,
+      icon:ClipboardList,
+      bgColor:'bg-red-50',
+      iconColor:'text-red-600',
+      valueColor:'text-red-600',
+    }
+  ], [totalItems, activeItems, inactiveItems, studentsWithNoPlansCount, unPaidItems,t]);
 
 
   const grades = [
@@ -254,17 +274,19 @@ interface StatCard {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         {stats.map((stat) => {
-          const isClickable = stat.id === 'total' || stat.id === 'active' || stat.id === 'inactive';
+          const isClickable = stat.id === 'total' || stat.id === 'active' || stat.id === 'inactive' || stat.id === 'studentsWithUnpaid';
           const isSelected =
             (stat.id === 'total' && selectedStatus === 'all') ||
             (stat.id === 'active' && (selectedStatus === 'approved' || selectedStatus === 'active')) ||
-            (stat.id === 'inactive' && (selectedStatus === 'inactive' || selectedStatus === 'pending'));
+            (stat.id === 'inactive' && (selectedStatus === 'inactive' || selectedStatus === 'pending')) ||
+            (stat.id === 'studentsWithUnpaid' && (selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid'));
 
           const getSelectionStyle = (id: string) => {
             if (id === 'active') return 'border-2 border-green-500 shadow-md ring-2 ring-green-200';
             if (id === 'inactive') return 'border-2 border-orange-500 shadow-md ring-2 ring-orange-200';
+            if (id === 'studentsWithUnpaid') return 'border-2 border-red-500 shadow-md ring-2 ring-red-200';
             return 'border-2 border-blue-500 shadow-md ring-2 ring-blue-200';
           };
 
@@ -282,6 +304,10 @@ interface StatCard {
                 } else if (stat.id === 'inactive') {
                   setSelectedStatus((prev) =>
                     prev === 'inactive' || prev === 'pending' ? 'all' : 'inactive'
+                  );
+                } else if (stat.id === 'studentsWithUnpaid') {
+                  setSelectedStatus((prev) =>
+                    prev === 'studentsWithUnpaid' || prev === 'unpaid' ? 'all' : 'studentsWithUnpaid'
                   );
                 }
               }}
@@ -324,7 +350,9 @@ interface StatCard {
               <strong className="font-semibold">
                 {selectedStatus === 'approved' || selectedStatus === 'active'
                   ? t('activeStudents')
-                  : t('inactiveStudents')}
+                  : selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid'
+                    ? (t('studentsWithUnpaid') || (language === 'ar' ? 'الطلاب غير المدفوعين' : 'Unpaid Students'))
+                    : t('inactiveStudents')}
               </strong>
             </span>
           </div>
@@ -601,6 +629,7 @@ interface StatCard {
               nationality: studentData.nationality,
               active: studentData.status === 'approved',
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              paid: studentData.paid,
             };
 
             if (studentData.plan && studentData.plan.trim() !== "") {
@@ -659,6 +688,7 @@ interface StatCard {
               nationality: (selectedStudent.user as any)?.nationality || selectedStudent.nationality || '',
               password: selectedStudent.user.password || '',
               birthDate: selectedStudent.birth_date ? selectedStudent.birth_date.split('T')[0] : '',
+              paid: (selectedStudent.paid || 'unpaid') as any,
             }
             : null
         }
@@ -675,6 +705,7 @@ interface StatCard {
               gender: updatedData.gender,
               active: updatedData.status === 'approved',
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              paid: updatedData.paid,
             };
 
             if (updatedData.email) {

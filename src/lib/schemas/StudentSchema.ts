@@ -24,6 +24,7 @@ export const getStudentSchema = (t: TFunc) => z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^#])[A-Za-z\d@$!%*?&^#]+$/,
       t("validation.passwordComplex")
     ),
+  paid: z.enum(['paid', 'unpaid', 'pending']),
   age: z.string().optional(),
   city: z.string().optional(),
 });

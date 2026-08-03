@@ -10,12 +10,12 @@ const getBaseSession = (t: TFunc) => z.object({
   ]),
   teacher: z.string().min(1, t("validation.required")),
   subject: z.string().min(1, t("validation.required")),
-  title: z.string().min(3, t("validation.min", { count: 3 })),
-  description: z.string(),
+  title: z.string().optional(),
+  description: z.string().optional(),
   // type: z.enum(['full', 'half']),
-  notification_Time: z.string(),
+  notification_Time: z.string().optional(),
   meetingLink: z.string().min(1, t("validation.required")).url(t("validation.email")),
-  notes: z.string(),
+  notes: z.string().optional(),
 });
 
 export const getSessionSchema = (t: TFunc) => getBaseSession(t).extend({

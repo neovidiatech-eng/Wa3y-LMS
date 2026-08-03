@@ -106,4 +106,16 @@ export interface TeacherViolationsHistoryResponse {
   };
 }
 
+export interface NormalizedViolation {
+  id: string;
+  type: ViolationType;
+  title: string;
+  reason: string;
+  deductionAmount: number;
+  createdAt: string;
+  supervisorName?: string;
+  raw?: any;
+}
+
+
 
