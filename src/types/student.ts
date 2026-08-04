@@ -40,6 +40,7 @@ export interface Student {
     user: UserDetails;
     paid:string;
     plan: Plan | null;
+    paid: string;
 }
 
 export interface StudentsFetchResponse {

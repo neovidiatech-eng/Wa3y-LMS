@@ -10,6 +10,8 @@ import {
   Repeat,
   Edit,
   Loader2,
+  Star,
+  MessageSquare,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Schedule } from "../../types/scheduales";
@@ -206,9 +208,11 @@ export default function ViewSessionModal({
                     <p className="text-sm font-bold text-gray-900">—</p>
                   ) : enrolledStudents.length === 1 ? (
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-white">
-                        {enrolledStudents[0].charAt(0).toUpperCase()}
-                      </div>
+                      <Tooltip title={enrolledStudents[0]} placement="top">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-white cursor-pointer hover:scale-110 transition-all">
+                          {enrolledStudents[0].charAt(0).toUpperCase()}
+                        </div>
+                      </Tooltip>
                       <p className="text-sm font-bold text-gray-900">{enrolledStudents[0]}</p>
                     </div>
                   ) : (
@@ -383,6 +387,69 @@ export default function ViewSessionModal({
                 <p className="text-sm font-medium text-gray-700 leading-relaxed">
                   {session.notes}
                 </p>
+              </div>
+            )}
+
+            {/* Reviews */}
+            {session.reviews && session.reviews.length > 0 && (
+              <div className="mt-6 space-y-4">
+                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-indigo-500" />
+                  {language === 'ar' ? 'التقييمات' : 'Reviews'}
+                </h3>
+                {session.reviews.map((review: any) => {
+                  let reviewerName = "";
+                  if (review.role === 'teacher') {
+                    reviewerName = session.teacher?.user?.name || (session.teacher as any)?.name || "";
+                  } else if (review.role === 'student') {
+                    if (session.student && (session.student?.user?.id === review.reviewerId || session.student?.id === review.reviewerId)) {
+                      reviewerName = session.student?.user?.name || (session.student as any)?.name || "";
+                    } else if (session.students) {
+                      const st = session.students.find((s:any) => s.user?.id === review.reviewerId || s.id === review.reviewerId);
+                      if (st) reviewerName = st.user?.name || (st as any).name || "";
+                    }
+                    if (!reviewerName && session.groupStudents) {
+                      const gs = session.groupStudents.find((g:any) => g.student?.user?.id === review.reviewerId || g.student?.id === review.reviewerId);
+                      if (gs) reviewerName = gs.student?.user?.name || (gs.student as any)?.name || "";
+                    }
+                  }
+
+                  const roleText = review.role === 'teacher' 
+                    ? (language === 'ar' ? 'معلم' : 'Teacher')
+                    : (language === 'ar' ? 'طالب' : 'Student');
+
+                  return (
+                    <div key={review.id} className="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs font-bold text-gray-900">
+                            {reviewerName || (language === 'ar' ? 'مستخدم مجهول' : 'Unknown User')}
+                          </p>
+                          <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            {roleText}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-3.5 h-3.5 ${
+                                i < (review.rating || 0)
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'fill-gray-200 text-gray-200'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      {review.comment && (
+                        <p className="text-sm font-medium text-gray-700 leading-relaxed whitespace-pre-line mt-2">
+                          {review.comment}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
 
