@@ -626,7 +626,6 @@ export default function Students() {
               active: studentData.status === 'approved',
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
               paid: studentData.paid,
-              paid: studentData.paid,
             };
 
             if (studentData.plan && studentData.plan.trim() !== "") {
