@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { X, Phone, Mail, GraduationCap, DollarSign, Calendar, CheckCircle, Clock, Star, Users, TrendingUp, Wallet, Settings } from 'lucide-react';
+import { X, Phone, Mail, GraduationCap, DollarSign, Calendar, CheckCircle, Clock, Star, Users, TrendingUp, Wallet, Settings, ShieldAlert, AlertTriangle, Ban, UserCheck, FileText } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Teacher } from '../../types/teachers';
 import { useTeacherById } from '../../features/admin/hooks/useTeacher';
+import { useTeacherViolationsHistory } from '../../features/admin/hooks/useViolations';
+import { IssuedViolationHistoryItem } from '../../types/Violations';
 import AssignHourPriceModal from './AssignHourPriceModal';
 
 interface ViewTeacherModalProps {
@@ -17,9 +19,33 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
 
   const [selectedStudentForPrice, setSelectedStudentForPrice] = useState<{ id: string, name: string, currentPrice?: number } | null>(null);
 
+  const fetchedAny: any = fetchedTeacher;
+  const activeTeacher: any = fetchedAny?.data || fetchedAny?.teacher || fetchedTeacher || teacher;
+  const targetTeacherId = teacher?.id || activeTeacher?.id;
+
+  const { data: violationsHistoryData, isLoading: isLoadingViolations } = useTeacherViolationsHistory(
+    isOpen && targetTeacherId ? targetTeacherId : undefined
+  );
+
+  // Debug: log violations response to understand structure
+  if (violationsHistoryData) {
+    console.log('[ViewTeacherModal] violationsHistoryData:', violationsHistoryData);
+  }
+
+  // Helper: extract violations list from any response shape
+  const extractViolations = (data: any): IssuedViolationHistoryItem[] => {
+    if (!data) return [];
+    if (Array.isArray(data?.data?.violations)) return data.data.violations;
+    if (Array.isArray(data?.data?.items)) return data.data.items;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.violations)) return data.violations;
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data)) return data;
+    return [];
+  };
+
   if (!isOpen || !teacher) return null;
 
-  const activeTeacher: any = fetchedTeacher || teacher;
   const students = activeTeacher.students || [];
 
   // --- Real stats from the API ---
@@ -140,7 +166,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
 
             {/* Subjects */}
             <div className="flex flex-wrap gap-2 justify-center mb-4">
-              {subjects.map((sub, index) => (
+              {subjects.map((sub:string, index:number) => (
                 <span key={index} className="inline-flex px-3 py-1 bg-primary-100 text-blue-700 rounded-lg text-sm font-medium">
                   {sub}
                 </span>
@@ -295,7 +321,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                       <p className="text-sm text-gray-500 text-start mb-1">{student.email}</p>
                       <p className="text-sm text-gray-500 text-start" dir="ltr">{student.code_country} {student.phone}</p>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end items-center justify-between">
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end items-center">
                       <span className="text-sm font-semibold text-gray-700">
                         {student.hour_price ? `${student.hour_price} ${currencySymbol}` : (language === 'ar' ? 'غير محدد' : 'Not set')}
                       </span>
@@ -319,6 +345,115 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                 <p className="text-gray-500">{language === 'ar' ? 'لا يوجد طلاب مسجلين' : 'No registered students'}</p>
               </div>
             )}
+          </div>
+
+          {/* Teacher Violations & Warnings History Section */}
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-red-600" />
+                <h4 className="text-lg font-bold text-gray-900">
+                  {language === 'ar' ? 'سجل المخالفات والتحذيرات للمعلم' : 'Teacher Violations & Warnings History'}
+                </h4>
+              </div>
+              {(() => {
+                const list = extractViolations(violationsHistoryData);
+                return list.length > 0 ? (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                    {list.length} {language === 'ar' ? 'مخالفة' : 'violations'}
+                  </span>
+                ) : null;
+              })()}
+            </div>
+
+            {isLoadingViolations ? (
+              <div className="flex justify-center p-6 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (() => {
+                const list: IssuedViolationHistoryItem[] = extractViolations(violationsHistoryData);
+
+                if (list.length === 0) {
+                  return (
+                    <div className="text-center py-6 bg-gray-50 rounded-xl border border-gray-200">
+                      <p className="text-gray-500 text-sm">
+                        {language === 'ar' ? 'لا توجد مخالفات أو تحذيرات مسجلة لهذا المعلم' : 'No violations recorded for this teacher'}
+                      </p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="space-y-4">
+                    {list.map((v) => {
+                      const isPenalty = v.type === 'penalty';
+                      const title = language === 'ar'
+                        ? v.infractionItem?.title_ar || v.infractionItem?.title_en || 'مخالفة مخصصة'
+                        : v.infractionItem?.title_en || v.infractionItem?.title_ar || 'Specific Infraction';
+
+                      const formattedDate = v.createdAt
+                        ? new Date(v.createdAt).toLocaleString(language === 'ar' ? 'ar-EG' : 'en-US', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          })
+                        : '';
+
+                      return (
+                        <div key={v.id} className="p-4 bg-gray-50/80 border border-gray-200 rounded-xl space-y-3">
+                          {/* Top Row: Icon, Title, Date, Type Tag & Amount */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div className="flex items-center gap-3">
+                              <div className={`p-2.5 rounded-xl ${isPenalty ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'}`}>
+                                {isPenalty ? <Ban className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
+                              </div>
+                              <div>
+                                <h5 className="font-bold text-gray-900 text-sm">{title}</h5>
+                                {formattedDate && (
+                                  <p className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
+                                    <Calendar className="w-3 h-3 text-gray-400" />
+                                    <span>{formattedDate}</span>
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${isPenalty ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800'}`}>
+                                {isPenalty ? (language === 'ar' ? 'خصم مالي / مخالفة' : 'Penalty / Deduction') : (language === 'ar' ? 'تحذير رسمي' : 'Official Warning')}
+                              </span>
+                              {v.deductionAmount > 0 && (
+                                <span className="font-extrabold text-red-600 text-sm bg-rose-50 px-2.5 py-0.5 rounded-lg border border-rose-100">
+                                  -{v.deductionAmount} {currencySymbol}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Reason & Detailed Explanation */}
+                          <div className="p-3 bg-white rounded-lg border border-gray-100 text-xs text-gray-700 leading-relaxed font-medium">
+                            <span className="font-bold text-gray-500 flex items-center gap-1 mb-1">
+                              <FileText className="w-3.5 h-3.5 text-gray-400" />
+                              {language === 'ar' ? 'سبب وإيضاح المخالفة:' : 'Reason & Details:'}
+                            </span>
+                            <p className="text-gray-800 text-xs">
+                              {v.reason || (language === 'ar' ? 'لا توجد تفاصيل إضافية' : 'No details provided')}
+                            </p>
+                          </div>
+
+                          {/* Supervisor / Issuer */}
+                          {v.supervisor?.name && (
+                            <div className="flex items-center gap-1.5 text-[11px] text-gray-500 pt-1 border-t border-gray-200/60">
+                              <UserCheck className="w-3.5 h-3.5 text-gray-400" />
+                              <span>{language === 'ar' ? 'الجهة الصادرة عنه:' : 'Issued by:'}</span>
+                              <span className="font-semibold text-gray-800">{v.supervisor.name}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
           </div>
         </div>
 
