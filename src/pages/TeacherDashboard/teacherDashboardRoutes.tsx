@@ -30,6 +30,7 @@ const ChatPage = lazyWithRetry(() => import('../../features/teacher/pages/Chat')
 const RequestsPage = lazyWithRetry(() => import('../../features/teacher/pages/Requests'));
 const NotificationsPage = lazyWithRetry(() => import('../../features/admin/pages/Notifications'));
 const ViolationsPage = lazyWithRetry(() => import('../../features/teacher/pages/Violations'));
+const DailyQuranPage = lazyWithRetry(() => import('../../features/teacher/pages/DailyQuran'))
 export const teacherDashboardRoutes: RouteConfig[] = [
   {
     id: 'dashboard',
@@ -73,6 +74,15 @@ export const teacherDashboardRoutes: RouteConfig[] = [
         path: 'exams',
         element: <ExamsPage />,
         icon: FileText,
+
+      },
+
+      {
+        id:"daily-quran",
+        label:"sidebar_daily_quran",
+        path:"daily-quran",
+        element:<DailyQuranPage />,
+        icon: BookOpen,
 
       },
       {

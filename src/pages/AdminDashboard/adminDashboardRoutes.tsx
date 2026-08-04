@@ -47,6 +47,7 @@ const ParentsPage = lazyWithRetry(() => import("../../features/admin/pages/Paren
 const SessionsPage = lazyWithRetry(() => import("../../features/admin/pages/Sessions"));
 const AgendaPage = lazyWithRetry(() => import("../../features/admin/pages/Agenda"));
 const ExamsPage = lazyWithRetry(() => import("../../features/admin/pages/Exams"));
+const DailyQuranPage = lazyWithRetry(() => import("../../features/admin/pages/DailyQuran"));
 const AssignmentsPage = lazyWithRetry(() => import("../../features/admin/pages/Assignments"));
 const SubscriptionRequestsPage = lazyWithRetry(
   () => import("../../features/admin/pages/SubscriptionRequests"),
@@ -195,6 +196,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
         icon: FileText,
         path: "exams",
         element: <ExamsPage />,
+      },
+      {
+        id: "daily-quran",
+        label: "sidebar_daily_quran",
+        icon: BookOpen,
+        path: "daily-quran",
+        element: <DailyQuranPage />,
       },
       {
         id: "assignments",

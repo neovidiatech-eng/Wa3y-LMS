@@ -225,6 +225,7 @@
   "sidebar_agenda": "الأجندة",
   "sidebar_feedback": "تقارير",
   "sidebar_exams": "الامتحانات",
+  "sidebar_daily_quran": "الورد اليومي",
   "sidebar_assignments": "الواجبات",
   "sidebar_subscription_requests": "طلبات الاشتراك",
   "sidebar_all_subscriptions": "كل الاشتراكات",
@@ -482,6 +483,5 @@
   "settings_adding": "جاري الإضافة...",
   "settings_addRule": "إضافة قاعدة",
   "settings_loadingRules": "يتم تحميل قواعد حضور الطلاب",
-  "settings_loadError": "حدث خطأ أثناء تحميل البيانات",
-  "settings_saved": "تم الحفظ"
+  "settings_loadError": "حدث خطأ أثناء تحميل البيانات"
 }
