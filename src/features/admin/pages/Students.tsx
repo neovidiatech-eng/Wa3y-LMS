@@ -104,15 +104,15 @@ export default function Students() {
   const { mutateAsync: deleteStudent } = useDeleteStudent();
   const { confirm, ConfirmDialog } = useConfirm();
 
-interface StatCard {
-  id: string;
-  label: string;
-  value: number;
-  icon: ElementType;
-  bgColor: string;
-  iconColor: string;
-  valueColor: string;
-}
+  interface StatCard {
+    id: string;
+    label: string;
+    value: number;
+    icon: ElementType;
+    bgColor: string;
+    iconColor: string;
+    valueColor: string;
+  }
 
   const stats = useMemo<StatCard[]>(() => [
     {
@@ -285,15 +285,13 @@ interface StatCard {
                   );
                 }
               }}
-              className={`${stat.bgColor} rounded-2xl p-6 border transition-all ${
-                isClickable
+              className={`${stat.bgColor} rounded-2xl p-6 border transition-all ${isClickable
                   ? 'cursor-pointer hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
                   : ''
-              } ${
-                isSelected && isClickable && selectedStatus !== 'all'
+                } ${isSelected && isClickable && selectedStatus !== 'all'
                   ? getSelectionStyle(stat.id)
                   : 'border-gray-200'
-              }`}
+                }`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-xl ${stat.bgColor}`}>
@@ -508,26 +506,24 @@ interface StatCard {
                       </td>
                       <td className="px-6 py-4 text-start">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                            student.status === 'approved' || student.status === 'active'
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${student.status === 'approved' || student.status === 'active'
                               ? 'bg-green-100 text-green-700'
                               : student.status === 'pending'
                                 ? 'bg-orange-100 text-orange-700'
                                 : student.status === 'rejected'
                                   ? 'bg-red-100 text-red-700'
                                   : 'bg-gray-100 text-gray-700'
-                          }`}
+                            }`}
                         >
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${language === 'ar' ? 'ml-1.5' : 'mr-1.5'} ${
-                              student.status === 'approved' || student.status === 'active'
+                            className={`w-1.5 h-1.5 rounded-full ${language === 'ar' ? 'ml-1.5' : 'mr-1.5'} ${student.status === 'approved' || student.status === 'active'
                                 ? 'bg-green-500'
                                 : student.status === 'pending'
                                   ? 'bg-orange-500'
                                   : student.status === 'rejected'
                                     ? 'bg-red-500'
                                     : 'bg-gray-500'
-                            }`}
+                              }`}
                           />
                           {student.status === 'approved' || student.status === 'active'
                             ? t('approved')
@@ -601,6 +597,7 @@ interface StatCard {
               nationality: studentData.nationality,
               active: studentData.status === 'approved',
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              paid: studentData.paid,
             };
 
             if (studentData.plan && studentData.plan.trim() !== "") {
@@ -659,6 +656,7 @@ interface StatCard {
               nationality: (selectedStudent.user as any)?.nationality || selectedStudent.nationality || '',
               password: selectedStudent.user.password || '',
               birthDate: selectedStudent.birth_date ? selectedStudent.birth_date.split('T')[0] : '',
+              paid: (selectedStudent.paid as 'paid' | 'pending') || 'pending',
             }
             : null
         }

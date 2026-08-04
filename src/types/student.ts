@@ -39,6 +39,7 @@ export interface Student {
     status: StudentStatus;
     user: UserDetails;
     plan: Plan | null;
+    paid: string;
 }
 
 export interface StudentsFetchResponse {

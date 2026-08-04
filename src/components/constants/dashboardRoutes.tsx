@@ -21,7 +21,8 @@ import {
   Package,
   Coins,
   ShieldCheck,
-  Repeat
+  Repeat,
+  MessageSquare
 } from 'lucide-react';
 import Roles from '../../features/admin/pages/Roles';
 
@@ -179,6 +180,7 @@ export const dashboardRoutes: RouteConfig[] = [
         path: "agenda",
         element: <AgendaPage />,
       },
+      
       {
         id: "exams",
         label: "sidebar_exams",

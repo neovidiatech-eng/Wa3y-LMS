@@ -473,10 +473,12 @@ export default function Sessions() {
                       if (names.length === 1) {
                         return (
                           <div className="flex items-center justify-end gap-2">
+                            <Tooltip title={names[0]} placement="top">
+                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-[11px] shadow-sm ring-2 ring-white shrink-0 cursor-pointer hover:scale-110 transition-all">
+                                {names[0].charAt(0).toUpperCase()}
+                              </div>
+                            </Tooltip>
                             <span className="font-semibold text-gray-800 text-xs">{names[0]}</span>
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-[11px] shadow-sm ring-2 ring-white shrink-0">
-                              {names[0].charAt(0).toUpperCase()}
-                            </div>
                           </div>
                         );
                       }

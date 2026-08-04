@@ -30,7 +30,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
       duration: 1,
       sessionsCount: 0,
       sessionTime: 60,
-      planType: "single",
+      planType: "individual",
       maxStudents: "0",
       color: "#3b82f6",
       features: [''],
@@ -88,7 +88,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
           duration: 1,
           sessionsCount: 0,
           sessionTime: 60,
-          planType: "single",
+          planType: "individual",
           maxStudents: "0",
           color: "#3b82f6",
           features: [''],
@@ -199,7 +199,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData }: A
               render={({ field }) => (
                 <CustomSelect
                   options={[
-                    { label: text.single[language], value: 'single' },
+                    { label: text.single[language], value: 'individual' },
                     { label: text.group[language], value: 'group' },
                   ]}
                   className='text-start'
