@@ -134,6 +134,7 @@ export interface Schedule {
     }[];
     teacher: Teacher;
     subject?: ScheduleSubject;
+    reviews?: any[];
 }
 
 export interface Pagination {

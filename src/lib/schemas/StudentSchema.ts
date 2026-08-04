@@ -26,6 +26,7 @@ export const getStudentSchema = (t: TFunc) => z.object({
     ),
   age: z.string().optional(),
   city: z.string().optional(),
+  paid: z.enum(["paid", "pending"])
 });
 
 export type StudentFormData = z.infer<ReturnType<typeof getStudentSchema>>;

@@ -22,7 +22,8 @@ import {
   Coins,
   ShieldCheck,
   Repeat,
-  Trophy
+  Trophy,
+  MessageSquare
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -62,6 +63,8 @@ const TeacherSubscriptionsPage = lazyWithRetry(
 const TeacherAvailabilityPage = lazyWithRetry(
   () => import("../../features/admin/pages/TeacherAvailability"),
 );
+const FeedbackPage = lazyWithRetry(() => import("../../features/admin/pages/Feedback"));
+
 const SubjectsPage = lazyWithRetry(() => import("../../features/admin/pages/Subjects"));
 const LMSCoursesPage = lazyWithRetry(() => import("../../features/admin/pages/LMSCourses/LMSCourses"));
 const SettingsPage = lazyWithRetry(() => import("../../features/admin/pages/Settings"));
@@ -178,6 +181,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
         icon: Calendar,
         path: "agenda",
         element: <AgendaPage />,
+      },
+      {
+        id: "feedback",
+        label: "sidebar_feedback",
+        icon: MessageSquare,
+        path: "feedback",
+        element: <FeedbackPage />,
       },
       {
         id: "exams",

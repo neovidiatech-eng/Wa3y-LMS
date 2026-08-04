@@ -38,7 +38,8 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       age: '',
       city: '',
       status: 'approved',
-      birthDate: ''
+      birthDate: '',
+      paid: 'paid'
     }
   });
 
@@ -73,6 +74,8 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       label: country.nationality,
     }));
   }, []);
+
+  
 
   const uniqueCountryCodes = useMemo(() => {
     return Array.from(
@@ -115,6 +118,10 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
     { value: 'rejected', label: language === 'ar' ? 'مرفوض' : 'Rejected' },
   ];
 
+  const paymentOptions = [
+    { value: 'paid', label: language === 'ar' ? 'مدفوع' : 'Paid' },
+    { value: 'pending', label: language === 'ar' ? 'مؤجل' : 'Postponed' },
+  ];
   const handleNationalityChange = (val: string) => {
     setValue('nationality', val, { shouldValidate: true });
     const matched = DEFAULT_COUNTRIES.find(
@@ -374,6 +381,20 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                 )}
               />
             </div>
+
+                <Controller
+                name="paid"
+                control={control}
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('paymentStatus')}
+                    value={field.value}
+                    options={paymentOptions}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            
 
           </div>
 
