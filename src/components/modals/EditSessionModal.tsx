@@ -99,7 +99,7 @@ export default function EditSessionModal({
       groupedSessions?.find((s) => s.id === sessionId) ?? currentSession!;
 
     const payload: any = {
-      title: data.title,
+      ...(!data.title?.trim() ? {} : { title: data.title.trim() }),
       link: data.link,
       status: data.status,
       start_time: data.start_time

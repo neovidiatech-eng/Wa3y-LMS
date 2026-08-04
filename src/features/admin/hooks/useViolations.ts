@@ -1,18 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getViolations, createViolation, issueViolation, getTeacherViolationsHistory, deleteViolationItem } from "../services/ViolationsServices"
-import { CreateViolationPayload, IssueViolationPayload, GetTeacherViolationsParams } from "../../../types/Violations"
+import { getViolations, createViolation, issueViolation, getTeacherViolationsHistory, getAllViolationsHistory, deleteViolationItem } from "../services/ViolationsServices"
+import { CreateViolationPayload, IssueViolationPayload, ViolationType } from "../../../types/Violations"
 
 export const useViolations = () => {
     return useQuery({
         queryKey: ['violations'],
         queryFn: getViolations,
     })
-}   
+}
 
-export const useTeacherViolationsHistory = (params?: GetTeacherViolationsParams) => {
+export const useTeacherViolationsHistory = (teacherId: string | undefined) => {
     return useQuery({
-        queryKey: ['teacher-violations-history', params],
-        queryFn: () => getTeacherViolationsHistory(params),
+        queryKey: ['teacher-violations-history', teacherId],
+        queryFn: () => getTeacherViolationsHistory(teacherId!),
+        enabled: !!teacherId,
+    })
+}
+
+export const useAllViolationsHistory = (page: number, limit: number, type?: ViolationType) => {
+    return useQuery({
+        queryKey: ['all-violations-history', page, limit, type],
+        queryFn: () => getAllViolationsHistory(page, limit, type),
     })
 }
 
@@ -49,4 +57,4 @@ export const useDeleteViolationItem = () => {
 };
 
 
-
+
