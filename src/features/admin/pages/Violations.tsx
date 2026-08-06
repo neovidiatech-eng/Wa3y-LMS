@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Table, Tag, Card, Row, Col, Select, Spin, Alert, Button, message } from "antd";
-import { ShieldAlert, AlertTriangle, CheckCircle, Filter, Plus, History, List, Trash2 } from "lucide-react";
+import { ShieldAlert, AlertTriangle, CheckCircle, Filter, Plus, History, List, Trash2, EyeIcon } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
-import { useViolations, useTeacherViolationsHistory, useDeleteViolationItem } from "../hooks/useViolations";
+import { useViolations, useAllViolationsHistory, useDeleteViolationItem } from "../hooks/useViolations";
 import { ViolationItem, IssuedViolationHistoryItem, ViolationType } from "../../../types/Violations";
 import AddViolationModal from "../../../components/modals/AddViolationModal";
 import IssueViolationModal from "../../../components/modals/IssueViolationModal";
@@ -26,18 +26,13 @@ export default function Violations() {
   const { data, isLoading, isError, error } = useViolations();
   const deleteViolationMutation = useDeleteViolationItem();
 
-  // History query params
-  const historyParams = {
-    page: historyPage,
-    limit: historyLimit,
-    type: historyTypeFilter !== "all" ? (historyTypeFilter as ViolationType) : undefined,
-  };
+  // History: fetch all violations (no teacherId filter - used for general history tab)
   const {
     data: historyData,
     isLoading: isHistoryLoading,
     isError: isHistoryError,
     error: historyError,
-  } = useTeacherViolationsHistory(historyParams);
+  } = useAllViolationsHistory(historyPage, historyLimit, historyTypeFilter !== "all" ? (historyTypeFilter as ViolationType) : undefined);
 
   const items: ViolationItem[] = Array.isArray(data?.data)
     ? data.data
@@ -211,6 +206,20 @@ export default function Violations() {
               timeStyle: "short",
             })
           : "-",
+    },
+        {
+      title: isRtl ? " الاجرائات" : "Actions",
+      dataIndex: "actions",
+      key: "actions",
+      render: (_: any, record: IssuedViolationHistoryItem) => (
+        <Button
+          type="text"
+          danger
+          icon={<EyeIcon className="w-4 h-4 text-red-500" />}
+          onClick={() => setItemToDelete(record as any)}
+          title={isRtl ? "حذف" : "Delete"}
+        />
+      ),
     },
   ];
 

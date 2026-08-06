@@ -39,7 +39,7 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       city: '',
       status: 'approved',
       birthDate: '',
-      paid: 'paid'
+      paid: 'unpaid'
     }
   });
 
@@ -118,10 +118,12 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
     { value: 'rejected', label: language === 'ar' ? 'مرفوض' : 'Rejected' },
   ];
 
-  const paymentOptions = [
+  const paidOptions = [
     { value: 'paid', label: language === 'ar' ? 'مدفوع' : 'Paid' },
-    { value: 'pending', label: language === 'ar' ? 'مؤجل' : 'Postponed' },
+    { value: 'unpaid', label: language === 'ar' ? 'غير مدفوع' : 'Unpaid' },
+    { value: 'pending', label: language === 'ar' ? 'قيد الانتظار' : 'Pending' },
   ];
+
   const handleNationalityChange = (val: string) => {
     setValue('nationality', val, { shouldValidate: true });
     const matched = DEFAULT_COUNTRIES.find(
@@ -382,19 +384,21 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
               />
             </div>
 
-                <Controller
+            {/* Row 7: Paid Status */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Controller
                 name="paid"
                 control={control}
                 render={({ field }) => (
                   <CustomSelect
-                    label={t('paymentStatus')}
+                    label={language === 'ar' ? 'حالة الدفع' : 'Payment Status'}
                     value={field.value}
-                    options={paymentOptions}
+                    options={paidOptions}
                     onChange={field.onChange}
                   />
                 )}
               />
-            
+            </div>
 
           </div>
 

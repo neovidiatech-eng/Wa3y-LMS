@@ -157,6 +157,27 @@ export default function ViewStudentModal({ isOpen, onClose, studentData }: ViewS
                 </span>
               </div>
 
+              {/* Payment Status */}
+              <div className="text-start">
+                <label className="text-sm font-medium text-gray-500 block mb-1">
+                  {language === 'ar' ? 'حالة الدفع' : 'Payment Status'}
+                </label>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${student.paid === 'paid'
+                    ? 'bg-green-100 text-green-700'
+                    : student.paid === 'pending'
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-red-100 text-red-700'
+                    }`}
+                >
+                  {student.paid === 'paid'
+                    ? (language === 'ar' ? 'مدفوع' : 'Paid')
+                    : student.paid === 'pending'
+                      ? (language === 'ar' ? 'قيد الانتظار' : 'Pending')
+                      : (language === 'ar' ? 'غير مدفوع' : 'Unpaid')}
+                </span>
+              </div>
+
               {/* Rank */}
               <div className="text-start">
                 <label className="text-sm font-medium text-gray-500 block mb-1">

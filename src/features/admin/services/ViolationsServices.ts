@@ -5,8 +5,8 @@ import {
   CreateViolationResponse,
   IssueViolationPayload,
   IssueViolationResponse,
-  GetTeacherViolationsParams,
-  TeacherViolationsHistoryResponse
+  TeacherViolationsHistoryResponse,
+  ViolationType
 } from "../../../types/Violations";
 
 export const getViolations = async (): Promise<ViolationsResponse> => {
@@ -25,10 +25,16 @@ export const issueViolation = async (payload: IssueViolationPayload): Promise<Is
 }
 
 export const getTeacherViolationsHistory = async (
-  params?: GetTeacherViolationsParams
+  teacherId: string
 ): Promise<TeacherViolationsHistoryResponse> => {
-  const response = await api.get('/violations', { params });
-  return response.data;
+  try {
+    const response = await api.get(`/violations?teacherId=${teacherId}`);
+    return response.data;
+  } catch (error) {
+    // Handle the error appropriately
+    console.error('Error fetching teacher violations history:', error);
+    throw error;
+  }
 };
 
 export const deleteViolationItem = async (id: string): Promise<{ status: number; message: string }> => {
@@ -36,5 +42,14 @@ export const deleteViolationItem = async (id: string): Promise<{ status: number;
   return response.data;
 };
 
+export const getAllViolationsHistory = async (
+  page: number,
+  limit: number,
+  type?: ViolationType
+): Promise<TeacherViolationsHistoryResponse> => {
+  const response = await api.get('/violations', { params: { page, limit, type } });
+  return response.data;
+};
 
-
+
+

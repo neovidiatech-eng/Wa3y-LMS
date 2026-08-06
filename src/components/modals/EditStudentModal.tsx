@@ -46,6 +46,7 @@ export default function EditStudentModal({
 
 
   const handleEditSubmit = async (data: EditStudentFormData) => {
+    if (!studentData) return;
     const payload: any = { ...data, id: studentData.id };
     if (!dirtyFields.email) {
       delete payload.email;
@@ -111,6 +112,12 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
     { value: 'approved', label: language === 'ar' ? 'نشط' : 'Active' },
     { value: 'pending', label: language === 'ar' ? 'قيد الانتظار' : 'Pending' },
     { value: 'rejected', label: language === 'ar' ? 'مرفوض' : 'Rejected' },
+  ];
+
+  const paidOptions = [
+    { value: 'paid', label: language === 'ar' ? 'مدفوع' : 'Paid' },
+    { value: 'unpaid', label: language === 'ar' ? 'غير مدفوع' : 'Unpaid' },
+    { value: 'pending', label: language === 'ar' ? 'قيد الانتظار' : 'Pending' },
   ];
 
   if (!isOpen || !studentData) return null;
@@ -286,19 +293,34 @@ const nationalityOptions = DEFAULT_COUNTRIES.map((country) => ({
             </div>
           </div>
 
-          {/* Status */}
-          <Controller
-            name="status"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <CustomSelect
-                label={t('status')}
-                value={value}
-                options={statusOptions}
-                onChange={onChange}
-              />
-            )}
-          />
+          {/* Status & Paid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Controller
+              name="status"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  label={t('status')}
+                  value={value}
+                  options={statusOptions}
+                  onChange={onChange}
+                />
+              )}
+            />
+
+            <Controller
+              name="paid"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CustomSelect
+                  label={language === 'ar' ? 'حالة الدفع' : 'Payment Status'}
+                  value={value}
+                  options={paidOptions}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </div>
 
           <div className="flex gap-3 mt-8 pt-6 border-t">
             <button type="button" onClick={onClose} className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-50">{t('cancel')}</button>

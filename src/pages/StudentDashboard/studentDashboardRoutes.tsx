@@ -29,6 +29,7 @@ import { lazyWithRetry } from '../../utils/lazyWithRetry';
 const SessionsPage = lazyWithRetry(() => import('../../features/student/pages/Sessions'));
 const AgendaPage = lazyWithRetry(() => import('../../features/student/pages/Agenda'));
 const ExamsPage = lazyWithRetry(() => import('../../features/student/pages/Exams'));
+const DailyQuranPage = lazyWithRetry(() => import('../../features/student/pages/DailyQuran'));
 const AssignmentsPage = lazyWithRetry(() => import('../../features/student/pages/Assignments'));
 const ProfilePage = lazyWithRetry(() => import('../../features/student/pages/Profile'));
 const LMSCoursesPage = lazyWithRetry(() => import('../../features/student/pages/LMSCourses/LMSCourses'));
@@ -84,6 +85,13 @@ export const studentDashboardRoutes: StudentRouteConfig[] = [
         icon: FileText,
         path: 'exams',
         element: <ExamsPage />,
+      },
+      {
+        id: 'student-daily-quran',
+        label: 'sidebar_daily_quran',
+        icon: BookOpen,
+        path: 'daily-quran',
+        element: <DailyQuranPage />,
       },
       {
         id: 'student-assignments',
