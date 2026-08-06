@@ -138,7 +138,7 @@ export default function TeacherStudents() {
                   <BookOpen className="w-3 h-3" />
                   <span className="text-xs font-medium">{isRtl ? 'الكورسات' : 'Courses'}</span>
                 </div>
-                <span className="font-bold text-gray-900">{student.subject.name}</span>
+                <span className="font-bold text-gray-900">{student.subject?.name}</span>
               </div>
               <div className="text-center p-2 rounded-lg bg-gray-50">
                 <div className="flex items-center justify-center gap-1 text-gray-500 mb-1">
