@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import DashboardCard from "../../../components/ui/Card";
 import Pagination from "../../../components/ui/Pagination";
 import ActiveUsersChart from "../components/ActiveUsersChart";
-import RevenueExpenseChart from "../components/RevenueExpenseChart";
-import RecentActivity from "../components/RecentActivity";
+import RevenueExpenseChart from "../components/SubscriptionStatus";
+import RecentActivity from "../components/SubsToExpire";
 import { useActivityLogs, useAdminDashboard } from "../hooks/useAdminDashboard";
 import { useStudents } from "../hooks/useStudents";
 import { useTeacher } from "../hooks/useTeacher";
 import { useTranslation } from "react-i18next";
+import SubscriptionsStatus from "../components/SubscriptionStatus";
+import SubsToExpire from "../components/SubsToExpire";
 
 
 const formatSessionTime = (
@@ -171,7 +173,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Main Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mx-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-3 gap-6">
         <DashboardCard
           title={t("dashboard.totalStudents")}
           value={stats?.stats?.totalStudents ?? 0}
@@ -227,41 +229,67 @@ export default function Dashboard() {
           }}
           onClick={() => navigate("/dashboard/requests")}
         />
+        <DashboardCard
+          title={t("dashboard.totalRevenue")}
+          value={stats?.stats?.totalRevenue ?? 0}
+          unit={"EGP"}
+          percentage=""
+          isIncrease={true}
+          subText={t("dashboard.totalOverall")}
+          icon={{
+            bgColor: "bg-[#eefcfc]",
+            svg: <Users size={20} className="text-[#00a8a8]" />,
+          }}
+          onClick={() => navigate("/dashboard/transactions")}
+        />
+        <DashboardCard
+          title={t("dashboard.monthlyRevenue")}
+          value={stats?.stats?.monthlyRevenue ?? 0}
+          unit={"EGP"}
+          percentage=""
+          isIncrease={true}
+          subText={t("dashboard.thisMonth")}
+          icon={{
+            bgColor: "bg-[#eefcfc]",
+            svg: <Users size={20} className="text-[#00a8a8]" />,
+          }}
+          onClick={() => navigate("/dashboard/transactions")}
+        />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-3">
         {/* Left Column */}
         <div className="lg:col-span-1 space-y-6">
           <ActiveUsersChart activeUsers={stats?.activeUsers} />
         </div>
 
         {/* Right Column */}
-        <div className="lg:col-span-2">
-          <RevenueExpenseChart sessionsData={stats?.sessionsPerDay} />
+        <div className="lg:col-span-1">
+          <SubscriptionsStatus subscriptionStatus={stats?.subscriptionsStatus} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-3">
-        {/* Recent Activity */}
-        <div className="h-full">
-          <RecentActivity activities={stats?.activityFeed} />
+        {/*Subscriptions to Expire */}
+        <div>
+          <SubsToExpire SubscriptionsToExpire={stats?.activityFeed} />
         </div>
 
         {/* Upcoming Sessions */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col h-full">
-          <div className="flex justify-between items-center mb-6">
-            <span className="text-xs bg-[#eefcfc] text-[#00a8a8] px-3 py-1 rounded-full font-bold">
-              {t("dashboard.scheduledSoon")}
-            </span>
-
-            <h2 className="text-lg font-bold text-gray-800 text-start">
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col max-h-[650px]">
+          <div className="w-full flex justify-between items-center mb-6">
+            <h2 className="text-lg font-bold text-gray-800">
               {t("dashboard.upcomingSessions")}
             </h2>
+
+            <span className="text-xs bg-[#eefcfc] text-[#00a8a8] px-3 py-1 rounded-full font-bold whitespace-nowrap">
+              {t("dashboard.scheduledSoon")}
+            </span>
           </div>
 
           {stats?.upcomingSessions &&
           stats.upcomingSessions.length > 0 ? (
-            <div className="overflow-x-auto flex-1">
+            <div className="overflow-auto flex-1 pl-2 pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <table className="w-full text-right border-collapse">
                 <thead>
                   <tr className="border-b border-gray-100 text-gray-400 text-xs font-bold">

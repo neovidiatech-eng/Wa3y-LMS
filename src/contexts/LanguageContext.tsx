@@ -18,12 +18,16 @@ export function useLanguage(): LanguageContextType {
   const language = (i18n.language?.split('-')[0] || 'en') as Language;
 
   const setLanguage = (lang: Language) => {
-    i18n.changeLanguage(lang);
+    i18n.changeLanguage(lang).then(() => {
+      window.location.reload();
+    });
   };
 
   const toggleLanguage = () => {
     const newLang = language === 'ar' ? 'en' : 'ar';
-    i18n.changeLanguage(newLang);
+    i18n.changeLanguage(newLang).then(() => {
+      window.location.reload();
+    });
   };
 
   return { language, setLanguage, toggleLanguage, t };

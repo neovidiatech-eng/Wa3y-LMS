@@ -9,8 +9,9 @@ export interface DashboardData {
   stats: Stats;
   sessionsPerDay: SessionPerDay[];
   upcomingSessions: UpcomingSession[];
-  activityFeed: ActivityFeedItem[];
+  activityFeed: SubscriptionsToExpire[];
   activeUsers: ActiveUsers;
+  subscriptionsStatus: subscriptionsStatus;  
 }
 
 export interface Stats {
@@ -18,6 +19,8 @@ export interface Stats {
   totalTeachers: number;
   pendingRequests: number;
   todaySessions: number;
+  totalRevenue: number;
+  monthlyRevenue: number;
 }
 
 export interface SessionPerDay {
@@ -34,7 +37,7 @@ export interface UpcomingSession {
   student: string;
 }
 
-export interface ActivityFeedItem {
+export interface SubscriptionsToExpire {
   id: string;
   type: string;
   title: string;
@@ -46,8 +49,15 @@ export interface ActivityFeedItem {
 export interface ActiveUsers {
   students: number;
   instructors: number;
+  admins:number;
+  parents:number;
 }
 
+export interface subscriptionsStatus {
+  active: number;
+  expiringSoon: number;
+  expired: number;
+}
 
 export interface ActivityLogUser {
   id: string;

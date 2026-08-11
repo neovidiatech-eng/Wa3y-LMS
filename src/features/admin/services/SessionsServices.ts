@@ -4,6 +4,9 @@ import { CreateRecurringSessionBody, CreateSessionBody, GetSessionsResponse, Upd
 interface ScheduleFilters {
     fromDate?: string;
     toDate?: string;
+    status?: string;
+    sortBy?: string;
+    sortOrder?: string;
 }
 
 export const getAllSchedules = async (
@@ -17,6 +20,9 @@ export const getAllSchedules = async (
             limit,
             fromDate: filters.fromDate || undefined,
             toDate: filters.toDate || undefined,
+            status: filters.status || undefined,
+            sortBy: filters.sortBy || undefined,
+            sortOrder: filters.sortOrder || undefined,
         },
     });
     return response.data;
@@ -35,6 +41,9 @@ export const searchSchedules = async (
             limit,
             fromDate: filters.fromDate || undefined,
             toDate: filters.toDate || undefined,
+            status: filters.status || undefined,
+            sortBy: filters.sortBy || undefined,
+            sortOrder: filters.sortOrder || undefined,
         },
     });
     return response.data;
