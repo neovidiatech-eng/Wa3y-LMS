@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import DashboardCard from "../../../components/ui/Card";
 import Pagination from "../../../components/ui/Pagination";
 import ActiveUsersChart from "../components/ActiveUsersChart";
-import RevenueExpenseChart from "../components/SubscriptionStatus";
-import RecentActivity from "../components/SubsToExpire";
 import { useActivityLogs, useAdminDashboard } from "../hooks/useAdminDashboard";
 import { useStudents } from "../hooks/useStudents";
 import { useTeacher } from "../hooks/useTeacher";
