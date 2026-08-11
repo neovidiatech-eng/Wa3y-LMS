@@ -75,7 +75,7 @@ export default function SubscriptionsStatus({ subscriptionStatus }: Subscription
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <span className="text-gray-400 text-xs font-medium">{t("dashboard.total")}</span>
           <span className="text-3xl font-black text-gray-900">{total}</span>
-          <span className="text-gray-400 text-[11px] mt-0.5">{t("dashboard.subs")}</span>
+          <span className="text-gray-400 text-[11px] mt-0.5">{t("subscriptions")}</span>
         </div>
       </div>
 
