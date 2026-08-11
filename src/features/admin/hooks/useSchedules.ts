@@ -24,6 +24,9 @@ export const useGetSchedules = (
   filters: {
     fromDate?: string;
     toDate?: string;
+    status?: string;
+    sortBy?: string;
+    sortOrder?: string;
   } = {},
 ) => {
   return useQuery({
@@ -40,6 +43,9 @@ export const useSearchSchedules = (
   filters: {
     fromDate?: string;
     toDate?: string;
+    status?: string;
+    sortBy?: string;
+    sortOrder?: string;
   } = {},
 ) => {
   return useQuery({

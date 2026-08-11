@@ -14,10 +14,10 @@ interface DashboardCardProps {
   onClick?: () => void;
 }
 
-const DashboardCard: React.FC<DashboardCardProps> = ({ 
-  title, 
-  value, 
-  unit, 
+const DashboardCard: React.FC<DashboardCardProps> = ({
+  title,
+  value,
+  unit,
   icon,
   onClick
 }) => {

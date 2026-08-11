@@ -31,6 +31,7 @@ export default function Sessions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -149,11 +150,32 @@ export default function Sessions() {
   }, [searchTerm]);
 
   const itemsPerPage = 10;
-  const dateFilters = useMemo(() => ({
-    fromDate,
-    toDate,
-  }), [fromDate, toDate]);
-  const { data: searchResults } = useSearchSchedules(debouncedSearch, currentPage, itemsPerPage, dateFilters);
+  const activeFilters = useMemo(() => {
+    let status = undefined;
+    let sortBy = undefined;
+    let sortOrder = undefined;
+
+    if (selectedFilter === "newest") {
+      sortBy = "createdAt";
+      sortOrder = "desc";
+    } else if (selectedFilter === "oldest") {
+      sortBy = "createdAt";
+      sortOrder = "asc";
+    } else if (selectedFilter === "scheduled") {
+      status = "scheduled";
+    } else if (selectedFilter === "planned") {
+      status = "planned";
+    }
+
+    return {
+      fromDate,
+      toDate,
+      status,
+      sortBy,
+      sortOrder,
+    };
+  }, [fromDate, toDate, selectedFilter]);
+  const { data: searchResults } = useSearchSchedules(debouncedSearch, currentPage, itemsPerPage, activeFilters);
 
   const scheduleData: Schedule[] = searchResults?.data?.schedule ?? [];
 
@@ -220,7 +242,7 @@ export default function Sessions() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearch, fromDate, toDate]);
+  }, [debouncedSearch, fromDate, toDate, selectedFilter]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -356,7 +378,23 @@ export default function Sessions() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+            <label className="block text-start">
+              <span className="block text-xs font-medium text-gray-500 mb-1">
+                {language === "ar" ? "فلتر" : "Filter"}
+              </span>
+              <select
+                value={selectedFilter}
+                onChange={(e) => setSelectedFilter(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary text-start bg-white"
+              >
+                <option value="">{language === "ar" ? "الكل" : "All"}</option>
+                <option value="newest">{language === "ar" ? "الأحدث إنشاءً" : "Newest Created"}</option>
+                <option value="oldest">{language === "ar" ? "الأقدم إنشاءً" : "Oldest Created"}</option>
+                <option value="scheduled">{language === "ar" ? "المجدولة" : "Scheduled"}</option>
+                <option value="planned">{language === "ar" ? "المخطط لها" : "Planned"}</option>
+              </select>
+            </label>
             <label className="block text-start">
               <span className="block text-xs font-medium text-gray-500 mb-1">
                 {language === "ar" ? "من تاريخ" : "From Date"}
@@ -382,17 +420,18 @@ export default function Sessions() {
             </label>
           </div>
 
-          {(fromDate || toDate) && (
+          {(fromDate || toDate || selectedFilter) && (
             <div className="flex justify-end mt-3">
               <button
                 type="button"
                 onClick={() => {
                   setFromDate("");
                   setToDate("");
+                  setSelectedFilter("");
                 }}
                 className="text-sm font-medium text-primary hover:underline"
               >
-                {language === "ar" ? "مسح التاريخ" : "Clear Date"}
+                {language === "ar" ? "مسح الفلاتر" : "Clear Filters"}
               </button>
             </div>
           )}

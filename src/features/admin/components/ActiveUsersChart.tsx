@@ -1,6 +1,7 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useTranslation } from "react-i18next";
 import { ActiveUsers } from "../../../types/AdminDasboard";
+import i18n from "../../../../i18n";
 
 interface ActiveUsersChartProps {
   activeUsers?: ActiveUsers;
@@ -9,26 +10,35 @@ interface ActiveUsersChartProps {
 const COLORS = {
   students: "#00a8a8",
   instructors: "#daad15",
+  admins: "#ab0000ff",
+  parents: "#022e8eff",
 };
 
 export default function ActiveUsersChart({ activeUsers }: ActiveUsersChartProps) {
   const { t } = useTranslation();
   const students = activeUsers?.students ?? 0;
   const instructors = activeUsers?.instructors ?? 0;
-  const total = students + instructors;
+  const admins = activeUsers?.admins ?? 0;
+  const parents = activeUsers?.parents ?? 0;
+  const total = students + instructors + admins + parents;
 
   const chartData = [
     { name: t("dashboard.students"), value: students, color: COLORS.students },
     { name: t("dashboard.instructors"), value: instructors, color: COLORS.instructors },
+    { name: t("dashboard.instructors"), value: admins, color: COLORS.admins },
+    { name: t("dashboard.instructors"), value: parents, color: COLORS.parents },
+
   ];
 
   const studentsPercent = total > 0 ? Math.round((students / total) * 100) : 0;
   const instructorsPercent = total > 0 ? 100 - studentsPercent : 0;
+  const adminsPercent = total > 0 ? 100 - studentsPercent - instructorsPercent : 0;
+  const parentsPercent = total > 0 ? 100 - studentsPercent - instructorsPercent - adminsPercent : 0;
 
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col items-center h-full">
-      <div className="w-full flex justify-end items-start mb-6">
-        <div className="text-right">
+      <div className={`w-full flex ${i18n.language === "ar" ? "justify-start" : "justify-start"} items-start mb-6`}>
+        <div className={`flex flex-col ${i18n.language === "ar" ? "items-start text-right" : "items-start text-left"}`}>
           <h2 className="text-xl font-bold text-gray-800">{t("dashboard.activeUsers")}</h2>
           <p className="text-gray-400 text-sm">{t("dashboard.activeUsersSubtitle")}</p>
         </div>
@@ -53,7 +63,7 @@ export default function ActiveUsersChart({ activeUsers }: ActiveUsersChartProps)
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: unknown, name: unknown) => [`${value} ${t("dashboard.user")}`, name]}
+              formatter={(value: any, name: any) => [`${value} ${t("dashboard.user")}`, name]}
               contentStyle={{
                 borderRadius: "12px",
                 border: "none",
@@ -108,6 +118,43 @@ export default function ActiveUsersChart({ activeUsers }: ActiveUsersChartProps)
             style={{ width: `${instructorsPercent}%`, backgroundColor: COLORS.instructors }}
           />
         </div>
+
+        <div className="flex items-center justify-between text-sm mt-3">
+          <div className="flex items-center gap-2 order-2">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS.admins }} />
+            <span className="text-gray-600 font-medium">{t("dashboard.admins")}</span>
+          </div>
+          <div className="flex items-center gap-2 order-1">
+            <span className="text-gray-800 font-black text-base">{admins}</span>
+            <span className="text-gray-400 text-xs">({adminsPercent}%)</span>
+          </div>
+        </div>
+
+        <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{ width: `${adminsPercent}%`, backgroundColor: COLORS.admins }}
+          />
+        </div>  
+
+          <div className="flex items-center justify-between text-sm mt-3">
+          <div className="flex items-center gap-2 order-2">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS.parents }} />
+            <span className="text-gray-600 font-medium">{t("dashboard.parents")}</span>
+          </div>
+          <div className="flex items-center gap-2 order-1">
+            <span className="text-gray-800 font-black text-base">{parents}</span>
+            <span className="text-gray-400 text-xs">({parentsPercent}%)</span>
+          </div>
+        </div>
+
+        <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{ width: `${parentsPercent}%`, backgroundColor: COLORS.parents }}
+          />
+        </div>
+
       </div>
     </div>
   );

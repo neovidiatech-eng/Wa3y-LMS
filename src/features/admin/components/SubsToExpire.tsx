@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { ActivityFeedItem } from "../../../types/AdminDasboard";
+import { SubscriptionsToExpire } from "../../../types/AdminDasboard";
 
-interface RecentActivityProps {
-  activities?: ActivityFeedItem[];
+interface SubscriptionsToExpireProps {
+  SubscriptionsToExpire?: SubscriptionsToExpire[];
 }
 
 const formatRelativeTime = (isoString: string, locale: string): string => {
@@ -48,21 +48,22 @@ const getActivityColor = (type: string) => {
   }
 };
 
-export default function RecentActivity({ activities }: RecentActivityProps) {
+export default function SubsToExpire({ SubscriptionsToExpire }: SubscriptionsToExpireProps) {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split("-")[0];
   const locale = language === "ar" ? "ar-EG" : "en-US";
-  const displayActivities = activities && activities.length > 0 ? activities : [];
+  const displayActivities = SubscriptionsToExpire && SubscriptionsToExpire.length > 0 ? SubscriptionsToExpire : [];
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col h-full">
-      <div className="flex justify-between items-center mb-8">
+    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col max-h-[650px]">
+      <div className="flex justify-between items-center mb-6 shrink-0">
         <h2 className="text-lg font-bold text-gray-800 text-right">{t("dashboard.recentActivity")}</h2>
       </div>
 
       {displayActivities.length > 0 ? (
-        <div className="relative space-y-6 before:absolute before:top-2 before:bottom-2 before:right-[3px] before:w-[2px] before:bg-gray-100">
-          {displayActivities.map((activity) => (
+        <div className="flex-1 min-h-0 overflow-y-auto pl-4 pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="relative space-y-6 before:absolute before:top-2 before:bottom-2 before:right-[3px] before:w-[2px] before:bg-gray-100">
+            {displayActivities.map((activity) => (
             <div key={activity.id} className="relative flex items-start gap-4">
               <div className={`w-2 h-2 rounded-full ${getActivityColor(activity.type)} ring-4 ring-white z-10 shrink-0 mt-1.5`} />
               <div className="text-right flex-grow">
@@ -72,6 +73,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
               </div>
             </div>
           ))}
+          </div>
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center text-center">
