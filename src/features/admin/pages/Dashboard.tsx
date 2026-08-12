@@ -1,4 +1,4 @@
-import { Notebook, Users, ClipboardList } from "lucide-react";
+import { Notebook, Users, ClipboardList, DollarSign } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardCard from "../../../components/ui/Card";
@@ -236,7 +236,7 @@ export default function Dashboard() {
           subText={t("dashboard.totalOverall")}
           icon={{
             bgColor: "bg-[#eefcfc]",
-            svg: <Users size={20} className="text-[#00a8a8]" />,
+            svg: <DollarSign size={20} className="text-[#00a8a8]" />,
           }}
           onClick={() => navigate("/dashboard/transactions")}
         />
@@ -249,9 +249,22 @@ export default function Dashboard() {
           subText={t("dashboard.thisMonth")}
           icon={{
             bgColor: "bg-[#eefcfc]",
-            svg: <Users size={20} className="text-[#00a8a8]" />,
+            svg: <DollarSign size={20} className="text-[#00a8a8]" />,
           }}
           onClick={() => navigate("/dashboard/transactions")}
+        />
+           <DashboardCard
+          title={t("dashboard.totalFeedbacks")}
+          value={stats?.stats?.totalFeedbacks ?? 0}
+          unit={t("dashboard.report")}
+          percentage=""
+          isIncrease={true}
+          subText={t("dashboard.totalOverall")}
+          icon={{
+            bgColor: "bg-[#eefcfc]",
+            svg: <ClipboardList size={20} className="text-[#00a8a8]" />,
+          }}
+          onClick={() => navigate("/dashboard/feedback")}
         />
       </div>
 

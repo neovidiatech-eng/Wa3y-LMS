@@ -623,7 +623,9 @@
     "expired": "Expired",
     "subs": "Subscription",
     "admins":"Admins",
-    "parents":"Parents"
+    "parents":"Parents",
+    "totalFeedbacks":"Total Reports",
+    "report":"Report"
   },
   "city": "City",
   "age": "Age",

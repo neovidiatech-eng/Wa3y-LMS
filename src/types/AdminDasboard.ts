@@ -18,6 +18,7 @@ export interface Stats {
   totalStudents: number;
   totalTeachers: number;
   pendingRequests: number;
+  totalFeedbacks: number;
   todaySessions: number;
   totalRevenue: number;
   monthlyRevenue: number;
