@@ -25,8 +25,8 @@ export default function ActiveUsersChart({ activeUsers }: ActiveUsersChartProps)
   const chartData = [
     { name: t("dashboard.students"), value: students, color: COLORS.students },
     { name: t("dashboard.instructors"), value: instructors, color: COLORS.instructors },
-    { name: t("dashboard.instructors"), value: admins, color: COLORS.admins },
-    { name: t("dashboard.instructors"), value: parents, color: COLORS.parents },
+    { name: t("dashboard.admins"), value: admins, color: COLORS.admins },
+    { name: t("dashboard.parents"), value: parents, color: COLORS.parents },
 
   ];
 

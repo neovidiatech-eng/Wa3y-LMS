@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useFeedback } from "../hooks/useFeedback";
+import { useStudents } from "../hooks/useStudents";
 import { FeedBackItem } from "../../../types/feedback";
 import ViewFeedbackModal from "../../../components/modals/ViewFeedbackModal";
 import Pagination from "../../../components/ui/Pagination";
 import { Star, Calendar, User, GraduationCap, Clock, Search } from "lucide-react";
 import { useDebounce } from "../../../hooks/useDebounce";
+import { Student } from "../../../types/student";
+import { AutoComplete, Input } from "antd";
 
 const FeedbackPage = () => {
     const { i18n } = useTranslation();
@@ -14,7 +17,9 @@ const FeedbackPage = () => {
     const limit = 15;
     const [searchTerm, setSearchTerm] = useState("");
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
-    
+
+    const { data: students } = useStudents({ limit: 100 });
+
     // Reset page to 1 when search term changes
     useEffect(() => {
         setPage(1);
@@ -22,12 +27,20 @@ const FeedbackPage = () => {
 
     // Fetch from backend using the debounced search term (with key saerch as requested)
     const { data, isLoading, isError } = useFeedback(page, limit, debouncedSearchTerm);
-    
+
     const [selectedFeedback, setSelectedFeedback] = useState<FeedBackItem | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    if (isLoading) return <div className="flex justify-center p-10"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
-    if (isError) return <div className="text-red-500 text-center p-10 font-bold">{language === 'ar' ? 'حدث خطأ أثناء تحميل التقارير' : 'Error loading reports'}</div>;
+    const studentOptions = useMemo(() => {
+        return students?.data?.studentsData?.map((student: Student) => {
+            return {
+                value: String(student?.user?.name || ''),
+                label: student?.user?.name || 'Unknown',
+                searchText: String(student?.user?.name || '')
+            }
+        }) || [];
+    }, [students])
+
 
     const allFeedbacks = data?.data.feedbacks.items || [];
     const pagination = data?.data.feedbacks.pagination;
@@ -53,26 +66,44 @@ const FeedbackPage = () => {
                 </h1>
                 
                 <div className="relative w-full md:w-96">
-                    <input
-                        type="text"
-                        placeholder={language === 'ar' ? 'ابحث باسم المعلم أو الطالب...' : 'Search by teacher or student...'}
+                    <AutoComplete
+                        options={studentOptions}
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className={`w-full ${language === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all bg-white`}
-                    />
-                    <Search className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 ${language === 'ar' ? 'right-3' : 'left-3'}`} />
+                        onChange={(val) => setSearchTerm(val)}
+                        className="w-full"
+                        allowClear
+                        defaultActiveFirstOption={false}
+                        filterOption={(inputValue, option) => {
+                            const optionText = String(option?.label || '').toLowerCase();
+                            const inputText = inputValue.toLowerCase();
+                            // Normalize Arabic letters (Hamza, Taa Marboota, Yaa)
+                            const normalize = (str: string) => str.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ي/g, 'ى');
+                            return normalize(optionText).includes(normalize(inputText));
+                        }}
+                    >
+                        <Input 
+                            size="large" 
+                            placeholder={language === 'ar' ? ' ابحث باسم الطالب او المعلم...' : 'Search by student or teacher...'}
+                            prefix={<Search className="w-5 h-5 text-gray-400 mr-2 rtl:ml-2 rtl:mr-0" />} 
+                            className="rounded-xl h-[46px]"
+                        />
+                    </AutoComplete>
                 </div>
             </div>
 
-            {allFeedbacks.length === 0 ? (
+            {isLoading ? (
+                <div className="flex justify-center p-10"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>
+            ) : isError ? (
+                <div className="text-red-500 text-center p-10 font-bold">{language === 'ar' ? 'حدث خطأ أثناء تحميل التقارير' : 'Error loading reports'}</div>
+            ) : allFeedbacks.length === 0 ? (
                 <div className="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
                     <p className="text-gray-500 text-lg">{language === 'ar' ? 'لا توجد تقارير مطابقة' : 'No matching reports found'}</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {allFeedbacks.map((item) => (
-                        <div 
-                            key={item.id} 
+                        <div
+                            key={item.id}
                             onClick={() => handleCardClick(item)}
                             className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer group hover:-translate-y-1"
                         >
@@ -85,7 +116,7 @@ const FeedbackPage = () => {
                                     <span className="text-sm font-bold text-yellow-700 ml-1 rtl:mr-1 rtl:ml-0">{item.rating}</span>
                                 </div>
                             </div>
-                            
+
                             <div className="space-y-3 mb-5">
                                 <div className="flex items-center text-sm text-gray-600 gap-2">
                                     <GraduationCap className="w-4 h-4 text-primary shrink-0" />
@@ -108,7 +139,7 @@ const FeedbackPage = () => {
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <Clock className="w-4 h-4 text-gray-400" />
-                                        <span dir="ltr">{new Date(item.schedule.start_time).toLocaleTimeString(language === 'ar' ? 'ar-EG' : 'en-US', {hour: '2-digit', minute: '2-digit'})}</span>
+                                        <span dir="ltr">{new Date(item.schedule.start_time).toLocaleTimeString(language === 'ar' ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                                     </div>
                                 </div>
                             </div>
@@ -122,10 +153,10 @@ const FeedbackPage = () => {
                     ))}
                 </div>
             )}
-            
-            {pagination && pagination.totalPages >= 1 && (
+
+            {!isLoading && !isError && pagination && pagination.totalPages >= 1 && (
                 <div className="mt-8 overflow-hidden shadow-sm">
-                    <Pagination 
+                    <Pagination
                         currentPage={pagination.page}
                         totalPages={pagination.totalPages}
                         totalItems={pagination.totalItems}
@@ -135,10 +166,10 @@ const FeedbackPage = () => {
                 </div>
             )}
 
-            <ViewFeedbackModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                feedback={selectedFeedback} 
+            <ViewFeedbackModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                feedback={selectedFeedback}
             />
         </div>
     );
