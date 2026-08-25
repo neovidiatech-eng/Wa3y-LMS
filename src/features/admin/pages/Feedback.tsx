@@ -79,7 +79,7 @@ const FeedbackPage = () => {
                             <div className="flex justify-between items-start mb-4">
                                 <h3 className="font-bold text-lg text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
                                     {item.schedule.title}
-                                </h3>
+                                </h3> 
                                 <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-full">
                                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 gap-1" />
                                     <span className="text-sm font-bold text-yellow-700 ml-1 rtl:mr-1 rtl:ml-0">{item.rating}</span>
