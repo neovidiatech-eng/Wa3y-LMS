@@ -197,8 +197,9 @@ export default function DailyQuran() {
                       {(() => {
                         const map: Record<string, { ar: string; en: string; cls: string }> = {
                           pending:   { ar: "قيد الانتظار", en: "Pending",   cls: "bg-yellow-100 text-yellow-800" },
-                          completed: { ar: "مكتمل",       en: "Completed", cls: "bg-blue-100 text-blue-800" },
-                          reviewed:  { ar: "تمت المراجعة",en: "Reviewed",  cls: "bg-green-100 text-green-800" },
+                          submitted: { ar: "تم التسليم",  en: "Submitted", cls: "bg-blue-100 text-blue-800" },
+                          completed: { ar: "مكتمل",       en: "Completed", cls: "bg-green-100 text-green-800" },
+                          reviewed:  { ar: "تمت المراجعة",en: "Reviewed",  cls: "bg-teal-100 text-teal-800" },
                           rejected:  { ar: "مرفوض",       en: "Rejected",  cls: "bg-red-100 text-red-800" },
                         };
                         const s = map[item.status] ?? map.pending;

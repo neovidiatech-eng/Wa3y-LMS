@@ -5,7 +5,7 @@ export interface IDailyQuranRecitation {
   startPage: number;
   endPage: number;
   dueDate: string;
-  status: "pending" | "completed" | "reviewed" | "rejected";
+  status: "pending" | "submitted" | "completed" | "reviewed" | "rejected";
   student?: {
     user?: {
       name?: string;

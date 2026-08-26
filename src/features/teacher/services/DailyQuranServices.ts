@@ -6,7 +6,7 @@ export interface CreateDailyQuranPayload {
   startPage: number;
   endPage: number;
   dueDate: string;
-  status: "pending" | "completed" | "reviewed" | "rejected";
+  status: "pending" | "submitted" | "completed" | "reviewed" | "rejected";
 }
 
 export interface UpdateDailyQuranPayload {
@@ -14,7 +14,7 @@ export interface UpdateDailyQuranPayload {
   startPage?: number;
   endPage?: number;
   dueDate?: string;
-  status?: "pending" | "completed" | "reviewed" | "rejected";
+  status?: "pending" | "submitted" | "completed" | "reviewed" | "rejected";
 }
 
 // Create daily quran recitation

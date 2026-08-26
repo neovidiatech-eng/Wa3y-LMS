@@ -626,7 +626,13 @@
     "admins":"مسؤولين",
     "parents":"أولياء أمور",
     "totalFeedbacks":"اجمالي التقارير",
-    "report":"تقرير"
+    "report":"تقرير",
+    "violation":"مخالفة",
+    "sessions":"حصة",
+    "completedSessions": "الحصص المكتملة",
+    "transactionRequests": "طلبات الشحن",
+    "subscriptionRequests": "طلبات الاشتراكات",
+    "totalViolations": "إجمالي المخالفات"
   },
   "city": "المدينة",
   "age": "العمر",

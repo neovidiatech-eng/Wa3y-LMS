@@ -22,6 +22,10 @@ export interface Stats {
   todaySessions: number;
   totalRevenue: number;
   monthlyRevenue: number;
+  totalViolations: number;
+  subscriptionRequests:number;
+  completedSessions:number;
+  transactionRequests:number;
 }
 
 export interface SessionPerDay {
