@@ -625,7 +625,12 @@
     "admins":"Admins",
     "parents":"Parents",
     "totalFeedbacks":"Total Reports",
-    "report":"Report"
+    "report":"Report",
+    "violation":"Violation",
+    "completedSessions": "Completed Sessions",
+    "transactionRequests": "Transaction Requests",
+    "subscriptionRequests": "Subscription Requests",
+    "totalViolations": "Total Violations"
   },
   "city": "City",
   "age": "Age",

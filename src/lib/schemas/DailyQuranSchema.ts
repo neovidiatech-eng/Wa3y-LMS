@@ -9,7 +9,7 @@ export const getDailyQuranSchema = (t: TFunc) =>
     startPage: z.coerce.number().min(1, t("validation.required")),
     endPage: z.coerce.number().min(1, t("validation.required")),
     dueDate: z.string().min(1, t("validation.required")),
-    status: z.enum(["pending", "completed", "reviewed", "rejected"]),
+    status: z.enum(["pending", "submitted", "completed", "reviewed", "rejected"]),
   });
 
 export type DailyQuranFormData = z.infer<

@@ -50,6 +50,8 @@ const getPersonName = (person: any, id?: string, idMap?: Map<string, string>): s
   return "-";
 };
 
+
+
 const getStatusBadge = (status?: string, language: string = "ar") => {
   const s = status?.toLowerCase();
   const isAr = language.startsWith("ar");
@@ -110,6 +112,10 @@ export default function Dashboard() {
       setLogsCurrentPage(logsTotalPages);
     }
   }, [logsCurrentPage, logsTotalPages]);
+
+  const getCompletedSessions = () => {
+    navigate('/dashboard/sessions?status=completed');
+  }
 
   if (isLoading) {
     return (
@@ -211,7 +217,7 @@ export default function Dashboard() {
             bgColor: "bg-[#eefcfc]",
             svg: <Notebook size={20} className="text-[#00a8a8]" />,
           }}
-          onClick={() => navigate("/dashboard/sessions")}
+          onClick={() => navigate('/dashboard/sessions')}
         />
 
         <DashboardCard
@@ -253,7 +259,7 @@ export default function Dashboard() {
           }}
           onClick={() => navigate("/dashboard/transactions")}
         />
-           <DashboardCard
+        <DashboardCard
           title={t("dashboard.totalFeedbacks")}
           value={stats?.stats?.totalFeedbacks ?? 0}
           unit={t("dashboard.report")}
@@ -266,6 +272,59 @@ export default function Dashboard() {
           }}
           onClick={() => navigate("/dashboard/feedback")}
         />
+        <DashboardCard
+          title={t("dashboard.completedSessions")}
+          value={stats?.stats?.completedSessions ?? 0}
+          unit={t("dashboard.session")}
+          percentage=""
+          isIncrease={true}
+          subText={t("dashboard.scheduledToday")}
+          icon={{
+            bgColor: "bg-[#eefcfc]",
+            svg: <Users size={20} className="text-[#00a8a8]" />,
+          }}
+          onClick={getCompletedSessions}
+        />
+        <DashboardCard
+          title={t("dashboard.transactionRequests")}
+          value={stats?.stats?.transactionRequests ?? 0}
+          unit={t("dashboard.request")}
+          percentage=""
+          isIncrease={true}
+          subText={t("dashboard.request")}
+          icon={{
+            bgColor: "bg-[#eefcfc]",
+            svg: <Users size={20} className="text-[#00a8a8]" />,
+          }}
+          onClick={() => navigate("/dashboard/transaction-requests")}
+        />
+        <DashboardCard
+          title={t("dashboard.subscriptionRequests")}
+          value={stats?.stats?.subscriptionRequests ?? 0}
+          unit={t("dashboard.request")}
+          percentage=""
+          isIncrease={true}
+          subText={t("dashboard.request")}
+          icon={{
+            bgColor: "bg-[#eefcfc]",
+            svg: <Users size={20} className="text-[#00a8a8]" />,
+          }}
+          onClick={() => navigate("/dashboard/subscription-requests")}
+        />
+        <DashboardCard
+          title={t("dashboard.totalViolations")}
+          value={stats?.stats?.totalViolations ?? 0}
+          unit={t("dashboard.violation")}
+          percentage=""
+          isIncrease={true}
+          subText={t("dashboard.violation")}
+          icon={{
+            bgColor: "bg-[#eefcfc]",
+            svg: <Users size={20} className="text-[#00a8a8]" />,
+          }}
+          onClick={() => navigate("/dashboard/violations")}
+        />
+
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-3">
@@ -299,7 +358,7 @@ export default function Dashboard() {
           </div>
 
           {stats?.upcomingSessions &&
-          stats.upcomingSessions.length > 0 ? (
+            stats.upcomingSessions.length > 0 ? (
             <div className="overflow-auto flex-1 pl-2 pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <table className="w-full text-right border-collapse">
                 <thead>
@@ -385,139 +444,138 @@ export default function Dashboard() {
           )}
         </div>
 
-        
+
       </div>
       {/* Activity Logs */}
-<div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 mx-3">
-  <div className="flex items-center justify-between mb-6">
-   
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 mx-3">
+        <div className="flex items-center justify-between mb-6">
 
-<h2 className="text-lg font-bold text-gray-800">
-  {t("dashboard.activityLogs")}
-</h2>
- <span className="text-xs bg-[#eefcfc] text-[#00a8a8] px-3 py-1 rounded-full font-bold">
-  {logsData?.data?.length || 0} {t("dashboard.logsCount")}
-</span>
-  </div>
 
-  {logsLoading ? (
-    <div className="space-y-3">
-      {[1, 2, 3, 4].map((i) => (
-        <div
-          key={i}
-          className="h-14 rounded-2xl bg-gray-100 animate-pulse"
-        />
-      ))}
-    </div>
-  ) : !logsData?.data?.length ? (
-    <div className="text-center py-10">
-      <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-        <span className="text-2xl">📄</span>
+          <h2 className="text-lg font-bold text-gray-800">
+            {t("dashboard.activityLogs")}
+          </h2>
+          <span className="text-xs bg-[#eefcfc] text-[#00a8a8] px-3 py-1 rounded-full font-bold">
+            {logsData?.data?.length || 0} {t("dashboard.logsCount")}
+          </span>
+        </div>
+
+        {logsLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-14 rounded-2xl bg-gray-100 animate-pulse"
+              />
+            ))}
+          </div>
+        ) : !logsData?.data?.length ? (
+          <div className="text-center py-10">
+            <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <span className="text-2xl">📄</span>
+            </div>
+
+            <p className="text-gray-500 text-sm font-medium">
+              {t("noLogs")}
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="px-4 py-4 text-start font-semibold">
+                    {t("dashboard.user")}
+                  </th>
+
+                  <th className="px-4 py-4 text-start font-semibold">
+                    {t("dashboard.emailColumn")}
+                  </th>
+
+                  <th className="px-4 py-4 text-start font-semibold">
+                    {t("dashboard.role")}
+                  </th>
+
+                  <th className="px-4 py-4 text-start font-semibold">
+                    {t("dashboard.action")}
+                  </th>
+
+                  <th className="px-4 py-4 text-start font-semibold">
+                    {t("dashboard.statusColumn")}
+                  </th>
+
+                  <th className="px-4 py-4 text-start font-semibold">
+                    {t("dashboard.timeColumn")}
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-50">
+                {paginatedLogs.map((log) => (
+                  <tr
+                    key={log.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="py-4 px-4">
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {log.user.name}
+                        </p>
+
+                      </div>
+                    </td>
+
+                    <td className="py-4 px-4 text-sm text-gray-600">
+                      {log.user.email}
+                    </td>
+
+                    <td className="py-4 px-4 text-sm font-medium text-gray-700">
+                      {log.role}
+                    </td>
+
+                    <td className="py-4 px-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary-50 text-blue-600">
+                        {
+                          log.action
+                        }
+                      </span>
+                    </td>
+
+
+                    <td className="py-4 px-4">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${log.user.status === "active"
+                            ? "bg-green-50 text-green-600"
+                            : log.user.status === "blocked"
+                              ? "bg-red-50 text-red-600"
+                              : "bg-gray-100 text-gray-600"
+                          }`}
+                      >
+                        {log.user.status}
+                      </span>
+                    </td>
+
+                    <td className="py-4 px-4 text-sm text-gray-500">
+                      {formatSessionTime(
+                        log.createdAt,
+                        i18n.language
+                      )}
+                    </td>
+
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Pagination
+              currentPage={logsCurrentPage}
+              totalPages={logsTotalPages}
+              totalItems={activityLogs.length}
+              itemsPerPage={logsItemsPerPage}
+              onPageChange={setLogsCurrentPage}
+            />
+          </div>
+        )}
       </div>
-
-      <p className="text-gray-500 text-sm font-medium">
-        {t("noLogs")}
-      </p>
-    </div>
-  ) : (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr>
-            <th className="px-4 py-4 text-start font-semibold">
-              {t("dashboard.user")}
-            </th>
-
-            <th className="px-4 py-4 text-start font-semibold">
-              {t("dashboard.emailColumn")}
-            </th>
-
-            <th className="px-4 py-4 text-start font-semibold">
-              {t("dashboard.role")}
-            </th>
-
-            <th className="px-4 py-4 text-start font-semibold">
-              {t("dashboard.action")}
-            </th>
-
-            <th className="px-4 py-4 text-start font-semibold">
-              {t("dashboard.statusColumn")}
-            </th>
-
-            <th className="px-4 py-4 text-start font-semibold">
-              {t("dashboard.timeColumn")}
-            </th>
-          </tr>
-        </thead>
-
-        <tbody className="divide-y divide-gray-50">
-          {paginatedLogs.map((log) => (
-            <tr
-              key={log.id}
-              className="hover:bg-gray-50 transition-colors"
-            >
-              <td className="py-4 px-4">
-                <div>
-                  <p className="font-semibold text-gray-800">
-                    {log.user.name}
-                  </p>
-
-                </div>
-              </td>
-
-              <td className="py-4 px-4 text-sm text-gray-600">
-                {log.user.email}
-              </td>
-              
-              <td className="py-4 px-4 text-sm font-medium text-gray-700">
-                {log.role}
-              </td>
-
-              <td className="py-4 px-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary-50 text-blue-600">
-{
-    log.action
-}
-                </span>
-              </td>
-
-
-                            <td className="py-4 px-4">
-                <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                    log.user.status === "active"
-                      ? "bg-green-50 text-green-600"
-                      : log.user.status === "blocked"
-                      ? "bg-red-50 text-red-600"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {log.user.status}
-              </span>
-              </td>
-
-              <td className="py-4 px-4 text-sm text-gray-500">
-                {formatSessionTime(
-                  log.createdAt,
-                  i18n.language
-                )}
-              </td>
-
-
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <Pagination
-        currentPage={logsCurrentPage}
-        totalPages={logsTotalPages}
-        totalItems={activityLogs.length}
-        itemsPerPage={logsItemsPerPage}
-        onPageChange={setLogsCurrentPage}
-      />
-    </div>
-  )}
-</div>
     </div>
   );
 }

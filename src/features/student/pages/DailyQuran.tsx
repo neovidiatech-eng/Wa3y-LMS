@@ -1,24 +1,28 @@
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "../../../contexts/LanguageContext";
-import { useMyRecitations } from "../hooks/useDailyQuran";
+import { useMyRecitations, useSubmitRecitation } from "../hooks/useDailyQuran";
 import { IDailyQuranRecitation } from "../../../types/dailyQuran";
+import { Button } from "antd";
 
 const STATUS_MAP: Record<
   string,
   { ar: string; en: string; cls: string }
 > = {
   pending:   { ar: "قيد الانتظار", en: "Pending",   cls: "bg-yellow-100 text-yellow-800" },
-  completed: { ar: "مكتمل",        en: "Completed", cls: "bg-blue-100 text-blue-800" },
-  reviewed:  { ar: "تمت المراجعة", en: "Reviewed",  cls: "bg-green-100 text-green-800" },
+  submitted: { ar: "تم التسليم",  en: "Submitted", cls: "bg-blue-100 text-blue-800" },
+  completed: { ar: "مكتمل",        en: "Completed", cls: "bg-green-100 text-green-800" },
+  reviewed:  { ar: "تمت المراجعة", en: "Reviewed",  cls: "bg-teal-100 text-teal-800" },
   rejected:  { ar: "مرفوض",        en: "Rejected",  cls: "bg-red-100 text-red-800" },
 };
 
 export default function DailyQuran() {
   const { language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
+  const [submittingId, setSubmittingId] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useMyRecitations();
+  const { mutate: submitRecitation } = useSubmitRecitation();
 
   const recitations: IDailyQuranRecitation[] =
     data?.data?.recitations ?? [];
@@ -30,6 +34,13 @@ export default function DailyQuran() {
       (item.student?.user?.name ?? "").toLowerCase().includes(term)
     );
   });
+
+  const handleSubmit = (id: string) => {
+    setSubmittingId(id);
+    submitRecitation(id, {
+      onSettled: () => setSubmittingId(null),
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -80,13 +91,16 @@ export default function DailyQuran() {
                 <th className="px-6 py-4 text-center">
                   {language === "ar" ? "الحالة" : "Status"}
                 </th>
+                <th className="px-6 py-4 text-center">
+                  {language === "ar" ? "الإجراءات" : "Actions"}
+                </th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-6 py-10 text-center text-gray-400"
                   >
                     {language === "ar" ? "لا توجد بيانات" : "No data found"}
@@ -99,7 +113,7 @@ export default function DailyQuran() {
                   return (
                     <tr
                       key={item.id}
-                      className="border-t hover:bg-gray-50"
+                      className="border-t hover:bg-gray-50 transition-colors"
                     >
                       <td className="px-6 py-4 text-center">
                         {item.surah}
@@ -121,6 +135,28 @@ export default function DailyQuran() {
                           {language === "ar" ? s.ar : s.en}
                         </span>
                       </td>
+                      <td className="px-6 py-4 text-center">
+                        {item.status === "pending" ? (
+                          <button
+                            disabled={submittingId === item.id}
+                            onClick={() => handleSubmit(item.id)}
+                            className="px-4 py-1.5 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-semibold shadow-sm transition-all duration-200 disabled:bg-primary-dark disabled:opacity-90 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 mx-auto min-w-[90px]"
+                          >
+                            {submittingId === item.id ? (
+                              <>
+                                <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                <span>
+                                  {language === "ar" ? "جاري التسليم..." : "Submitting..."}
+                                </span>
+                              </>
+                            ) : (
+                              <span>{language === "ar" ? "تسليم" : "Submit"}</span>
+                            )}
+                          </button>
+                        ) : (
+                          <span className="text-gray-400 text-xs">-</span>
+                        )}
+                      </td>
                     </tr>
                   );
                 })
@@ -132,3 +168,4 @@ export default function DailyQuran() {
     </div>
   );
 }
+

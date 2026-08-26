@@ -8,7 +8,7 @@ import {
   useCreateRecurringSchedule,
   useUpdateSchedule,
   useDeleteSchedule,
-  useDeleteGroupedSchedule,
+  // useDeleteGroupedSchedule,
 } from "../hooks/useSchedules";
 import AddSessionModal from "../../../components/modals/AddSessionModal";
 import ViewSessionModal from "../../../components/modals/ViewSessionModal";
@@ -22,16 +22,28 @@ import {
 import { useSubjects } from "../hooks/useSubjects";
 import { Subject } from "../../../types/subject";
 import { Tooltip } from "antd";
+import { useSearchParams } from "react-router-dom";
 
 export default function Sessions() {
   const { t, i18n } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const statusParam = searchParams.get('status');
   const language = i18n.language.split("-")[0];
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState(
+    statusParam && statusParam !== 'all' ? statusParam : ""
+  );
+
+  useEffect(() => {
+    const currentStatus = searchParams.get('status');
+    if (currentStatus && currentStatus !== 'all') {
+      setSelectedFilter(currentStatus);
+    }
+  }, [searchParams]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -165,6 +177,8 @@ export default function Sessions() {
       status = "scheduled";
     } else if (selectedFilter === "planned") {
       status = "planned";
+    } else if (selectedFilter === "completed") {
+      status = "completed";
     }
 
     return {
@@ -175,7 +189,7 @@ export default function Sessions() {
       sortOrder,
     };
   }, [fromDate, toDate, selectedFilter]);
-  const { data: searchResults } = useSearchSchedules(debouncedSearch, currentPage, itemsPerPage, activeFilters);
+  const { data: searchResults } = useSearchSchedules(debouncedSearch, currentPage, itemsPerPage, activeFilters,);
 
   const scheduleData: Schedule[] = searchResults?.data?.schedule ?? [];
 
@@ -393,6 +407,7 @@ export default function Sessions() {
                 <option value="oldest">{language === "ar" ? "الأقدم إنشاءً" : "Oldest Created"}</option>
                 <option value="scheduled">{language === "ar" ? "المجدولة" : "Scheduled"}</option>
                 <option value="planned">{language === "ar" ? "المخطط لها" : "Planned"}</option>
+                <option value="completed">{language === "ar" ? "المكتملة" : "Completed"}</option>
               </select>
             </label>
             <label className="block text-start">

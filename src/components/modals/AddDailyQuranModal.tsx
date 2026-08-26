@@ -217,7 +217,7 @@ export default function AddDailyQuranModal({
               onChange={(value) =>
                 setValue(
                   "status",
-                  value as "pending" | "completed" | "reviewed" | "rejected",
+                  value as "pending" | "submitted" | "completed" | "reviewed" | "rejected",
                   { shouldValidate: true }
                 )
               }
