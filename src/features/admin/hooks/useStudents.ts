@@ -4,11 +4,12 @@ import { Student } from "../../../types/student";
 import { StudentFormData } from "../../../lib/schemas/StudentSchema";
 import { message } from "antd";
 
-export const useStudents = (params: GetStudentsParams = {}) => {
+export const useStudents = (params: GetStudentsParams = {}, options?: any) => {
     return useQuery({
         queryKey: ["students", params],
         queryFn: () => getStudents(params),
         staleTime: 60 * 1000,
+        ...options,
     });
 }
 export const useStudentById = (id?: string) => {

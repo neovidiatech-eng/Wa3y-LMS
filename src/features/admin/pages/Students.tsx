@@ -5,6 +5,7 @@ import Pagination from '../../../components/ui/Pagination';
 import CustomSelect from '../../../components/ui/CustomSelect';
 import { useTranslation } from 'react-i18next';
 import { useStudents, useCreateStudent, useUpdateStudent, useDeleteStudent, useUpdateStudentPlan } from '../hooks/useStudents';
+import { useStudentsModerators } from "../../supervisor/hooks/useStudentsModerators";
 import { Student } from '../../../types/student';
 import { useConfirm } from '../../../hooks/useConfirm';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
@@ -79,20 +80,40 @@ export default function Students() {
     };
   }, [currentPage, itemsPerPage, debouncedSearch, selectedCountry, selectedGrade, selectedStatus]);
 
-  const { data: apiResponse, isLoading } = useStudents(studentsQueryParams);
-  const { data: allStudentsResponse } = useStudents({ limit: 1000 });
+  const isModerator = role === 'moderator' || role === 'supervisor';
 
-  const rawData: any = apiResponse?.data.studentsData;
-  const studentsList: Student[] = Array.isArray(rawData) ? rawData : (rawData?.students || rawData?.data || []);
+  const { data: adminApiResponse, isLoading: adminLoading } = useStudents(studentsQueryParams, { enabled: !isModerator });
+  const { data: adminAllStudentsResponse } = useStudents({ limit: 1000 }, { enabled: !isModerator });
+  
+  const { data: modApiResponse, isLoading: modLoading } = useStudentsModerators({ enabled: isModerator });
+
+  const apiResponse: any = isModerator ? modApiResponse : adminApiResponse;
+  const isLoading = isModerator ? modLoading : adminLoading;
+  const allStudentsResponse: any = isModerator ? modApiResponse : adminAllStudentsResponse;
+
+  const studentsList: Student[] = useMemo(() => {
+    if (isModerator) {
+      const items = apiResponse?.data?.students?.items || [];
+      return items.map((i: any) => i.student).filter(Boolean);
+    } else {
+      const rawData: any = apiResponse?.data?.studentsData || apiResponse?.data;
+      return Array.isArray(rawData) ? rawData : (rawData?.students || rawData?.data || []);
+    }
+  }, [apiResponse, isModerator]);
   const pagination = apiResponse?.data?.pagination;
   const activeItems = apiResponse?.data?.activeCount ?? 0;
   const inactiveItems = apiResponse?.data?.inactiveCount ?? 0;
   const unPaidItems = apiResponse?.data?.unpaidCount??0;
 
-  const allRawData: any = allStudentsResponse?.data?.studentsData;
   const allStudentsList: Student[] = useMemo(() => {
-    return Array.isArray(allRawData) ? allRawData : (allRawData?.students || allRawData?.data || []);
-  }, [allRawData]);
+    if (isModerator) {
+      const items = allStudentsResponse?.data?.students?.items || [];
+      return items.map((i: any) => i.student).filter(Boolean);
+    } else {
+      const allRawData: any = allStudentsResponse?.data?.studentsData || allStudentsResponse?.data;
+      return Array.isArray(allRawData) ? allRawData : (allRawData?.students || allRawData?.data || []);
+    }
+  }, [allStudentsResponse, isModerator]);
 
 
 
@@ -465,12 +486,12 @@ export default function Students() {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center flex-shrink-0">
                             <span className="text-blue-600 text-sm font-semibold">
-                              {student.user.name ? student.user.name.charAt(0).toUpperCase() : '?'}
+                              {student.user?.name ? student.user.name.charAt(0).toUpperCase() : '?'}
                             </span>
                           </div>
                           <div className="text-start">
-                            <div className="font-medium text-gray-900">{student.user.name}</div>
-                            <div className="text-xs text-gray-500">{student.user.email}</div>
+                            <div className="font-medium text-gray-900">{student.user?.name || t('noName')}</div>
+                            <div className="text-xs text-gray-500">{student.user?.email || ''}</div>
                           </div>
                         </div>
                       </td>
@@ -497,10 +518,14 @@ export default function Students() {
                       )}
 
                       <td className="px-6 py-4 text-start">
-                        <WhatsAppPhone
-                          phone={`${student.user.code_country} ${student.user.phone}`}
-                          className="text-sm text-gray-900"
-                        />
+                        {student.user ? (
+                          <WhatsAppPhone
+                            phone={`${student.user?.code_country ?? ''} ${student.user?.phone ?? ''}`.trim()}
+                            className="text-sm text-gray-900"
+                          />
+                        ) : (
+                          <span className="text-sm text-gray-400">-</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-start">
                         <button

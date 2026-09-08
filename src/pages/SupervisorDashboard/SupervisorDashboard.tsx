@@ -31,7 +31,7 @@ const SubscriptionRequestsPage = lazyWithRetry(() => import("../../features/admi
 const TeacherSubscriptionsPage = lazyWithRetry(() => import("../../features/admin/pages/TeacherSubscriptions"));
 const AllSubscriptionsPage = lazyWithRetry(() => import("../../features/admin/pages/AllSubscriptions"));
 const PlansPage = lazyWithRetry(() => import("../../features/admin/pages/Plans"));
-const ViolationsPage = lazyWithRetry(() => import("../../features/admin/pages/Violations"));
+const ViolationsPage = lazyWithRetry(() => import("../../features/supervisor/pages/violations"));
 const NotificationsPage = lazyWithRetry(() => import("../../features/admin/pages/Notifications"));
 
 const LoadingFallback = () => (

@@ -17,7 +17,8 @@ import {
   Package,
   Trophy,
   MessageSquare,
-  User
+  User,
+  ShieldAlert
 } from 'lucide-react';
 
 export interface RouteConfig {
@@ -189,12 +190,7 @@ export const supervisorDashboardRoutes: RouteConfig[] = [
     icon: FileQuestion,
     path: "requests",
   },
-  {
-    id: "violations",
-    label: "sidebar_violations",
-    icon: AlertCircle,
-    path: "violations",
-  },
+
   {
     id: "notifications",
     label: "sidebar_notifications",
@@ -202,9 +198,9 @@ export const supervisorDashboardRoutes: RouteConfig[] = [
     path: "notifications",
   },
   {
-    id: "profile",
-    label: "الملف الشخصي",
-    icon: User,
-    path: "profile",
+    id: "violations",
+    label: "sidebar_violations",
+    icon: ShieldAlert,
+    path: "violations",
   }
 ];

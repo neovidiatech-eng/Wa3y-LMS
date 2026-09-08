@@ -5,6 +5,8 @@ import { useSettings } from '../../contexts/SettingsContext';
 import { supervisorDashboardRoutes } from './supervisorDashboardRoutes';
 import { useTranslation } from 'react-i18next';
 import SidebarToggle from '../../components/layout/SidebarToggle';
+import { filterAdminRoutesByPermissions } from '../../utils/auth';
+
 
 interface SupervisorSidebarProps {
   isOpen: boolean;
@@ -19,6 +21,9 @@ export default function SupervisorSidebar({ isOpen, onClose, isCollapsed, setIsC
   const { settings } = useSettings();
   const academyName = language === 'ar' ? t('academyName') : settings.name;
   const [expandedItems, setExpandedItems] = useState<string[]>(['users']);
+  
+  const filteredRoutes = filterAdminRoutesByPermissions(supervisorDashboardRoutes);
+
 
   const toggleExpand = (itemId: string) => {
     setExpandedItems(prev =>
@@ -83,7 +88,8 @@ export default function SupervisorSidebar({ isOpen, onClose, isCollapsed, setIsC
         {/* Menu Items */}
         <nav className="p-4 overflow-y-auto no-scrollbar h-[calc(100vh-120px)]">
           <div className="space-y-1">
-            {supervisorDashboardRoutes.map((item) => (
+            {filteredRoutes.map((item) => (
+
               <div key={item.id}>
                 {item.subItems ? (
                   <>

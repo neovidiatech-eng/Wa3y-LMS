@@ -1,4 +1,4 @@
-import { Notebook, Users, ClipboardList } from "lucide-react";
+import { Notebook, Users, ClipboardList, Shield, Key } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardCard from "../../../components/ui/Card";
@@ -7,9 +7,10 @@ import ActiveUsersChart from "../../admin/components/ActiveUsersChart";
 import RevenueExpenseChart from "../../admin/components/RevenueExpenseChart";
 import RecentActivity from "../../admin/components/RecentActivity";
 import { useActivityLogs, useAdminDashboard } from "../../admin/hooks/useAdminDashboard";
-import { useStudents } from "../../admin/hooks/useStudents";
+import { useStudentsModerators } from "../hooks/useStudentsModerators";
 import { useTeacher } from "../../admin/hooks/useTeacher";
 import { useTranslation } from "react-i18next";
+import { getStoredPermissions } from "../../../utils/auth";
 
 
 const formatSessionTime = (
@@ -71,15 +72,19 @@ const getStatusBadge = (status?: string, language: string = "ar") => {
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const myPermissions = getStoredPermissions();
 
   const { data: stats, isLoading, isError } = useAdminDashboard();
   const { data: logsData, isLoading: logsLoading } = useActivityLogs();
-  const { data: studentsResponse } = useStudents({ limit: 1000 });
+  const { data: studentsResponse }: any = useStudentsModerators();
   const { data: teachersResponse } = useTeacher({ limit: 100 });
 
   const studentMap = useMemo(() => {
     const map = new Map<string, string>();
-    const studentsList = studentsResponse?.data?.studentsData || (studentsResponse as any)?.data?.students || [];
+    const items = studentsResponse?.data?.students?.items || [];
+    const studentsList = items.length 
+      ? items.map((i: any) => i.student).filter(Boolean) 
+      : (studentsResponse?.data?.studentsData || (studentsResponse as any)?.data?.students || (studentsResponse as any)?.data || []);
     studentsList.forEach((s: any) => {
       if (s.id && s.user?.name) map.set(s.id, s.user.name);
       if (s.user_id && s.user?.name) map.set(s.user_id, s.user.name);
@@ -479,6 +484,38 @@ export default function Dashboard() {
     </div>
   )}
 </div>
+
+      {/* My Permissions */}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 mx-3">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-indigo-600" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">
+              {t("myPermissions") || (i18n.language.startsWith("ar") ? "صلاحياتي" : "My Permissions")}
+            </h2>
+            <p className="text-xs text-gray-500">
+              {i18n.language.startsWith("ar") ? "الصلاحيات الممنوحة لك في النظام" : "Your granted permissions in the system"}
+            </p>
+          </div>
+        </div>
+        
+        {myPermissions.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {myPermissions.map((perm, idx) => (
+              <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-sm font-medium text-gray-700">
+                <Key className="w-4 h-4 text-gray-400" />
+                {perm.name || perm.code || perm.resource}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-6 text-gray-500 text-sm">
+            {i18n.language.startsWith("ar") ? "لا توجد صلاحيات مخصصة" : "No permissions assigned"}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
