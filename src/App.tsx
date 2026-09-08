@@ -37,6 +37,7 @@ import { store } from './store/store';
 import { useChatSocket } from './hooks/useChat';
 import { useFCM } from './hooks/useFCM';
 const ParentDashboard = lazyWithRetry(() => import('./features/parent/pages/ParentDashboard'));
+const SupervisorDashboard = lazyWithRetry(() => import('./pages/SupervisorDashboard/SupervisorDashboard'));
 
 // Centralized Loading Fallback UI
 const LoadingFallback = () => (
@@ -56,11 +57,13 @@ const queryClient = new QueryClient({
 });
 
 
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return !!localStorage.getItem("token") || !!sessionStorage.getItem("token");
   });
   const { i18n } = useTranslation();
+
 
   useEffect(() => {
     const lang = i18n.language.split('-')[0];
@@ -126,6 +129,10 @@ function FCMProvider() {
 
                       <Route element={<AuthGuard allowedRoles={['parent']} />}>
                         <Route path="/parent-dashboard/*" element={<ParentDashboard />} />
+                      </Route>
+
+                      <Route element={<AuthGuard allowedRoles={['supervisor', 'moderator', 'super_admin', 'admin']} />}>
+                        <Route path="/supervisor-dashboard/*" element={<SupervisorDashboard />} />
                       </Route>
 
 

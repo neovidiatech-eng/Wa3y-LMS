@@ -41,6 +41,7 @@ import { lazyWithRetry } from "../../utils/lazyWithRetry";
 
 // --- Lazy Loading Admin Page Components from Features ---
 const UsersPage = lazyWithRetry(() => import("../../features/admin/pages/Users"));
+const ModeratorPage = lazyWithRetry(() => import("../../features/admin/pages/Moderator"));
 const StudentsPage = lazyWithRetry(() => import("../../features/admin/pages/Students"));
 const TeachersPage = lazyWithRetry(() => import("../../features/admin/pages/Teachers"));
 const ParentsPage = lazyWithRetry(() => import("../../features/admin/pages/Parents"));
@@ -109,6 +110,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
         icon: UserCheck,
         path: "admins",
         element: <UsersPage />,
+      },
+      {
+        id: "moderators",
+        label: "sidebar_moderators",
+        icon: UserCheck,
+        path: "moderators",
+        element: <ModeratorPage />,
       },
       {
         id: "students",
@@ -257,7 +265,6 @@ export const adminDashboardRoutes: RouteConfig[] = [
     path: 'roles',
     element: <RolesPage />
   },
-
 
   {
     id: "finance",

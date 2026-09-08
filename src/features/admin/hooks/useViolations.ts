@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getViolations, createViolation, issueViolation, getTeacherViolationsHistory, getAllViolationsHistory, deleteViolationItem } from "../services/ViolationsServices"
+import { getViolations, createViolation, issueViolation, getTeacherViolationsHistory, getAllViolationsHistory, deleteViolationItem, getModeratorViolations, createModeratorViolations, deleteModeratorViolation } from "../services/ViolationsServices"
 import { CreateViolationPayload, IssueViolationPayload, ViolationType } from "../../../types/Violations"
+import { IssueModeratorViolationPayload } from "../../../types/moderatorViolations"
 
 export const useViolations = () => {
     return useQuery({
@@ -57,4 +58,29 @@ export const useDeleteViolationItem = () => {
 };
 
 
+export const useGetModeratorViolations = () =>{
+    return useQuery({
+        queryKey:['moderator-violations'],
+        queryFn: getModeratorViolations,
+    })
+}
 
+export const useCreateModeratorViolations = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (payload: IssueModeratorViolationPayload) => createModeratorViolations(payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['moderator-violations'] });
+        },
+    });
+};
+
+export const useDeleteModeratorViolation = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: string) => deleteModeratorViolation(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['moderator-violations'] });
+        },
+    });
+};

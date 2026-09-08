@@ -3,16 +3,16 @@ import { PlayCircle, Plus, Search, BookOpen, MoreVertical, Edit, Trash2, Eye } f
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { CourseItem } from '../../../../types/course';
-import { useLanguage } from '../../../../contexts/LanguageContext';
-import { CourseFormData, getCourseSchema } from '../../../../lib/schemas/CourseSchema';
-import CourseViewer from '../../../../components/features/LMS/CourseViewer';
-import CourseModal from '../../../../components/modals/CourseModal';
-import { useCourses, useDeleteCourse, useCreateCourse, useUpdateCourse } from '../../../admin/hooks/useCourses';
-import { useSubjects } from '../../../admin/hooks/useSubjects';
-import { baseURL } from '../../../../consts';
+import { CourseItem } from '../../../types/course';
+import { useLanguage } from '../../../contexts/LanguageContext';
+import { CourseFormData, getCourseSchema } from '../../../lib/schemas/CourseSchema';
+import CourseViewer from '../../../components/features/LMS/CourseViewer';
+import CourseModal from '../../../components/modals/CourseModal';
+import { useCourses, useDeleteCourse, useCreateCourse, useUpdateCourse } from '../../admin/hooks/useCourses';
+import { useSubjects } from '../../admin/hooks/useSubjects';
+import { baseURL } from '../../../consts';
 
-import { useConfirm } from "../../../../hooks/useConfirm";
+import { useConfirm } from "../../../hooks/useConfirm";
 
 
 

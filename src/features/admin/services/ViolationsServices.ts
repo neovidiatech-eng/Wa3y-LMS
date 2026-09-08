@@ -1,4 +1,9 @@
 import api from "../../../lib/axios";
+import { 
+  ModeratorViolationsResponse, 
+  IssueModeratorViolationPayload, 
+  IssueModeratorViolationResponse,
+} from "../../../types/moderatorViolations";
 import {
   ViolationsResponse,
   CreateViolationPayload,
@@ -52,4 +57,21 @@ export const getAllViolationsHistory = async (
 };
 
 
+export const getModeratorViolations = async () : Promise<ModeratorViolationsResponse>=>{
+    const response = await api.get('/violations/moderator');
+  return response.data;
+};
+
+export const createModeratorViolations = async (
+  payload: IssueModeratorViolationPayload
+): Promise<IssueModeratorViolationResponse> => {
+  const response = await api.post('/violations/moderator/issue', payload);
+  return response.data;
+};
+
+
+export const deleteModeratorViolation = async (id: string): Promise<{ status: number; message: string }> => {
+  const response = await api.delete(`/violations/moderator/${id}`);
+  return response.data;
+};
 

@@ -11,14 +11,17 @@ const fixedDashboardPaths: Record<string, string> = {
   teacher: "/teacher-dashboard",
   student: "/student-dashboard",
   parent: "/parent-dashboard",
+  moderator: "/supervisor-dashboard",
+  supervisor: "/supervisor-dashboard",
 };
 
 const adminRoles = ["super_admin", "admin"];
-const nonAdminDashboardRoles = ["teacher", "student", "parent"];
+const nonAdminDashboardRoles = ["teacher", "student", "parent", "moderator", "supervisor"];
 
 const routeResources: Record<string, string[]> = {
   dashboard: ["dashboard"],
   admins: ["users", "admins"],
+  moderators: ["moderators", "users", "admins"],
   students: ["students", "users"],
   parents: ["parents", "users"],
   teachers: ["teachers"],
