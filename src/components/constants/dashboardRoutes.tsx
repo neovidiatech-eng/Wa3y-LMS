@@ -22,7 +22,6 @@ import {
   Coins,
   ShieldCheck,
   Repeat,
-  MessageSquare
 } from 'lucide-react';
 import Roles from '../../features/admin/pages/Roles';
 
@@ -40,6 +39,7 @@ import { lazyWithRetry } from "../../utils/lazyWithRetry";
 
 // --- Lazy Loading Page Components ---
 const UsersPage = lazyWithRetry(() => import("../../features/admin/pages/Users"));
+const ModeratorPage = lazyWithRetry(() => import("../../features/admin/pages/Moderator"));
 const StudentsPage = lazyWithRetry(() => import("../../features/admin/pages/Students"));
 const TeachersPage = lazyWithRetry(() => import("../../features/admin/pages/Teachers"));
 const ParentsPage = lazyWithRetry(() => import("../../features/admin/pages/Parents"));
@@ -100,6 +100,13 @@ export const dashboardRoutes: RouteConfig[] = [
         icon: UserCheck,
         path: "admins",
         element: <UsersPage />,
+      },
+      {
+        id: "moderators",
+        label: "sidebar_moderators",
+        icon: UserCheck,
+        path: "moderators",
+        element: <ModeratorPage />,
       },
       {
         id: "students",

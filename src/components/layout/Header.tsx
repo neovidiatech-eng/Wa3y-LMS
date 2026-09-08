@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../ui/ThemeToggle";
 interface HeaderProps {
   onMenuClick: () => void;
-  userRole: "admin" | "teacher" | "student" | "parent";
+  userRole: "admin" | "teacher" | "student" | "parent" | "supervisor";
   userName?: string;
   userEmail?: string;
   isCollapsed?: boolean;
@@ -29,11 +29,12 @@ export default function Header({
   const isRtl = language === "ar";
   const academyName = language === "ar" ? t("academyName") : settings.name;
 
-  const roleSubtitle: Record<"admin" | "teacher" | "student" | "parent", Record<string, string>> = {
+  const roleSubtitle: Record<"admin" | "teacher" | "student" | "parent" | "supervisor", Record<string, string>> = {
     admin: { ar: "لوحة التحكم", en: "Control Panel" },
     teacher: { ar: "لوحة المعلم", en: "Teacher Panel" },
     student: { ar: "لوحة الطالب", en: "Student Panel" },
     parent: { ar: "لوحة ولي الأمر", en: "Parent Panel" },
+    supervisor: { ar: "لوحة المشرف", en: "Supervisor Panel" },
   };
 
   const { data: notificationsData } = useNotifications();
@@ -71,6 +72,8 @@ export default function Header({
     role = language === "ar" ? "طالب" : "Student";
   } else if (role === "parent") {
     role = language === "ar" ? "ولي أمر" : "Parent";
+  } else if (role === "supervisor") {
+    role = language === "ar" ? "مشرف" : "Supervisor";
   }
 
   return (

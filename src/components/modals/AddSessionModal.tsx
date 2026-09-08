@@ -26,6 +26,7 @@ import {
 import CustomSelect from '../ui/CustomSelect';
 
 import { useStudents } from '../../features/admin/hooks/useStudents';
+import { useStudentsModerators } from '../../features/supervisor/hooks/useStudentsModerators';
 import { useTeacher } from '../../features/admin/hooks/useTeacher';
 
 import { Student } from '../../types/student';
@@ -72,7 +73,22 @@ export default function AddSessionModal({
   const [sessionsLimitError, setSessionsLimitError] = useState('');
   const [apiConflicts, setApiConflicts] = useState<{date: string, conflict: string}[]>([]);
 
-  const { data: students } = useStudents({ limit: 1000 });
+  const role = localStorage.getItem('role');
+  const isModerator = role === 'moderator' || role === 'supervisor';
+
+  const { data: allStudents } = useStudents({ limit: 1000 }, { enabled: !isModerator });
+  const { data: modStudents } = useStudentsModerators({ enabled: isModerator });
+  const students: any = isModerator ? modStudents : allStudents;
+
+  const studentsList: Student[] = useMemo(() => {
+    if (isModerator) {
+      const items = students?.data?.students?.items || [];
+      return items.map((i: any) => i.student).filter(Boolean);
+    } else {
+      return students?.data?.studentsData || students?.data?.students || students?.data || [];
+    }
+  }, [students, isModerator]);
+
   const { data: instructors } = useTeacher({ limit: 100 });
 
   const singleSchema = getSessionSchema(t);
@@ -171,11 +187,11 @@ export default function AddSessionModal({
     );
 
   const selectedStudentData = useMemo(() => {
-    const list = students?.data?.studentsData;
+    const list = studentsList;
     if (!watchStudent || !list) return null;
     const firstId = Array.isArray(watchStudent) ? watchStudent[0] : watchStudent;
     return list.find((s: Student) => String(s.id) === String(firstId)) || null;
-  }, [watchStudent, students]);
+  }, [watchStudent, studentsList]);
 
   const isGroupPlan = isGroupPlanStudent(selectedStudentData);
 
@@ -193,7 +209,7 @@ export default function AddSessionModal({
   }, [watchStudent]);
 
   const studentOptions = useMemo(() => {
-    const list = students?.data?.studentsData;
+    const list = studentsList;
     if (!list) return [];
 
     const isReachedMax = maxStudentsCount > 0 && selectedStudentIds.length >= maxStudentsCount;
@@ -222,12 +238,12 @@ export default function AddSessionModal({
 
       return {
         value: String(student.id),
-        label: `${student.user.name}${badge}`,
-        searchText: `${student.user.name} ${student.user.email || ''}`,
+        label: `${student.user?.name || t('noName')}${badge}`,
+        searchText: `${student.user?.name || ''} ${student.user?.email || ''}`,
         disabled,
       };
     });
-  }, [students, language, isGroupPlan, maxStudentsCount, selectedStudentIds]);
+  }, [studentsList, language, isGroupPlan, maxStudentsCount, selectedStudentIds]);
 
   const selectedTeacherData = useMemo(() => {
     if (!watchTeacher || !instructors?.teachers) return null;
@@ -595,7 +611,7 @@ export default function AddSessionModal({
                             let arr = Array.isArray(val) ? val.map(String) : [String(val)];
                             // Only allow students subscribed to a group plan
                             arr = arr.filter((id) => {
-                              const s = students?.data?.studentsData?.find((st: Student) => String(st.id) === id);
+                              const s = studentsList?.find((st: Student) => String(st.id) === id);
                               return isGroupPlanStudent(s);
                             });
                             // Limit to maxStudentsCount if specified
