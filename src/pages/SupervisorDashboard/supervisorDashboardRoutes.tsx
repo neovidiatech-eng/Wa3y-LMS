@@ -17,7 +17,6 @@ import {
   Package,
   Trophy,
   MessageSquare,
-  User,
   ShieldAlert
 } from 'lucide-react';
 
@@ -55,12 +54,6 @@ export const supervisorDashboardRoutes: RouteConfig[] = [
         label: "sidebar_admins",
         icon: UserCheck,
         path: "admins",
-      },
-      {
-        id: "moderators",
-        label: "sidebar_moderators",
-        icon: UserCheck,
-        path: "moderators",
       },
       {
         id: "students",

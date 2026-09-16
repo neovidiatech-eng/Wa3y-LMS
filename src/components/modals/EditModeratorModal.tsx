@@ -23,6 +23,7 @@ interface FormValues {
   age?: string;
   gender: 'male' | 'female';
   studentIds?: string[];
+  status: 'active' | 'inactive' | string;
 }
 
 export default function EditModeratorModal({
@@ -35,7 +36,7 @@ export default function EditModeratorModal({
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: studentsResponse } = useStudents({ limit: 100 });
+  const { data: studentsResponse } = useStudents({ limit: 100 }) as any;
   const students = studentsResponse?.data?.studentsData || [];
 
   const defaultStudentIds = useMemo(() => {
@@ -58,6 +59,7 @@ export default function EditModeratorModal({
       age: '',
       gender: (moderator?.gender as 'male' | 'female') || 'male',
       studentIds: defaultStudentIds,
+      status: moderator?.status || 'active',
     },
   });
 
@@ -72,6 +74,7 @@ export default function EditModeratorModal({
         age: '',
         gender: (moderator.gender as 'male' | 'female') || 'male',
         studentIds: moderator.studentModerators?.map((sm) => sm.studentId) || [],
+        status: moderator.status || 'active',
       });
     }
   }, [moderator, reset]);
@@ -97,7 +100,7 @@ export default function EditModeratorModal({
   }, [displayNames]);
 
   const studentOptions = useMemo(() => {
-    return students.map((s) => ({
+    return students.map((s: any) => ({
       value: s.id,
       searchText: `${s.user?.name || ''} ${s.user?.email || ''} ${s.user?.phone || ''}`,
       label: (
@@ -120,6 +123,7 @@ export default function EditModeratorModal({
         phone: values.phone.trim(),
         gender: values.gender,
         studentIds: values.studentIds || [],
+        status: values.status,
       };
       if (values.password && values.password.trim()) {
         payload.password = values.password.trim();
@@ -268,7 +272,7 @@ export default function EditModeratorModal({
             </div>
 
             {/* Gender */}
-            <div className="md:col-span-2">
+            <div className="md:col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('gender') || 'النوع'} <span className="text-red-500">*</span>
               </label>
@@ -281,6 +285,28 @@ export default function EditModeratorModal({
                     options={[
                       { value: 'male', label: t('male') || 'ذكر' },
                       { value: 'female', label: t('female') || 'أنثى' },
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            </div>
+
+            {/* Status */}
+            <div className="md:col-span-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('status') || 'الحالة'} <span className="text-red-500">*</span>
+              </label>
+              <Controller
+                name="status"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <CustomSelect
+                    options={[
+                      { value: 'active', label: t('active') || 'نشط' },
+                      { value: 'inactive', label: t('inactive') || 'غير نشط' },
                     ]}
                     value={field.value}
                     onChange={field.onChange}
@@ -305,7 +331,7 @@ export default function EditModeratorModal({
                     value={field.value}
                     onChange={field.onChange}
                     placeholder={t('selectStudents') || 'اختر الطلاب المسندين لهذا المشرف...'}
-                    className="w-full"
+                    className="w-full h-full"
                   />
                 )}
               />
