@@ -75,6 +75,8 @@ const NotificationsPage = lazyWithRetry(() => import("../../features/admin/pages
 const ViolationsPage = lazyWithRetry(() => import("../../features/admin/pages/Violations"));
 const RanksPage = lazyWithRetry(() => import("../../features/admin/pages/Ranks"));
 
+const ModeratorsPage = lazyWithRetry(() => import("../../features/admin/pages/ModeratorsRequests"));
+
 export const adminDashboardRoutes: RouteConfig[] = [
   {
     id: "dashboard",
@@ -240,6 +242,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
         icon: UserCheck,
         path: "teacher-subscriptions",
         element: <TeacherSubscriptionsPage />,
+      },
+      {
+        id:"moderators-subscriptions",
+        label:"sidebar_moderators_subscriptions",
+        icon:UserCheck,
+        path:"moderators-subscriptions",
+        element:<ModeratorsPage />
       },
       {
         id: "all-subscriptions",

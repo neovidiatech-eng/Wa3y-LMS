@@ -12,6 +12,7 @@ export const useStudents = (params: GetStudentsParams = {}, options?: any) => {
         ...options,
     });
 }
+
 export const useStudentById = (id?: string) => {
     return useQuery({
         queryKey: ["student", id],
@@ -19,6 +20,7 @@ export const useStudentById = (id?: string) => {
         enabled: !!id,
     });
 }
+
 export const useUpdateStudent = () => {
     const queryClient = useQueryClient();
     return useMutation({

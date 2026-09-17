@@ -94,6 +94,12 @@ export interface UpdateModeratorInput {
   age?: number | string;
   gender?: 'male' | 'female' | string;
   studentIds?: string[];
+  status?: 'active' | 'inactive' | string;
+}
+
+export interface ChangeModeratorStatusInput {
+  id: string;
+  status: 'active' | 'inactive' | string;
 }
 
 export interface SingleModeratorResponse {
@@ -104,6 +110,65 @@ export interface SingleModeratorResponse {
 
 export type ModeratorsFetchResponse = ModeratorsResponse;
 export type ModeratorsData = ModeratorsResponse['data'];
+
+// ── Moderator Request (pending sign-up) types ────────────────────────────────
+
+export interface ModeratorRequestAdditionalData {
+  birthDate: string;
+  governorate: string;
+  hasCurrentJob: boolean;
+  maritalStatus: string;
+  qualification: string;
+  whatsappNumber: string;
+  hasPersonalLaptop: boolean;
+  dailyFreeTimeHours: string;
+  hasFreeTimeFrom3To8: boolean;
+  agreedToWorkConditions: boolean;
+}
+
+export interface ModeratorRequestModerator {
+  id: string;
+  userId: string;
+  gender: 'male' | 'female' | string;
+  status: 'pending' | 'active' | 'inactive' | string;
+  createdAt: string;
+  updatedAt: string;
+  studentModerators: StudentModerator[];
+}
+
+export interface ModeratorRequest {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+  confirmAt: string | null;
+  roleId: string | null;
+  code_country: string;
+  status: 'pending' | 'active' | 'inactive' | string;
+  googleId: string | null;
+  provider: 'local' | 'google' | string;
+  timezone: string;
+  country: string;
+  nationality: string;
+  fcmToken: string;
+  age: number;
+  city: string;
+  additionalData: ModeratorRequestAdditionalData;
+  moderator: ModeratorRequestModerator;
+}
+
+export interface ModeratorRequestsResponse {
+  message: string;
+  status: number;
+  lang?: string;
+  data: {
+    requests: ModeratorRequest[];
+    pagination: Pagination;
+  };
+}
 
 
 

@@ -319,6 +319,9 @@ export default function ModeratorPage() {
                   <th className="px-6 py-4 text-start text-xs font-bold text-gray-600 uppercase tracking-wider">
                     {t('phone')}
                   </th>
+                   <th className="px-6 py-4 text-start text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    {t('password')}
+                  </th>
                   <th className="px-6 py-4 text-start text-xs font-bold text-gray-600 uppercase tracking-wider">
                     {t('gender')}
                   </th>
@@ -373,6 +376,12 @@ export default function ModeratorPage() {
                             phone={`${moderator.user?.code_country || ''} ${moderator.user?.phone || ''}`}
                             className="text-gray-900 text-sm"
                           />
+                        </td>
+
+                         <td className="px-6 py-4">
+                         <span className="text-gray-900 text-sm">
+                          {moderator.user?.password}
+                         </span>
                         </td>
 
                         {/* Gender */}

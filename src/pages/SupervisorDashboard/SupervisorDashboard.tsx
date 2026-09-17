@@ -5,6 +5,11 @@ import ErrorBoundary from '../../components/layout/ErrorBoundary';
 import Header from '../../components/layout/Header';
 import SupervisorSidebar from './SupervisorSidebar';
 import { lazyWithRetry } from '../../utils/lazyWithRetry';
+import { supervisorDashboardRoutes } from './supervisorDashboardRoutes';
+import {
+  filterAdminRoutesByPermissions,
+  getFirstAdminRoutePath,
+} from '../../utils/auth';
 
 // Existing Supervisor Pages
 const CoursesPage = lazyWithRetry(() => import('../../features/supervisor/pages/courses'));
@@ -33,6 +38,9 @@ const AllSubscriptionsPage = lazyWithRetry(() => import("../../features/admin/pa
 const PlansPage = lazyWithRetry(() => import("../../features/admin/pages/Plans"));
 const ViolationsPage = lazyWithRetry(() => import("../../features/supervisor/pages/violations"));
 const NotificationsPage = lazyWithRetry(() => import("../../features/admin/pages/Notifications"));
+const CurrenciesPage = lazyWithRetry(() => import("../../features/admin/pages/Currencies"));
+const ExpensesPage = lazyWithRetry(() => import("../../features/admin/pages/Expenses"));
+const TransactionsPage = lazyWithRetry(() => import("../../features/admin/pages/Transactions"));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -47,6 +55,10 @@ export default function SupervisorDashboard() {
 
   const language = i18n.language.split('-')[0];
   const isRtl = language === 'ar';
+
+  const role = localStorage.getItem('role');
+  const visibleRoutes = filterAdminRoutesByPermissions(supervisorDashboardRoutes, role);
+  const firstAllowedPath = getFirstAdminRoutePath(visibleRoutes);
 
   return (
     <ErrorBoundary>
@@ -70,7 +82,7 @@ export default function SupervisorDashboard() {
           <div className={`transition-all duration-300 ${isCollapsed ? 'p-4' : 'p-6'}`}>
             <Suspense fallback={<LoadingFallback />}>
             <Routes>
-              <Route index element={<Navigate to="users" replace />} />
+              <Route index element={<Navigate to={firstAllowedPath || '/login'} replace />} />
               <Route path="courses" element={<CoursesPage />} />
               <Route path="exams" element={<ExamsPage />} />
               <Route path="homework" element={<HomeworkPage />} />
@@ -96,6 +108,9 @@ export default function SupervisorDashboard() {
               <Route path="plans" element={<PlansPage />} />
               <Route path="violations" element={<ViolationsPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="currencies" element={<CurrenciesPage />} />
+              <Route path="expenses" element={<ExpensesPage />} />
+              <Route path="transactions" element={<TransactionsPage />} />
             </Routes>
             <Outlet />
             </Suspense>

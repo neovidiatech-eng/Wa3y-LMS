@@ -279,7 +279,7 @@ export default function AddModeratorModal({ isOpen, onClose, onSubmit }: AddMode
                     value={field.value}
                     onChange={field.onChange}
                     placeholder={t('selectStudents') || 'اختر الطلاب المسندين لهذا المشرف...'}
-                    className="w-full"
+                    className="w-full h-full"
                   />
                 )}
               />
