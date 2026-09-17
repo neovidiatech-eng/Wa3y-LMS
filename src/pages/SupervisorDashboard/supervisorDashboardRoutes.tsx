@@ -17,7 +17,10 @@ import {
   Package,
   Trophy,
   MessageSquare,
-  ShieldAlert
+  ShieldAlert,
+  DollarSign,
+  Coins,
+  Repeat
 } from 'lucide-react';
 
 export interface RouteConfig {
@@ -195,5 +198,31 @@ export const supervisorDashboardRoutes: RouteConfig[] = [
     label: "sidebar_violations",
     icon: ShieldAlert,
     path: "violations",
+  },
+  {
+    id: "finance",
+    label: "sidebar_finance",
+    icon: DollarSign,
+    path: "finance-group",
+    subItems: [
+      {
+        id: "currencies",
+        label: "sidebar_currencies",
+        icon: Coins,
+        path: "currencies",
+      },
+      {
+        id: "expenses",
+        label: "sidebar_expenses",
+        icon: CreditCard,
+        path: "expenses",
+      },
+      {
+        id: "transactions",
+        label: "sidebar_transactions",
+        icon: Repeat,
+        path: "transactions",
+      },
+    ],
   }
 ];

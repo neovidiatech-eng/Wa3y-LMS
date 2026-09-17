@@ -25,8 +25,8 @@ export default function ModeratorsRequests() {
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     type: 'accept' | 'reject' | null;
-    requestId: string | null;
-  }>({ isOpen: false, type: null, requestId: null });
+    userId: string | null;
+  }>({ isOpen: false, type: null, userId: null });
   const [editRequest, setEditRequest] = useState<ModeratorRequest | null>(null);
 
   const { data, isLoading, isError } = useModeratorsRequests();
@@ -73,29 +73,29 @@ export default function ModeratorsRequests() {
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleOpenAccept = (id: string) => {
-    setConfirmModal({ isOpen: true, type: 'accept', requestId: id });
+    setConfirmModal({ isOpen: true, type: 'accept', userId: id });
   };
 
   const handleOpenReject = (id: string) => {
-    setConfirmModal({ isOpen: true, type: 'reject', requestId: id });
+    setConfirmModal({ isOpen: true, type: 'reject', userId: id });
   };
 
   const handleConfirmAction = (studentIds: string[]) => {
-    if (!confirmModal.requestId || !confirmModal.type) return;
+    if (!confirmModal.userId || !confirmModal.type) return;
     if (confirmModal.type === 'accept') {
       acceptRequest(
-        { id: confirmModal.requestId, studentIds },
+        { userId: confirmModal.userId, studentIds },
         {
           onSuccess: () => {
-            setConfirmModal({ isOpen: false, type: null, requestId: null });
+            setConfirmModal({ isOpen: false, type: null, userId: null });
             setSelectedRequest(null);
           },
         }
       );
     } else {
-      rejectRequest(confirmModal.requestId, {
+      rejectRequest(confirmModal.userId, {
         onSuccess: () => {
-          setConfirmModal({ isOpen: false, type: null, requestId: null });
+          setConfirmModal({ isOpen: false, type: null, userId: null });
           setSelectedRequest(null);
         },
       });
@@ -417,7 +417,7 @@ export default function ModeratorsRequests() {
                           {isPending && (
                             <>
                               <button
-                                onClick={() => handleOpenAccept(request.moderator.id)}
+                                onClick={() => handleOpenAccept(request.moderator.userId)}
                                 disabled={isActing}
                                 className="p-2 hover:bg-green-50 rounded-lg text-gray-400 hover:text-green-600 transition-colors disabled:opacity-40"
                                 title={language === 'ar' ? 'قبول' : 'Accept'}
@@ -425,7 +425,7 @@ export default function ModeratorsRequests() {
                                 <CheckCircle className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => handleOpenReject(request.moderator.id)}
+                                onClick={() => handleOpenReject(request.moderator.userId)}
                                 disabled={isActing}
                                 className="p-2 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40"
                                 title={language === 'ar' ? 'رفض' : 'Reject'}
@@ -480,7 +480,7 @@ export default function ModeratorsRequests() {
         type={confirmModal.type}
         isActing={isActing}
         onConfirm={handleConfirmAction}
-        onClose={() => setConfirmModal({ isOpen: false, type: null, requestId: null })}
+        onClose={() => setConfirmModal({ isOpen: false, type: null, userId: null })}
       />
 
       {editRequest && (

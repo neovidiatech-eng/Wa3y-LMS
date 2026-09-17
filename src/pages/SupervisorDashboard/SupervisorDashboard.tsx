@@ -38,6 +38,9 @@ const AllSubscriptionsPage = lazyWithRetry(() => import("../../features/admin/pa
 const PlansPage = lazyWithRetry(() => import("../../features/admin/pages/Plans"));
 const ViolationsPage = lazyWithRetry(() => import("../../features/supervisor/pages/violations"));
 const NotificationsPage = lazyWithRetry(() => import("../../features/admin/pages/Notifications"));
+const CurrenciesPage = lazyWithRetry(() => import("../../features/admin/pages/Currencies"));
+const ExpensesPage = lazyWithRetry(() => import("../../features/admin/pages/Expenses"));
+const TransactionsPage = lazyWithRetry(() => import("../../features/admin/pages/Transactions"));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[400px]">
@@ -105,6 +108,9 @@ export default function SupervisorDashboard() {
               <Route path="plans" element={<PlansPage />} />
               <Route path="violations" element={<ViolationsPage />} />
               <Route path="notifications" element={<NotificationsPage />} />
+              <Route path="currencies" element={<CurrenciesPage />} />
+              <Route path="expenses" element={<ExpensesPage />} />
+              <Route path="transactions" element={<TransactionsPage />} />
             </Routes>
             <Outlet />
             </Suspense>

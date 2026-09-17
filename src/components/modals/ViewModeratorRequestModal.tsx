@@ -230,7 +230,7 @@ export default function ViewModeratorRequestModal({
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => {
-                  onReject(request.moderator.id);
+                  onReject(request.moderator.userId);
                   onClose();
                 }}
                 disabled={isActing}
@@ -241,7 +241,7 @@ export default function ViewModeratorRequestModal({
               </button>
               <button
                 onClick={() => {
-                  onAccept(request.moderator.id);
+                  onAccept(request.moderator.userId);
                   onClose();
                 }}
                 disabled={isActing}

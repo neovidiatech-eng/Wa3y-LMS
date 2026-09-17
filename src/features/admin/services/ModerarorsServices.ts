@@ -13,13 +13,13 @@ export const getModeratorRequests = async (): Promise<ModeratorRequestsResponse>
     return response.data
 }
 
-export const acceptModeratorRequest = async (id: string, studentIds: string[] = []): Promise<ModeratorRequest> => {
-    const response = await api.patch(`/moderator/requests/${id}/approve`, { studentIds })
+export const acceptModeratorRequest = async (userId: string, studentIds: string[] = []): Promise<ModeratorRequest> => {
+    const response = await api.patch(`/moderator/requests/${userId}/approve`, { studentIds })
     return response.data
 }
 
-export const rejectModeratorRequest = async (id: string): Promise<ModeratorRequest> => {
-    const response = await api.delete(`/moderator/requests/${id}/reject`)
+export const rejectModeratorRequest = async (userId: string): Promise<ModeratorRequest> => {
+    const response = await api.delete(`/moderator/requests/${userId}/reject`)
     return response.data
 }
 
