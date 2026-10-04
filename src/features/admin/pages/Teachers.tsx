@@ -174,6 +174,8 @@ export default function Teachers() {
       country: formData.country,
       city: formData.city,
       age: formData.age ? Number(formData.age) : undefined,
+      group_hour_price: formData.group_hour_price,
+      one_hour_price: formData.one_hour_price,
     };
   };
 
@@ -315,7 +317,10 @@ export default function Teachers() {
                     {t('phone')}
                   </th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
-                    {t('amount')}
+                    {t('oneHourPrice')}
+                  </th>
+                  <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
+                    {t('groupHourPrice')}
                   </th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-700">
                     {t('status')}
@@ -328,13 +333,13 @@ export default function Teachers() {
               <tbody className="divide-y divide-gray-200">
                 {isError ? (
                   <tr>
-                    <td colSpan={isSuperAdmin ? 7 : 6} className="px-6 py-12 text-center text-red-500">
+                    <td colSpan={isSuperAdmin ? 8 : 7} className="px-6 py-12 text-center text-red-500">
                       {t('errorLoadingData')}
                     </td>
                   </tr>
                 ) : currentTeachers.length === 0 ? (
                   <tr>
-                    <td colSpan={isSuperAdmin ? 7 : 6} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={isSuperAdmin ? 8 : 7} className="px-6 py-12 text-center text-gray-500">
                       {t('noTeachersFound')}
                     </td>
                   </tr>
@@ -382,7 +387,12 @@ export default function Teachers() {
                       </td>
                       <td className="px-6 py-4 text-start">
                         <span className="text-sm font-medium text-gray-900">
-                          {currencyLookup[teacher.currencyId] || teacher.currencyId || '-'} {teacher.hour_price?.toFixed(2) ?? '0.00'}
+                          {currencyLookup[teacher.currencyId] || teacher.currencyId || '-'} {(teacher.one_hour_price ?? (teacher as any).hour_price ?? 0)?.toFixed(2)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-start">
+                        <span className="text-sm font-medium text-gray-900">
+                          {currencyLookup[teacher.currencyId] || teacher.currencyId || '-'} {(teacher.group_hour_price ?? 0)?.toFixed(2)}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-start">

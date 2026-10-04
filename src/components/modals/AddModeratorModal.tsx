@@ -21,6 +21,7 @@ interface FormValues {
   password?: string;
   age?: string;
   gender: 'male' | 'female';
+  salary:number;
   studentIds?: string[];
 }
 
@@ -47,6 +48,7 @@ export default function AddModeratorModal({ isOpen, onClose, onSubmit }: AddMode
       password: '',
       age: '',
       gender: 'male',
+      salary:0,
       studentIds: [],
     },
   });
@@ -94,6 +96,7 @@ export default function AddModeratorModal({ isOpen, onClose, onSubmit }: AddMode
         phone: values.phone.trim(),
         password: values.password || undefined,
         age: values.age ? Number(values.age) : undefined,
+        salary:values.salary,
         gender: values.gender,
         studentIds: values.studentIds || [],
       });
@@ -260,6 +263,19 @@ export default function AddModeratorModal({ isOpen, onClose, onSubmit }: AddMode
                     onChange={field.onChange}
                   />
                 )}
+              />
+            </div>
+               <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('salary') || 'المرتب'}
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="1000000"
+                placeholder="2000"
+                {...register('salary')}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-start"
               />
             </div>
 

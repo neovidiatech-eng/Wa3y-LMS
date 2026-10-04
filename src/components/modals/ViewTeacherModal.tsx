@@ -59,6 +59,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
 
   const totalHours = fin?.totalHours ?? 0;
   const hourPrice = fin?.hourPrice ?? activeTeacher.hour_price ?? 0;
+  const groupHourPrice = fin?.groupHourPrice ?? activeTeacher.group_hour_price ?? 0;
   const totalDue = fin?.totalDue ?? 0;
   const completedEarnings = fin?.completedEarnings ?? 0;
   const completedHours = fin?.completedHours ?? 0;
@@ -182,8 +183,12 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                 </p>
               </div>
               <div className="bg-primary-50 rounded-xl px-6 py-3 text-center border border-blue-100">
-                <p className="text-xs text-blue-600 mb-1">{t('hourlyRate') || (language === 'ar' ? 'السعر بالساعة' : 'Hourly Rate')}</p>
+                <p className="text-xs text-blue-600 mb-1">{t('oneHourlyRate') || (language === 'ar' ? 'السعر بالساعة (فردي)' : 'Individual Hourly Rate')}</p>
                 <p className="text-lg font-bold text-blue-700">{hourPrice.toFixed(2)} {currencySymbol}</p>
+              </div>
+              <div className="bg-primary-50 rounded-xl px-6 py-3 text-center border border-blue-100">
+                <p className="text-xs text-blue-600 mb-1">{t('groupHourlyRate') || (language === 'ar' ? 'السعر بالساعة (جماعي)' : 'Group Hourly Rate')}</p>
+                <p className="text-lg font-bold text-blue-700">{groupHourPrice.toFixed(2)} {currencySymbol}</p>
               </div>
               {currencyName && (
                 <div className="bg-gray-50 rounded-xl px-6 py-3 text-center border border-gray-200">

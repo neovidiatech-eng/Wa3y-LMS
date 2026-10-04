@@ -42,7 +42,9 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
       meeting_link: '',
       country: 'Egypt',
       city: '',
-      age: ''
+      age: '',
+      one_hour_price: 0,
+      group_hour_price: 0
     }
   });
 
@@ -164,7 +166,10 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(handleOnSubmit)} className="flex-1 overflow-y-auto no-scrollbar flex flex-col">
+        <form
+          onSubmit={handleSubmit(handleOnSubmit, (formErrors) => console.log('Validation Errors:', formErrors))}
+          className="flex-1 overflow-y-auto no-scrollbar flex flex-col"
+        >
           <div className="p-6 space-y-6 flex-1" dir={language === "ar" ? "rtl" : "ltr"}>
 
             {/* Row 1: Name & Email */}
@@ -216,6 +221,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                           value={field.value}
                           options={countryCodeOptions}
                           onChange={field.onChange}
+                          error={errors.phone_code?.message}
                         />
                       )}
                     />
@@ -266,6 +272,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     value={field.value}
                     options={nationalityOptions}
                     placeholder={t('selectNationality')}
+                    error={errors.nationality?.message}
                     onChange={(val) => {
                       field.onChange(val);
                       handleNationalityChange(val as string);
@@ -282,6 +289,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     label={t('country')}
                     value={field.value}
                     options={countries}
+                    error={errors.country?.message}
                     onChange={(val) => {
                       field.onChange(val);
                       handleCountryChange(val as string);
@@ -302,6 +310,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     value={field.value}
                     options={cityOptions}
                     onChange={field.onChange}
+                    error={errors.city?.message}
                     placeholder={language === 'ar' ? 'اختر المدينة' : 'Select City'}
                   />
                 )}
@@ -315,6 +324,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     label={t('currency')}
                     value={field.value}
                     options={currencyOptions}
+                    error={errors.currency?.message}
                     onChange={field.onChange}
                   />
                 )}
@@ -348,6 +358,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     value={field.value}
                     options={genders.map(g => ({ value: g.id, label: language === 'ar' ? g.label : g.labelEn }))}
                     onChange={field.onChange}
+                    error={errors.gender?.message}
                   />
                 )}
               />
@@ -367,7 +378,7 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
             </div>
 
             {/* Row 7: Status */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 ">
               <Controller
                 name="status"
                 control={control}
@@ -377,12 +388,40 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                     value={field.value}
                     options={statuses.map(s => ({ value: s.id, label: language === 'ar' ? s.label : s.labelEn }))}
                     onChange={field.onChange}
+                    error={errors.status?.message}
                   />
                 )}
               />
             </div>
+            {/* Row 8: Pricing */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('oneHourPrice')}
+                </label>
+                <input
+                  type="number"
+                  placeholder="ex: 30"
+                  {...register('one_hour_price')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                />
+                {errors.one_hour_price && <p className="text-red-500 text-xs mt-1">{errors.one_hour_price.message}</p>}
+              </div>
 
-            {/* Row 8: Subjects */}
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('groupHourPrice')}
+                </label>
+                <input
+                  type="number"
+                  placeholder="ex: 30"
+                  {...register('group_hour_price')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                />
+                {errors.group_hour_price && <p className="text-red-500 text-xs mt-1">{errors.group_hour_price.message}</p>}
+              </div>
+            </div>
+            {/* Row 9: Subjects */}
             <div className="text-start">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 {t('subject')}
@@ -413,6 +452,8 @@ export default function AddTeacherModal({ isOpen, onClose, onSubmit }: AddTeache
                 {errors.subjects && <p className="text-red-500 text-xs mt-1">{errors.subjects.message}</p>}
               </div>
             </div>
+
+           
           </div>
 
           {/* Action Buttons */}
