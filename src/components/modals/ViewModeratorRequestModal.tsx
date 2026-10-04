@@ -11,17 +11,17 @@ import {
   Laptop,
   Heart,
   Clock,
-} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { ModeratorRequest } from '../../types/moderator';
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { ModeratorRequest } from "../../types/moderator";
 
 interface ViewModeratorRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
   request: ModeratorRequest | null;
   isActing?: boolean;
-  onAccept: (moderatorId: string) => void;
-  onReject: (moderatorId: string) => void;
+  onAccept: (request: ModeratorRequest) => void;
+  onReject: (request: ModeratorRequest) => void;
 }
 
 function InfoCard({
@@ -53,40 +53,42 @@ export default function ViewModeratorRequestModal({
   onReject,
 }: ViewModeratorRequestModalProps) {
   const { i18n } = useTranslation();
-  const language = i18n?.language?.split('-')[0] || 'ar';
+  const language = i18n?.language?.split("-")[0] || "ar";
 
   if (!isOpen || !request) return null;
 
-  const effectiveStatus = request.moderator?.status || request.status || 'pending';
-  const isPending = effectiveStatus === 'pending';
+  const effectiveStatus =
+    request.moderator?.status || request.status || "pending";
+  const isPending = effectiveStatus === "pending";
 
   const getStatusBadgeClass = (status: string) => {
-    if (status === 'active') return 'bg-green-100 text-green-700';
-    if (status === 'inactive') return 'bg-gray-100 text-gray-600';
-    return 'bg-yellow-100 text-yellow-700';
+    if (status === "active") return "bg-green-100 text-green-700";
+    if (status === "inactive") return "bg-gray-100 text-gray-600";
+    return "bg-yellow-100 text-yellow-700";
   };
 
   const getStatusDotClass = (status: string) => {
-    if (status === 'active') return 'bg-green-500';
-    if (status === 'inactive') return 'bg-gray-400';
-    return 'bg-yellow-500';
+    if (status === "active") return "bg-green-500";
+    if (status === "inactive") return "bg-gray-400";
+    return "bg-yellow-500";
   };
 
   const getStatusLabel = (status: string) => {
-    if (status === 'active') return language === 'ar' ? 'نشط' : 'Active';
-    if (status === 'inactive') return language === 'ar' ? 'غير نشط' : 'Inactive';
-    return language === 'ar' ? 'معلق' : 'Pending';
+    if (status === "active") return language === "ar" ? "نشط" : "Active";
+    if (status === "inactive")
+      return language === "ar" ? "غير نشط" : "Inactive";
+    return language === "ar" ? "معلق" : "Pending";
   };
 
   const formatDate = (dateStr: string | null | undefined) => {
-    if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US');
+    if (!dateStr) return "-";
+    return new Date(dateStr).toLocaleDateString(
+      language === "ar" ? "ar-EG" : "en-US",
+    );
   };
 
   const boolLabel = (val: boolean) =>
-    val
-      ? language === 'ar' ? 'نعم' : 'Yes'
-      : language === 'ar' ? 'لا' : 'No';
+    val ? (language === "ar" ? "نعم" : "Yes") : language === "ar" ? "لا" : "No";
 
   return (
     <div
@@ -96,12 +98,12 @@ export default function ViewModeratorRequestModal({
       <div
         className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
-        dir={language === 'ar' ? 'rtl' : 'ltr'}
+        dir={language === "ar" ? "rtl" : "ltr"}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="text-lg font-bold text-gray-900">
-            {language === 'ar' ? 'تفاصيل الطلب' : 'Request Details'}
+            {language === "ar" ? "تفاصيل الطلب" : "Request Details"}
           </h2>
           <button
             onClick={onClose}
@@ -116,7 +118,7 @@ export default function ViewModeratorRequestModal({
           {/* Applicant header */}
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xl uppercase shrink-0">
-              {request.name?.charAt(0) || '?'}
+              {request.name?.charAt(0) || "?"}
             </div>
             <div className="text-start">
               <p className="text-lg font-bold text-gray-900">{request.name}</p>
@@ -124,7 +126,9 @@ export default function ViewModeratorRequestModal({
               <span
                 className={`inline-flex items-center gap-1.5 mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${getStatusBadgeClass(effectiveStatus)}`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${getStatusDotClass(effectiveStatus)}`} />
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${getStatusDotClass(effectiveStatus)}`}
+                />
                 {getStatusLabel(effectiveStatus)}
               </span>
             </div>
@@ -134,81 +138,114 @@ export default function ViewModeratorRequestModal({
           <div className="grid grid-cols-2 gap-3">
             <InfoCard
               icon={<Phone className="w-4 h-4 text-blue-500" />}
-              label={language === 'ar' ? 'الهاتف' : 'Phone'}
-              value={`${request.code_country || ''} ${request.phone || ''}`.trim() || '-'}
+              label={language === "ar" ? "الهاتف" : "Phone"}
+              value={
+                `${request.code_country || ""} ${request.phone || ""}`.trim() ||
+                "-"
+              }
             />
             <InfoCard
               icon={<Mail className="w-4 h-4 text-purple-500" />}
-              label={language === 'ar' ? 'البريد الإلكتروني' : 'Email'}
-              value={request.email || '-'}
+              label={language === "ar" ? "البريد الإلكتروني" : "Email"}
+              value={request.email || "-"}
             />
             <InfoCard
               icon={<MapPin className="w-4 h-4 text-red-500" />}
-              label={language === 'ar' ? 'المحافظة' : 'Governorate'}
-              value={request.additionalData?.governorate || '-'}
+              label={language === "ar" ? "المحافظة" : "Governorate"}
+              value={request.additionalData?.governorate || "-"}
             />
             <InfoCard
               icon={<Heart className="w-4 h-4 text-pink-500" />}
-              label={language === 'ar' ? 'الحالة الاجتماعية' : 'Marital Status'}
-              value={request.additionalData?.maritalStatus || '-'}
+              label={language === "ar" ? "الحالة الاجتماعية" : "Marital Status"}
+              value={request.additionalData?.maritalStatus || "-"}
             />
             <InfoCard
               icon={<Calendar className="w-4 h-4 text-orange-500" />}
-              label={language === 'ar' ? 'تاريخ الميلاد' : 'Birth Date'}
+              label={language === "ar" ? "تاريخ الميلاد" : "Birth Date"}
               value={formatDate(request.additionalData?.birthDate)}
             />
             <InfoCard
               icon={<Calendar className="w-4 h-4 text-gray-400" />}
-              label={language === 'ar' ? 'تاريخ الطلب' : 'Request Date'}
+              label={language === "ar" ? "تاريخ الطلب" : "Request Date"}
               value={formatDate(request.createdAt)}
             />
             <InfoCard
               icon={<GraduationCap className="w-4 h-4 text-indigo-500" />}
-              label={language === 'ar' ? 'المؤهل العلمي' : 'Qualification'}
-              value={request.additionalData?.qualification || '-'}
+              label={language === "ar" ? "المؤهل العلمي" : "Qualification"}
+              value={request.additionalData?.qualification || "-"}
             />
             <InfoCard
               icon={<Briefcase className="w-4 h-4 text-teal-500" />}
-              label={language === 'ar' ? 'لديه وظيفة حالية' : 'Has Current Job'}
+              label={language === "ar" ? "لديه وظيفة حالية" : "Has Current Job"}
               value={
                 request.additionalData != null
                   ? boolLabel(request.additionalData.hasCurrentJob)
-                  : '-'
+                  : "-"
               }
             />
+            
             <InfoCard
               icon={<Laptop className="w-4 h-4 text-cyan-500" />}
-              label={language === 'ar' ? 'لديه لابتوب شخصي' : 'Has Personal Laptop'}
+              label={
+                language === "ar" ? "لديه لابتوب شخصي" : "Has Personal Laptop"
+              }
               value={
                 request.additionalData != null
                   ? boolLabel(request.additionalData.hasPersonalLaptop)
-                  : '-'
+                  : "-"
               }
             />
             <InfoCard
               icon={<Clock className="w-4 h-4 text-yellow-500" />}
-              label={language === 'ar' ? 'ساعات الفراغ اليومية' : 'Daily Free Hours'}
-              value={request.additionalData?.dailyFreeTimeHours || '-'}
+              label={
+                language === "ar" ? "ساعات الفراغ اليومية" : "Daily Free Hours"
+              }
+              value={request.additionalData?.dailyFreeTimeHours || "-"}
             />
             <InfoCard
               icon={<Clock className="w-4 h-4 text-emerald-500" />}
-              label={language === 'ar' ? 'متاح من 3 إلى 8 مساءً' : 'Free 3–8 PM'}
+              label={
+                language === "ar" ? "متاح من 3 إلى 8 مساءً" : "Free 3–8 PM"
+              }
               value={
                 request.additionalData != null
                   ? boolLabel(request.additionalData.hasFreeTimeFrom3To8)
-                  : '-'
+                  : "-"
               }
             />
             <InfoCard
               icon={<CheckCircle className="w-4 h-4 text-green-500" />}
-              label={language === 'ar' ? 'وافق على شروط العمل' : 'Agreed to Work Conditions'}
+              label={
+                language === "ar"
+                  ? "وافق على شروط العمل"
+                  : "Agreed to Work Conditions"
+              }
               value={
                 request.additionalData != null
                   ? boolLabel(request.additionalData.agreedToWorkConditions)
-                  : '-'
+                  : "-"
               }
             />
+            {request.redisData?.expectedSalary != null && (
+              <InfoCard
+                icon={<Briefcase className="w-4 h-4 text-emerald-500" />}
+                label={language === "ar" ? "الراتب المتوقع" : "Expected Salary"}
+                value={`${request.redisData.expectedSalary}`}
+              />
+            )}
           </div>
+
+          {/* Notes */}
+          {request.additionalData?.notes && (
+            <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-start">
+              <p className="text-xs text-amber-700 font-medium">
+                {language === "ar" ? "ملاحظات" : "Notes"}
+              </p>
+              <p className="text-sm text-amber-900 font-medium mt-0.5">
+                {request.additionalData.notes}
+              </p>
+            </div>
+          )}
 
           {/* WhatsApp number */}
           {request.additionalData?.whatsappNumber && (
@@ -216,7 +253,7 @@ export default function ViewModeratorRequestModal({
               <Phone className="w-4 h-4 text-green-600 shrink-0" />
               <div className="text-start">
                 <p className="text-xs text-green-700 font-medium">
-                  {language === 'ar' ? 'رقم واتساب' : 'WhatsApp Number'}
+                  {language === "ar" ? "رقم واتساب" : "WhatsApp Number"}
                 </p>
                 <p className="text-sm text-green-800 font-semibold">
                   {request.additionalData.whatsappNumber}
@@ -230,25 +267,25 @@ export default function ViewModeratorRequestModal({
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => {
-                  onReject(request.moderator.userId);
+                  onReject(request);
                   onClose();
                 }}
                 disabled={isActing}
                 className="flex-1 flex items-center justify-center gap-2 py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100 font-medium transition-colors disabled:opacity-50"
               >
                 <XCircle className="w-4 h-4" />
-                {language === 'ar' ? 'رفض الطلب' : 'Reject'}
+                {language === "ar" ? "رفض الطلب" : "Reject"}
               </button>
               <button
                 onClick={() => {
-                  onAccept(request.moderator.userId);
+                  onAccept(request);
                   onClose();
                 }}
                 disabled={isActing}
                 className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-medium transition-colors disabled:opacity-50"
               >
                 <CheckCircle className="w-4 h-4" />
-                {language === 'ar' ? 'قبول الطلب' : 'Accept'}
+                {language === "ar" ? "قبول الطلب" : "Accept"}
               </button>
             </div>
           )}

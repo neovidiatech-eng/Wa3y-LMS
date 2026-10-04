@@ -13,9 +13,17 @@ export const getModeratorRequests = async (): Promise<ModeratorRequestsResponse>
     return response.data
 }
 
-export const acceptModeratorRequest = async (userId: string, studentIds: string[] = []): Promise<ModeratorRequest> => {
-    const response = await api.patch(`/moderator/requests/${userId}/approve`, { studentIds })
-    return response.data
+export const acceptModeratorRequest = async (
+    userId: string,
+    studentIds: string[] = [],
+    salary?: number
+): Promise<ModeratorRequest> => {
+    const payload: { studentIds: string[]; salary?: number } = { studentIds };
+    if (salary !== undefined && !isNaN(salary)) {
+        payload.salary = salary;
+    }
+    const response = await api.patch(`/moderator/requests/${userId}/approve`, payload);
+    return response.data;
 }
 
 export const rejectModeratorRequest = async (userId: string): Promise<ModeratorRequest> => {

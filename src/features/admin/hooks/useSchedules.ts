@@ -5,6 +5,7 @@ import {
   createRecurringSchedule,
   deleteSchedule,
   deleteRecurringScheduale,
+  syncStatuses,
 } from "../services/SchedulesServices";
 import {
   UpdateSchedulePayload,
@@ -15,6 +16,7 @@ import {
   getAllSchedules,
   searchSchedules,
   getSchedulesForTeacher,
+  
 } from "../services/SessionsServices";
 import { message } from "antd";
 
@@ -133,6 +135,20 @@ export const useUpdateSchedule = () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
       message.success(data.message || 'Schedule Updated Successfully');
     },
+  });
+};
+
+export const useSyncStatuses = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => syncStatuses(),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      message.success(data?.message || 'Statuses Synced Successfully');
+    },
+    onError: (error: any) => {
+      message.error(error?.response?.data?.message || 'Failed to sync statuses');
+    }
   });
 };
 

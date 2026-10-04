@@ -11,10 +11,11 @@ export interface GetStudentsParams {
   status?: string;
   active?: boolean;
   paid?: string;
+  noPlan?: boolean | string;
 }
 
 export const getStudents = async (params: GetStudentsParams = {}): Promise<StudentsFetchResponse> => {
-  const { page, limit, search, country, planId, status, active, paid } = params;
+  const { page, limit, search, country, planId, status, active, paid, noPlan } = params;
 
   const queryParams: Record<string, string | number | boolean> = {};
   if (page !== undefined) queryParams.page = page;
@@ -25,6 +26,7 @@ export const getStudents = async (params: GetStudentsParams = {}): Promise<Stude
   if (status && status !== "all") queryParams.status = status;
   if (active !== undefined) queryParams.active = active;
   if (paid && paid !== "all") queryParams.paid = paid;
+  if (noPlan !== undefined) queryParams.noPlan = noPlan;
 
   const response = await api.get("/students", {
     params: queryParams

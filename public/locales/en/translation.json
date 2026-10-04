@@ -97,6 +97,8 @@
   "editModerator": "Edit Moderator",
   "viewModerator": "Moderator Details",
   "deleteConfirmModerator": "Are you sure you want to delete this moderator?",
+  "salary": "Salary",
+  "expectedSalary": "Expected Salary",
   "assignedStudents": "Assigned Students",
   "assignStudents": "Assign Students",
   "totalModerators": "Total Moderators",

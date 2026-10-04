@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search, Plus, Eye, Trash2, Edit } from "lucide-react";
+import { Search, Plus, Eye, Trash2, Edit, RefreshCw } from "lucide-react";
 import Pagination from "../../../components/ui/Pagination";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,6 +8,7 @@ import {
   useCreateRecurringSchedule,
   useUpdateSchedule,
   useDeleteSchedule,
+  useSyncStatuses,
   // useDeleteGroupedSchedule,
 } from "../hooks/useSchedules";
 import AddSessionModal from "../../../components/modals/AddSessionModal";
@@ -55,6 +56,7 @@ export default function Sessions() {
   const createRecurringSchedule = useCreateRecurringSchedule();
   const updateSchedule = useUpdateSchedule();
   const deleteSchedule = useDeleteSchedule();
+  const { mutate: syncStatuses, isPending: isSyncing } = useSyncStatuses();
   // const deleteGroupedSchedule = useDeleteGroupedSchedule();
 
   const handleUpdateSession = async (
@@ -389,6 +391,14 @@ export default function Sessions() {
                 {t("singleSession")}
               </button>
 
+              <button
+                onClick={() => syncStatuses()}
+                disabled={isSyncing}
+                className="flex flex-1 md:flex-none items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl transition-colors font-medium whitespace-nowrap disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
+                {language === "ar" ? "مزامنة الحالات" : "Sync Statuses"}
+              </button>
             </div>
           </div>
 
