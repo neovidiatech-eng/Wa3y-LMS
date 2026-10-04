@@ -120,6 +120,8 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
         country: teacherCountry,
         city: teacherData.user.city || '',
         age: teacherData.user.age ? String(teacherData.user.age) : '',
+        one_hour_price: (teacherData as any).one_hour_price ?? (teacherData as any).hour_price ?? (teacherData as any).oneHourPrice ?? (teacherData as any).hourPrice ?? '',
+        group_hour_price: (teacherData as any).group_hour_price ?? (teacherData as any).groupHourPrice ?? '',
       });
     }
   }, [teacherData, reset, currenciesData]);
@@ -429,6 +431,35 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                   />
                 )}
               />
+            </div>
+
+            {/* Row 6: One Hour Price and Group Hour Price */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('oneHourPrice')}
+                </label>
+                <input
+                  type="number"
+                  placeholder="ex: 30"
+                  {...register('one_hour_price')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                />
+                {errors.one_hour_price && <p className="text-red-500 text-xs mt-1">{errors.one_hour_price.message}</p>}
+              </div>
+
+              <div className="text-start">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('groupHourPrice')}
+                </label>
+                <input
+                  type="number"
+                  placeholder="ex: 30"
+                  {...register('group_hour_price')}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-start"
+                />
+                {errors.group_hour_price && <p className="text-red-500 text-xs mt-1">{errors.group_hour_price.message}</p>}
+              </div>
             </div>
 
             {/* Subjects */}

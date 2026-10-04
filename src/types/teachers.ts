@@ -50,15 +50,14 @@ export interface Teacher {
     id: string;
     user_id: string;
     currencyId: string;
-    hour_price: number;
     gender: 'Male' | 'Female';
     active: boolean;
     nationality?: string;
     createdAt: string;
     updatedAt: string;
     roleId: string | null;
-    avgRating?: number;
-    totalReviews?: number;
+    one_hour_price?: number;
+    group_hour_price?: number;
     user: {
         id: string;
         email: string;
@@ -116,6 +115,8 @@ export interface CreateTeacherInput {
     country?: string;
     city?: string;
     age?: number | string;
+    one_hour_price: number;
+    group_hour_price: number;
 }
 
 export interface UpdateTeacherInput {
@@ -134,6 +135,8 @@ export interface UpdateTeacherInput {
     country?: string;
     city?: string;
     age?: number | string;
+    one_hour_price: number;
+    group_hour_price: number;
 }
 
 export type TeachersData = TeachersFetchResponse['data'];

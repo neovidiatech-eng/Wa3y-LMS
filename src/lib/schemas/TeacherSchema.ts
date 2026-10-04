@@ -30,6 +30,8 @@ export const getTeacherSchema = (t: TFunc) => z.object({
   country: z.string().optional(),
   age: z.string().optional(),
   city: z.string().optional(),
+  one_hour_price: z.coerce.number().min(1, t("validation.min", { count: 1 })),
+  group_hour_price: z.coerce.number().min(1, t("validation.min", { count: 1 })),
 });
 
 export type TeacherFormData = z.infer<ReturnType<typeof getTeacherSchema>>;

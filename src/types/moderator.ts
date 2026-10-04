@@ -50,6 +50,7 @@ export interface Moderator {
   createdAt: string;
   updatedAt: string;
   user: ModeratorUser;
+  salary:number;
   studentModerators: StudentModerator[];
 }
 
@@ -82,6 +83,7 @@ export interface CreateModeratorInput {
   phone: string;
   age?: number | string;
   gender: 'male' | 'female' | string;
+  salary:number;
   studentIds?: string[];
 }
 
@@ -94,6 +96,7 @@ export interface UpdateModeratorInput {
   age?: number | string;
   gender?: 'male' | 'female' | string;
   studentIds?: string[];
+  salary:number;
   status?: 'active' | 'inactive' | string;
 }
 

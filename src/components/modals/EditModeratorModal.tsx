@@ -23,6 +23,7 @@ interface FormValues {
   age?: string;
   gender: 'male' | 'female';
   studentIds?: string[];
+  salary: number;
   status: 'active' | 'inactive' | string;
 }
 
@@ -74,6 +75,7 @@ export default function EditModeratorModal({
         age: '',
         gender: (moderator.gender as 'male' | 'female') || 'male',
         studentIds: moderator.studentModerators?.map((sm) => sm.studentId) || [],
+        salary:moderator.salary,
         status: moderator.status || 'active',
       });
     }
@@ -123,6 +125,7 @@ export default function EditModeratorModal({
         phone: values.phone.trim(),
         gender: values.gender,
         studentIds: values.studentIds || [],
+        salary:values.salary,
         status: values.status,
       };
       if (values.password && values.password.trim()) {
@@ -267,6 +270,20 @@ export default function EditModeratorModal({
                 max="100"
                 placeholder="25"
                 {...register('age')}
+                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-start"
+              />
+            </div>
+
+              <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t('salary') || 'الراتب'}
+              </label>
+              <input
+                type="number"
+                min="18"
+                max="100"
+                placeholder="25"
+                {...register('salary')}
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-start"
               />
             </div>

@@ -28,6 +28,8 @@ export const getTeacherById = async (id: string): Promise<Teacher> => {
 }
 
 export const createTeacher = async (data: CreateTeacherInput): Promise<TeachersFetchResponse> => {
+    console.log(data, "here in create Teacher");
+
     const response = await api.post("/teachers/create", data);
     return response.data
 }
