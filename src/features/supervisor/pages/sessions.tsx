@@ -64,6 +64,10 @@ export default function Sessions() {
     if (!sessionToDelete) return;
     try {
       await deleteSchedule.mutateAsync(sessionToDelete.id);
+      if (selectedSession?.id === sessionToDelete.id) {
+        setShowViewModal(false);
+        setSelectedSession(null);
+      }
       setSessionToDelete(null);
     } catch (error) {
       console.error("Delete session failed:", error);
@@ -642,6 +646,9 @@ export default function Sessions() {
           setShowViewModal(false);
           setSelectedSession(s);
           setShowEditModal(true);
+        }}
+        onDeleteSession={(s) => {
+          handleDeleteSession(s);
         }}
       />
 

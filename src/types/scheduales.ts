@@ -127,10 +127,12 @@ export interface Schedule {
     students?: Student[];
     groupStudents?: {
         id?: string;
-        student_id?: string;
         studentId?: string;
-        schedule_id?: string;
-        student?: Student;
+        scheduleId?: string;
+        joinTime: string;
+        leaveTime: string;
+        isAttended: boolean;
+        student?:Student;
     }[];
     teacher: Teacher;
     subject?: ScheduleSubject;
