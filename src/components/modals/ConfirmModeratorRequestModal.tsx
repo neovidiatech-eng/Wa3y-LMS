@@ -1,19 +1,22 @@
-import { useState, useMemo } from 'react';
-import { X, CheckCircle, XCircle, Loader2, Search, Users } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { X, CheckCircle, XCircle, Loader2, Search, Users, DollarSign } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useStudents } from '../../features/admin/hooks/useStudents';
+import type { ModeratorRequest } from '../../types/moderator';
 
 interface ConfirmModeratorRequestModalProps {
   isOpen: boolean;
   type: 'accept' | 'reject' | null;
+  request?: ModeratorRequest | null;
   isActing?: boolean;
-  onConfirm: (studentIds: string[]) => void;
+  onConfirm: (studentIds: string[], salary?: number) => void;
   onClose: () => void;
 }
 
 export default function ConfirmModeratorRequestModal({
   isOpen,
   type,
+  request,
   isActing = false,
   onConfirm,
   onClose,
@@ -23,6 +26,18 @@ export default function ConfirmModeratorRequestModal({
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [studentSearch, setStudentSearch] = useState('');
+
+  const defaultSalary =
+    request?.redisData?.expectedSalary ?? request?.moderator?.salary ?? 0;
+  const [expectedSalary, setExpectedSalary] = useState<number | string>(defaultSalary);
+
+  useEffect(() => {
+    if (isOpen) {
+      setExpectedSalary(defaultSalary);
+      setSelectedIds([]);
+      setStudentSearch('');
+    }
+  }, [isOpen, defaultSalary]);
 
   const { data: studentsResponse } = useStudents({ limit: 1000 }, { enabled: isOpen && type === 'accept' }) as any;
   const allStudents = studentsResponse?.data?.studentsData || [];
@@ -51,7 +66,11 @@ export default function ConfirmModeratorRequestModal({
   };
 
   const handleConfirm = () => {
-    onConfirm(selectedIds);
+    const salaryNum =
+      expectedSalary === '' || expectedSalary === undefined
+        ? undefined
+        : Number(expectedSalary);
+    onConfirm(selectedIds, salaryNum);
     setSelectedIds([]);
     setStudentSearch('');
   };
@@ -110,93 +129,136 @@ export default function ConfirmModeratorRequestModal({
 
           {/* ── Students multi-select (accept only) ────────────────────────── */}
           {isAccept && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-green-600" />
-                  {language === 'ar' ? 'إسناد طلاب (اختياري)' : 'Assign Students (optional)'}
-                </label>
-                {selectedIds.length > 0 && (
-                  <span className="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">
-                    {selectedIds.length} {language === 'ar' ? 'محدد' : 'selected'}
-                  </span>
-                )}
-              </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-green-600" />
+                    {language === 'ar' ? 'إسناد طلاب' : 'Assign Students'}
+                  </label>
+                  {selectedIds.length > 0 && (
+                    <span className="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">
+                      {selectedIds.length} {language === 'ar' ? 'محدد' : 'selected'}
+                    </span>
+                  )}
+                </div>
 
-              {/* Search box */}
-              <div className="relative">
-                <Search
-                  className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4`}
-                />
-                <input
-                  type="text"
-                  placeholder={language === 'ar' ? 'بحث بالاسم أو البريد...' : 'Search by name or email...'}
-                  value={studentSearch}
-                  onChange={(e) => setStudentSearch(e.target.value)}
-                  className={`w-full ${language === 'ar' ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 transition-all`}
-                />
-              </div>
+                {/* Search box */}
+                <div className="relative">
+                  <Search
+                    className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4`}
+                  />
+                  <input
+                    type="text"
+                    placeholder={language === 'ar' ? 'بحث بالاسم أو البريد...' : 'Search by name or email...'}
+                    value={studentSearch}
+                    onChange={(e) => setStudentSearch(e.target.value)}
+                    className={`w-full ${language === 'ar' ? 'pr-9 pl-3' : 'pl-9 pr-3'} py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 transition-all`}
+                  />
+                </div>
 
-              {/* Students list */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto divide-y divide-gray-100">
-                {allStudents.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-gray-400">
-                    {language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
-                  </div>
-                ) : filteredStudents.length === 0 ? (
-                  <div className="py-6 text-center text-xs text-gray-400">
-                    {language === 'ar' ? 'لا توجد نتائج' : 'No results found'}
-                  </div>
-                ) : (
-                  filteredStudents.map((student: any) => {
-                    const isSelected = selectedIds.includes(student.id);
-                    return (
-                      <button
-                        key={student.id}
-                        type="button"
-                        onClick={() => toggleStudent(student.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-start transition-colors ${
-                          isSelected ? 'bg-green-50' : 'hover:bg-gray-50'
-                        }`}
-                      >
-                        {/* Checkbox */}
-                        <span
-                          className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                            isSelected
-                              ? 'bg-green-600 border-green-600'
-                              : 'border-gray-300'
+                {/* Students list */}
+                <div className="border border-gray-200 rounded-xl overflow-hidden max-h-40 overflow-y-auto divide-y divide-gray-100">
+                  {allStudents.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-gray-400">
+                      {language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
+                    </div>
+                  ) : filteredStudents.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-gray-400">
+                      {language === 'ar' ? 'لا توجد نتائج' : 'No results found'}
+                    </div>
+                  ) : (
+                    filteredStudents.map((student: any) => {
+                      const isSelected = selectedIds.includes(student.id);
+                      return (
+                        <button
+                          key={student.id}
+                          type="button"
+                          onClick={() => toggleStudent(student.id)}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-start transition-colors ${
+                            isSelected ? 'bg-green-50' : 'hover:bg-gray-50'
                           }`}
                         >
-                          {isSelected && (
-                            <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 8">
-                              <path d="M1 4l3 3 5-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                          )}
-                        </span>
+                          {/* Checkbox */}
+                          <span
+                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
+                              isSelected
+                                ? 'bg-green-600 border-green-600'
+                                : 'border-gray-300'
+                            }`}
+                          >
+                            {isSelected && (
+                              <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 8">
+                                <path d="M1 4l3 3 5-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            )}
+                          </span>
 
-                        {/* Avatar */}
-                        <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0 uppercase">
-                          {student.user?.name?.charAt(0) || 'S'}
-                        </span>
+                          {/* Avatar */}
+                          <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0 uppercase">
+                            {student.user?.name?.charAt(0) || 'S'}
+                          </span>
 
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-800 truncate">
-                            {student.user?.name || '-'}
-                          </p>
-                          <p className="text-xs text-gray-400 truncate">
-                            {student.user?.email || student.country || ''}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })
-                )}
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-800 truncate">
+                              {student.user?.name || '-'}
+                            </p>
+                            <p className="text-xs text-gray-400 truncate">
+                              {student.user?.email || student.country || ''}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Expected Salary Input */}
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
+                    <DollarSign className="w-4 h-4 text-green-600" />
+                    {language === 'ar' ? 'الراتب المتفق عليه' : 'Agreed Salary'}
+                  </label>
+                  {request?.redisData?.expectedSalary != null && (
+                    <span className="text-xs bg-amber-50 text-amber-700 font-medium px-2 py-0.5 rounded-full border border-amber-200/60">
+                      {language === 'ar'
+                        ? `المتوقع: ${request.redisData.expectedSalary} ج.م`
+                        : `Expected: ${request.redisData.expectedSalary} EGP`}
+                    </span>
+                  )}
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0"
+                    step="100"
+                    placeholder={language === 'ar' ? 'أدخل الراتب...' : 'Enter salary...'}
+                    value={expectedSalary}
+                    onChange={(e) =>
+                      setExpectedSalary(
+                        e.target.value === '' ? '' : Number(e.target.value)
+                      )
+                    }
+                    className={`w-full ${
+                      language === 'ar' ? 'pl-12 pr-4' : 'pr-12 pl-4'
+                    } py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none `}
+                  />
+                  <span
+                    className={`absolute ${
+                      language === 'ar' ? 'left-3' : 'right-3'
+                    } top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400 pointer-events-none`}
+                  >
+                    {language === 'ar' ? 'ج.م' : 'EGP'}
+                  </span>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <button
               onClick={handleClose}
               className="flex-1 py-2.5 px-4 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 font-medium transition-colors text-sm"

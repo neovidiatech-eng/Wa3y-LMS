@@ -105,6 +105,12 @@ export interface ChangeModeratorStatusInput {
   status: 'active' | 'inactive' | string;
 }
 
+
+export interface redisData{
+  user_id:string;
+  gender:string;
+  expectedSalary:number;
+}
 export interface SingleModeratorResponse {
   message: string;
   status: number;
@@ -114,9 +120,8 @@ export interface SingleModeratorResponse {
 export type ModeratorsFetchResponse = ModeratorsResponse;
 export type ModeratorsData = ModeratorsResponse['data'];
 
-// ── Moderator Request (pending sign-up) types ────────────────────────────────
-
 export interface ModeratorRequestAdditionalData {
+  notes?: string;
   birthDate: string;
   governorate: string;
   hasCurrentJob: boolean;
@@ -133,6 +138,7 @@ export interface ModeratorRequestModerator {
   id: string;
   userId: string;
   gender: 'male' | 'female' | string;
+  salary?: number;
   status: 'pending' | 'active' | 'inactive' | string;
   createdAt: string;
   updatedAt: string;
@@ -161,6 +167,7 @@ export interface ModeratorRequest {
   city: string;
   additionalData: ModeratorRequestAdditionalData;
   moderator: ModeratorRequestModerator;
+  redisData: redisData | null;
 }
 
 export interface ModeratorRequestsResponse {
@@ -168,7 +175,8 @@ export interface ModeratorRequestsResponse {
   status: number;
   lang?: string;
   data: {
-    requests: ModeratorRequest[];
+    allRedisData?: ModeratorRequest[];
+    requests?: ModeratorRequest[];
     pagination: Pagination;
   };
 }
