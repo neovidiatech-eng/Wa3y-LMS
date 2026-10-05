@@ -55,6 +55,7 @@ export default function Students() {
     let apiStatus: string | undefined = undefined;
     let apiActive: boolean | undefined = undefined;
     let apiPaid: string | undefined = undefined;
+    let apiNoPlan: boolean | undefined = undefined;
 
     if (selectedStatus === 'approved' || selectedStatus === 'active') {
       apiActive = true;
@@ -66,6 +67,8 @@ export default function Students() {
       apiStatus = 'rejected';
     } else if (selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid') {
       apiPaid = 'unpaid';
+    } else if (selectedStatus === 'studentsWithNoPlans' || selectedStatus === 'noPlan') {
+      apiNoPlan = true;
     }
 
     return {
@@ -77,6 +80,7 @@ export default function Students() {
       status: apiStatus,
       active: apiActive,
       paid: apiPaid,
+      noPlan: apiNoPlan,
     };
   }, [currentPage, itemsPerPage, debouncedSearch, selectedCountry, selectedGrade, selectedStatus]);
 
@@ -125,11 +129,14 @@ export default function Students() {
   const totalPages = pagination?.totalPages ?? 1;
 
   const paginatedStudents = useMemo(() => {
+    if (isModerator && (selectedStatus === 'studentsWithNoPlans' || selectedStatus === 'noPlan')) {
+      return studentsList.filter((student) => !student.planId);
+    }
     if (selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid') {
       return studentsList.filter((student) => student.paid === 'unpaid');
     }
     return studentsList;
-  }, [studentsList, selectedStatus]);
+  }, [studentsList, selectedStatus, isModerator]);
 
   const { mutateAsync: createStudent } = useCreateStudent();
   const { mutateAsync: updateStudent } = useUpdateStudent();
@@ -297,16 +304,18 @@ export default function Students() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         {stats.map((stat) => {
-          const isClickable = stat.id === 'total' || stat.id === 'active' || stat.id === 'inactive' || stat.id === 'studentsWithUnpaid';
+          const isClickable = stat.id === 'total' || stat.id === 'active' || stat.id === 'inactive' || stat.id === 'studentsWithNoPlans' || stat.id === 'studentsWithUnpaid';
           const isSelected =
             (stat.id === 'total' && selectedStatus === 'all') ||
             (stat.id === 'active' && (selectedStatus === 'approved' || selectedStatus === 'active')) ||
             (stat.id === 'inactive' && (selectedStatus === 'inactive' || selectedStatus === 'pending')) ||
+            (stat.id === 'studentsWithNoPlans' && (selectedStatus === 'studentsWithNoPlans' || selectedStatus === 'noPlan')) ||
             (stat.id === 'studentsWithUnpaid' && (selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid'));
 
           const getSelectionStyle = (id: string) => {
             if (id === 'active') return 'border-2 border-green-500 shadow-md ring-2 ring-green-200';
             if (id === 'inactive') return 'border-2 border-orange-500 shadow-md ring-2 ring-orange-200';
+            if (id === 'studentsWithNoPlans') return 'border-2 border-purple-500 shadow-md ring-2 ring-purple-200';
             if (id === 'studentsWithUnpaid') return 'border-2 border-red-500 shadow-md ring-2 ring-red-200';
             return 'border-2 border-blue-500 shadow-md ring-2 ring-blue-200';
           };
@@ -325,6 +334,10 @@ export default function Students() {
                 } else if (stat.id === 'inactive') {
                   setSelectedStatus((prev) =>
                     prev === 'inactive' || prev === 'pending' ? 'all' : 'inactive'
+                  );
+                } else if (stat.id === 'studentsWithNoPlans') {
+                  setSelectedStatus((prev) =>
+                    prev === 'studentsWithNoPlans' || prev === 'noPlan' ? 'all' : 'studentsWithNoPlans'
                   );
                 } else if (stat.id === 'studentsWithUnpaid') {
                   setSelectedStatus((prev) =>
@@ -369,9 +382,11 @@ export default function Students() {
               <strong className="font-semibold">
                 {selectedStatus === 'approved' || selectedStatus === 'active'
                   ? t('activeStudents')
-                  : selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid'
-                    ? (t('studentsWithUnpaid') || (language === 'ar' ? 'الطلاب غير المدفوعين' : 'Unpaid Students'))
-                    : t('inactiveStudents')}
+                  : selectedStatus === 'studentsWithNoPlans' || selectedStatus === 'noPlan'
+                    ? (t('studentsWithNoPlans') || (language === 'ar' ? 'الطلاب بدون خطة' : 'Students with no plans'))
+                    : selectedStatus === 'studentsWithUnpaid' || selectedStatus === 'unpaid'
+                      ? (t('studentsWithUnpaid') || (language === 'ar' ? 'الطلاب غير المدفوعين' : 'Unpaid Students'))
+                      : t('inactiveStudents')}
               </strong>
             </span>
           </div>

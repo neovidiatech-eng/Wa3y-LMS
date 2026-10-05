@@ -98,6 +98,8 @@
   "editModerator": "تعديل بيانات المشرف",
   "viewModerator": "تفاصيل المشرف",
   "deleteConfirmModerator": "هل أنت متأكد من حذف هذا المشرف؟",
+  "salary": "الراتب",
+  "expectedSalary": "الراتب المتوقع",
   "assignedStudents": "الطلاب المسندين",
   "assignStudents": "إسناد طلاب",
   "totalModerators": "إجمالي المشرفين",

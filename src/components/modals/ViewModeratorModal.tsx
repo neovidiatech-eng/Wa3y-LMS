@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { X, UserCheck, Mail, Phone, Calendar, Users, GraduationCap, Award, CheckCircle, Loader2 } from 'lucide-react';
+import { X, UserCheck, Mail, Phone, Calendar, Users, GraduationCap, Award, CheckCircle, Loader2, DollarSign } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Moderator } from '../../types/moderator';
 import { useModeratorById } from '../../features/admin/hooks/useModerator';
@@ -164,6 +164,18 @@ export default function ViewModeratorModal({ isOpen, onClose, moderator: initial
                 </div>
               </div>
             </div>
+
+               <div className="p-4 bg-gray-50/80 rounded-xl border border-gray-100 flex items-center gap-3">
+                <div className="p-2.5 bg-purple-50 text-purple-600 rounded-lg">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">{t('salary')}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {moderator.salary}
+                  </div>
+                </div>
+              </div>
 
             {/* Assigned Students Section */}
             <div className="space-y-3">

@@ -273,15 +273,13 @@ export default function EditModeratorModal({
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-start"
               />
             </div>
-
-              <div>
+            {/* Salary */ }
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('salary') || 'الراتب'}
               </label>
               <input
                 type="number"
-                min="18"
-                max="100"
                 placeholder="25"
                 {...register('salary')}
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-start"

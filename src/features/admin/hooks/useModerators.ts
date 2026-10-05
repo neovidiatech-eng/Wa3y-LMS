@@ -13,8 +13,8 @@ export const useModeratorsRequests = () => {
 export const useAcceptModeratorRequest = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: ({ userId, studentIds }: { userId: string; studentIds?: string[] }) =>
-            acceptModeratorRequest(userId, studentIds ?? []),
+        mutationFn: ({ userId, studentIds, salary }: { userId: string; studentIds?: string[]; salary?: number }) =>
+            acceptModeratorRequest(userId, studentIds ?? [], salary),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['moderator-requests'] })
         }
