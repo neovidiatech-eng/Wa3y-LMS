@@ -79,6 +79,10 @@ export default function Sessions() {
     if (!sessionToDelete) return;
     try {
       await deleteSchedule.mutateAsync(sessionToDelete.id);
+      if (selectedSession?.id === sessionToDelete.id) {
+        setShowViewModal(false);
+        setSelectedSession(null);
+      }
       setSessionToDelete(null);
     } catch (error) {
       console.error("Delete session failed:", error);
@@ -484,9 +488,7 @@ export default function Sessions() {
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
                   {t("duration")}
                 </th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
-                  {t("status")}
-                </th>
+
                 <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
                   {t("actions")}
                 </th>
@@ -620,13 +622,13 @@ export default function Sessions() {
                     {calculateDuration(session.start_time, session.end_time)}{" "}
                     {t("minutes")}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  {/* <td className="px-6 py-4 text-right">
                     <span
                       className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusStyle(session.status)}`}
                     >
                       {t(session.status?.toLowerCase() || "")}
                     </span>
-                  </td>
+                  </td> */}
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 justify-end">
                       <button
@@ -706,6 +708,9 @@ export default function Sessions() {
           setShowViewModal(false);
           setSelectedSession(s);
           setShowEditModal(true);
+        }}
+        onDeleteSession={(s) => {
+          handleDeleteSession(s);
         }}
       />
 

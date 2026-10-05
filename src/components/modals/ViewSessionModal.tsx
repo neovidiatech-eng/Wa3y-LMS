@@ -12,6 +12,7 @@ import {
   Loader2,
   Star,
   MessageSquare,
+  Trash,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Schedule } from "../../types/scheduales";
@@ -26,6 +27,7 @@ interface ViewSessionModalProps {
   groupedSessions?: Schedule[];
   allSessions?: Schedule[];
   onEditSession?: (session: Schedule) => void;
+  onDeleteSession?: (session: Schedule) => void;
 }
 
 export default function ViewSessionModal({
@@ -35,6 +37,7 @@ export default function ViewSessionModal({
   groupedSessions: initialGroupedSessions,
   allSessions = [],
   onEditSession,
+  onDeleteSession,
 }: ViewSessionModalProps) {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split("-")[0];
@@ -358,17 +361,29 @@ export default function ViewSessionModal({
                         {groupStudent.student?.user?.name || (groupStudent.student as any)?.name || ""}
                       </p>
                       <span
-                        className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                          groupStudent.isAttended
+                        className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${groupStudent.isAttended
                             ? "bg-green-100 text-green-700"
                             : "bg-red-100 text-red-700"
-                        }`}
+                          }`}
                       >
                         {groupStudent.isAttended ? t("attended") : t("notAttended")}
                       </span>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {session.status && (
+              <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 mb-6">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                  {t("status")}
+                </p>
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusStyle(session.status)}`}
+                >
+                  {t(session.status?.toLowerCase() || "")}
+                </span>
               </div>
             )}
 
@@ -464,8 +479,8 @@ export default function ViewSessionModal({
                             <Star
                               key={i}
                               className={`w-3.5 h-3.5 ${i < (review.rating || 0)
-                                  ? 'fill-amber-400 text-amber-400'
-                                  : 'fill-gray-200 text-gray-200'
+                                ? 'fill-amber-400 text-amber-400'
+                                : 'fill-gray-200 text-gray-200'
                                 }`}
                             />
                           ))}
@@ -579,6 +594,15 @@ export default function ViewSessionModal({
                                   title={t("edit")}
                                 >
                                   <Edit className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              {onDeleteSession && (
+                                <button
+                                  onClick={() => onDeleteSession(s)}
+                                  className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded-lg transition-colors"
+                                  title={language === "ar" ? "حذف" : "Delete"}
+                                >
+                                  <Trash className="w-3.5 h-3.5" />
                                 </button>
                               )}
                             </div>
